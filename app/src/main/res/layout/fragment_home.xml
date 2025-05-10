@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.moneywise.ui.home.HomeViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/light_grey"
+        tools:context=".MainActivity">
+
+        <!-- App Bar avec Toolbar -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/Theme.MoneyWise.AppBarOverlay">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Contenu principal scrollable -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp">
+
+                <!-- Section Solde -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/balance_background">
+
+                    <!-- Conteneur pour centrer les éléments texte -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal"
+                        android:layout_marginBottom="24dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hello Your Name"
+                            android:textSize="24sp"
+                            android:textColor="@color/black"
+                            android:layout_marginBottom="8dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="BALANCE"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:layout_marginBottom="4dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1.000.000.000 MGA"
+                            android:textSize="30sp"
+                            android:textColor="@color/black"/>
+                    </LinearLayout>
+
+                    <!-- Boutons d'action -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="32dp">
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Add"
+                            android:textColor="@color/black"
+                            android:drawableTop="@drawable/ic_add"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Send"
+                            android:drawableTop="@drawable/ic_send"
+                            android:textColor="@color/black"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Receive"
+                            android:drawableTop="@drawable/ic_receive"
+                            android:textColor="@color/black"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Buy"
+                            android:drawableTop="@drawable/ic_buy"
+                            android:textColor="@color/black"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Section Transactions -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Dernières transactions :"
+                    android:textColor="@color/grey"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:padding="16dp"
+                    android:background="@drawable/recente_background">
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="*"
+                        android:shrinkColumns="*"
+                        android:layout_marginBottom="8dp">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Type"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Montants"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Date"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Cause"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Description"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"/>
+                        </TableRow>
+                    </TableLayout>
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp">
+
+                        <TableLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stretchColumns="*"
+                            android:shrinkColumns="*">
+
+                            <!-- Ligne 1 -->
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Dépot"
+                                    android:textColor="@color/black"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="+1000000"
+                                    android:textColor="@color/green"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="02-10-2023"
+                                    android:textColor="@color/black"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="-"
+                                    android:textColor="@color/black"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Telma"
+                                    android:textColor="@color/black"/>
+                            </TableRow>
+
+                            <!-- Ligne 2 -->
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="8dp"
+                                android:background="#F5F5F5">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Retrait"
+                                    android:textColor="@color/black"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="-20000"
+                                    android:textColor="@color/black"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="02-10-2023"
+                                    android:textColor="@color/black"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="remboursement"
+                                    android:textColor="@color/black"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="dette"
+                                    android:textColor="@color/black"/>
+                            </TableRow>
+                        </TableLayout>
+                    </ScrollView>
+                </LinearLayout>
+
+                <!-- Section Projets -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Progression de projet"
+                    android:textColor="@color/grey"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:background="@drawable/recente_background">
+
+                        <!-- Projet 1 -->
+                        <LinearLayout
+                            android:layout_width="160dp"
+                            android:layout_height="160dp"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginRight="16dp"
+                            android:background="@drawable/project_card_background">
+
+                            <ProgressBar
+                                android:id="@+id/progressBar1"
+                                style="@style/Widget.AppCompat.ProgressBar"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:progress="65"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Projet A"
+                                android:textSize="14sp"
+                                android:textColor="@color/black"
+                                android:layout_marginTop="8dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="65% complété"
+                                android:textSize="12sp"
+                                android:textColor="@color/grey"/>
+                        </LinearLayout>
+
+                        <!-- Projet 2 -->
+                        <LinearLayout
+                            android:layout_width="160dp"
+                            android:layout_height="160dp"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginRight="16dp"
+                            android:background="@drawable/project_card_background">
+
+                            <ProgressBar
+                                android:id="@+id/progressBar2"
+                                style="@style/Widget.AppCompat.ProgressBar"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:progress="40"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Projet B"
+                                android:textSize="14sp"
+                                android:textColor="@color/black"
+                                android:layout_marginTop="8dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="40% complété"
+                                android:textSize="12sp"
+                                android:textColor="@color/grey"/>
+                        </LinearLayout>
+
+                        <!-- Projet 3 -->
+                        <LinearLayout
+                            android:layout_width="160dp"
+                            android:layout_height="160dp"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginRight="16dp"
+                            android:background="@drawable/project_card_background">
+
+                            <ProgressBar
+                                android:id="@+id/progressBar3"
+                                style="@style/Widget.AppCompat.ProgressBar"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:progress="90"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Projet C"
+                                android:textSize="14sp"
+                                android:textColor="@color/black"
+                                android:layout_marginTop="8dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="90% complété"
+                                android:textSize="12sp"
+                                android:textColor="@color/grey"/>
+                        </LinearLayout>
+
+                        <!-- Projet 4 -->
+                        <LinearLayout
+                            android:layout_width="160dp"
+                            android:layout_height="160dp"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="@drawable/project_card_background">
+
+                            <ProgressBar
+                                android:id="@+id/progressBar4"
+                                style="@style/Widget.AppCompat.ProgressBar"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:progress="25"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Projet D"
+                                android:textSize="14sp"
+                                android:textColor="@color/black"
+                                android:layout_marginTop="8dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="25% complété"
+                                android:textSize="12sp"
+                                android:textColor="@color/grey"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- Section Rappels -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Rappel :"
+                    android:textColor="@color/grey"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:padding="18dp"
+                    android:background="@drawable/recente_background">
+
+                    <!-- Colonne Emprunt -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:background="@drawable/project_card_background"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Emprunts"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="@color/black"
+                            android:gravity="center"
+                            android:layout_marginBottom="12dp"/>
+
+                        <!-- En-tête du tableau -->
+                        <TableLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stretchColumns="*"
+                            >
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Nom"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:padding="8dp"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Montant"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:padding="8dp"/>
+                            </TableRow>
+                        </TableLayout>
+
+                        <!-- Données Emprunts -->
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp">
+
+                            <TableLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:stretchColumns="*">
+
+                                <!-- Emprunt 1 -->
+                                <TableRow
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="8dp">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Jean Dupont"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="200,000 MGA"
+                                        android:textColor="@color/red"/>
+                                </TableRow>
+
+                                <!-- Emprunt 2 -->
+                                <TableRow
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="8dp"
+                                    android:background="#F5F5F5">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Marie Martin"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="150,000 MGA"
+                                        android:textColor="@color/red"/>
+                                </TableRow>
+
+                            </TableLayout>
+                        </ScrollView>
+                    </LinearLayout>
+
+                    <!-- Colonne Acquittement -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="8dp"
+                        android:background="@drawable/project_card_background"
+                        android:layout_marginLeft="8dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Acquittements"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="@color/black"
+                            android:gravity="center"
+                            android:layout_marginBottom="12dp"/>
+
+                        <!-- En-tête du tableau -->
+                        <TableLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stretchColumns="*">
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Nom"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:padding="8dp"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Montant"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:padding="8dp"/>
+                            </TableRow>
+                        </TableLayout>
+
+                        <!-- Données Acquittements -->
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp">
+
+                            <TableLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:stretchColumns="*">
+
+                                <!-- Acquittement 1 -->
+                                <TableRow
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="8dp">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Paul Durand"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="300,000 MGA"
+                                        android:textColor="@color/green"/>
+                                </TableRow>
+
+                                <!-- Acquittement 2 -->
+                                <TableRow
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="8dp"
+                                    android:background="#F5F5F5">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Sophie Lambert"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="250,000 MGA"
+                                        android:textColor="@color/green"/>
+                                </TableRow>
+                            </TableLayout>
+                        </ScrollView>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
