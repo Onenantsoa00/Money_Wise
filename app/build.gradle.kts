@@ -54,6 +54,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+
     implementation ("com.google.android.material:material:1.11.0")
 
     implementation("androidx.room:room-runtime:2.6.1")
@@ -63,4 +65,7 @@ dependencies {
 
     // Coroutines
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    // ViewModel
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 }

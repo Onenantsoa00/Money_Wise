@@ -1,19 +1,35 @@
 package com.example.moneywise.ui.emprunt
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.moneywise.data.dao.EmpruntDao
+import com.example.moneywise.data.entity.Emprunt
+import kotlinx.coroutines.launch
+import java.util.Date
 
-class EmpruntViewModel : ViewModel() {
-    // Données statiques pour les emprunts
-    val emprunts = listOf(
-        Emprunt("Jean Dupont", "034 12 345 67", "250,000 MGA", "10/06/2023", "10/07/2023"),
-        Emprunt("Marie Rakoto", "032 98 765 43", "150,000 MGA", "05/06/2023", "05/07/2023")
-    )
+class EmpruntViewModel(private val empruntDao: EmpruntDao) : ViewModel() {
+    val allEmprunts: LiveData<List<Emprunt>> = empruntDao.getAllEmprunt()
 
-    data class Emprunt(
-        val nom: String,
-        val contact: String,
-        val montant: String,
-        val dateEmprunt: String,
-        val dateRemboursement: String
-    )
+    fun insertEmprunt(
+        nom: String,
+        contact: String,
+        montant: Double,
+        dateEmprunt: Date,
+        dateRemboursement: Date
+    ) {
+        if (nom.isBlank()) {
+            throw IllegalArgumentException("Le nom ne peut pas être vide")
+        }
+        viewModelScope.launch {
+            val nouvelEmprunt = Emprunt(
+                nom_emprunte = nom,
+                contacte = contact,
+                montant = montant,
+                date_emprunt = dateEmprunt,
+                date_remboursement = dateRemboursement
+            )
+            empruntDao.insertEmprunt(nouvelEmprunt)
+        }
+    }
 }

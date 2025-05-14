@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/white"
+        android:clickable="true">
+
+        <!-- Structure identique à votre emprunt existant mais avec des IDs -->
+        <LinearLayout
+            android:id="@+id/layout_nom"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="#E6EEF8"
+                android:layout_marginEnd="8dp">
+
+                <TextView
+                    android:id="@+id/initials"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#4285F4"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_gravity="center"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/text_nom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:ellipsize="end"
+                android:maxLines="1"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_contact"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:textColor="#666666"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/text_montant"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="#EA4335"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:gravity="end"/>
+
+        <LinearLayout
+            android:id="@+id/layout_date_emprunt"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_calendar"
+                android:tint="#666666"
+                android:layout_marginEnd="4dp"/>
+
+            <TextView
+                android:id="@+id/text_date_emprunt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#666666"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_date_remboursement"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_calendar_alert"
+                android:tint="#FBBC05"
+                android:layout_marginEnd="4dp"/>
+
+            <TextView
+                android:id="@+id/text_date_remboursement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FBBC05"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+        </LinearLayout>
+    </LinearLayout>
+</HorizontalScrollView>
