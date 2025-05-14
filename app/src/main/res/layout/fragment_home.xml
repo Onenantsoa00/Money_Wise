@@ -19,12 +19,14 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:elevation="0dp"
             android:theme="@style/Theme.MoneyWise.AppBarOverlay">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
+                <!-- Vous pouvez ajouter un logo ou un titre ici si nécessaire -->
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -38,175 +40,244 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="16dp">
+                android:paddingBottom="24dp">
 
                 <!-- Section Solde -->
-                <LinearLayout
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
+                    android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/balance_background">
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="4dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="@color/white">
 
-                    <!-- Conteneur pour centrer les éléments texte -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:gravity="center_horizontal"
-                        android:layout_marginBottom="24dp">
+                        android:padding="20dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <!-- Conteneur pour centrer les éléments texte -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Hello Your Name"
-                            android:textSize="24sp"
-                            android:textColor="@color/black"
-                            android:layout_marginBottom="8dp"/>
+                            android:orientation="vertical"
+                            android:gravity="center_horizontal"
+                            android:layout_marginBottom="24dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="BALANCE"
-                            android:textSize="14sp"
-                            android:textColor="@color/black"
-                            android:layout_marginBottom="4dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Hello Your Name"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:layout_marginBottom="16dp"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="BALANCE"
+                                android:textSize="14sp"
+                                android:alpha="0.7"
+                                android:textColor="@color/black"
+                                android:layout_marginBottom="8dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1.000.000.000 MGA"
+                                android:textSize="32sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"/>
+                        </LinearLayout>
+
+                        <!-- Boutons d'action -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="1.000.000.000 MGA"
-                            android:textSize="30sp"
-                            android:textColor="@color/black"/>
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            android:layout_marginTop="8dp"
+                            app:cardBackgroundColor="#F5F7FA">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:padding="12dp">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="center">
+
+                                    <com.google.android.material.card.MaterialCardView
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
+                                        app:cardCornerRadius="24dp"
+                                        app:cardElevation="0dp"
+                                        app:cardBackgroundColor="#E6EEF8">
+
+                                        <ImageView
+                                            android:layout_width="24dp"
+                                            android:layout_height="24dp"
+                                            android:layout_gravity="center"
+                                            android:src="@drawable/ic_add"
+                                            android:tint="#4285F4"/>
+                                    </com.google.android.material.card.MaterialCardView>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Add"
+                                        android:textSize="12sp"
+                                        android:textColor="@color/black"
+                                        android:layout_marginTop="8dp"/>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="center">
+
+                                    <com.google.android.material.card.MaterialCardView
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
+                                        app:cardCornerRadius="24dp"
+                                        app:cardElevation="0dp"
+                                        app:cardBackgroundColor="#E6F8EE">
+
+                                        <ImageView
+                                            android:layout_width="24dp"
+                                            android:layout_height="24dp"
+                                            android:layout_gravity="center"
+                                            android:src="@drawable/ic_send"
+                                            android:tint="#34A853"/>
+                                    </com.google.android.material.card.MaterialCardView>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Send"
+                                        android:textSize="12sp"
+                                        android:textColor="@color/black"
+                                        android:layout_marginTop="8dp"/>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="center">
+
+                                    <com.google.android.material.card.MaterialCardView
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
+                                        app:cardCornerRadius="24dp"
+                                        app:cardElevation="0dp"
+                                        app:cardBackgroundColor="#FFF0E6">
+
+                                        <ImageView
+                                            android:layout_width="24dp"
+                                            android:layout_height="24dp"
+                                            android:layout_gravity="center"
+                                            android:src="@drawable/ic_receive"
+                                            android:tint="#FBBC05"/>
+                                    </com.google.android.material.card.MaterialCardView>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Receive"
+                                        android:textSize="12sp"
+                                        android:textColor="@color/black"
+                                        android:layout_marginTop="8dp"/>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="center">
+
+                                    <com.google.android.material.card.MaterialCardView
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
+                                        app:cardCornerRadius="24dp"
+                                        app:cardElevation="0dp"
+                                        app:cardBackgroundColor="#F8E6EE">
+
+                                        <ImageView
+                                            android:layout_width="24dp"
+                                            android:layout_height="24dp"
+                                            android:layout_gravity="center"
+                                            android:src="@drawable/ic_buy"
+                                            android:tint="#EA4335"/>
+                                    </com.google.android.material.card.MaterialCardView>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Buy"
+                                        android:textSize="12sp"
+                                        android:textColor="@color/black"
+                                        android:layout_marginTop="8dp"/>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
-
-                    <!-- Boutons d'action -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        android:layout_marginTop="32dp">
-
-                        <Button
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Add"
-                            android:textColor="@color/black"
-                            android:drawableTop="@drawable/ic_add"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
-
-                        <Button
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Send"
-                            android:drawableTop="@drawable/ic_send"
-                            android:textColor="@color/black"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
-
-                        <Button
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Receive"
-                            android:drawableTop="@drawable/ic_receive"
-                            android:textColor="@color/black"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
-
-                        <Button
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Buy"
-                            android:drawableTop="@drawable/ic_buy"
-                            android:textColor="@color/black"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
-                    </LinearLayout>
-                </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
                 <!-- Section Transactions -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Dernières transactions :"
-                    android:textColor="@color/grey"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:padding="16dp"
-                    android:background="@drawable/recente_background">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginHorizontal="16dp">
 
-                    <TableLayout
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Dernières transactions"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Voir tout"
+                        android:textColor="#4285F4"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:stretchColumns="*"
-                        android:shrinkColumns="*"
-                        android:layout_marginBottom="8dp">
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="8dp">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Type"
-                                android:textColor="@color/black"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Montants"
-                                android:textColor="@color/black"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Date"
-                                android:textColor="@color/black"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Cause"
-                                android:textColor="@color/black"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Description"
-                                android:textColor="@color/black"
-                                android:textStyle="bold"/>
-                        </TableRow>
-                    </TableLayout>
-
-                    <ScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp">
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
                         <TableLayout
                             android:layout_width="match_parent"
@@ -214,7 +285,6 @@
                             android:stretchColumns="*"
                             android:shrinkColumns="*">
 
-                            <!-- Ligne 1 -->
                             <TableRow
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -224,472 +294,710 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="Dépot"
-                                    android:textColor="@color/black"/>
+                                    android:text="Type"
+                                    android:textColor="@color/black"
+                                    android:alpha="0.7"
+                                    android:textStyle="bold"/>
 
                                 <TextView
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="+1000000"
-                                    android:textColor="@color/green"/>
+                                    android:text="Montant"
+                                    android:textColor="@color/black"
+                                    android:alpha="0.7"
+                                    android:textStyle="bold"/>
 
                                 <TextView
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="02-10-2023"
-                                    android:textColor="@color/black"/>
+                                    android:text="Date"
+                                    android:textColor="@color/black"
+                                    android:alpha="0.7"
+                                    android:textStyle="bold"/>
 
                                 <TextView
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="-"
-                                    android:textColor="@color/black"/>
+                                    android:text="Motif"
+                                    android:textColor="@color/black"
+                                    android:alpha="0.7"
+                                    android:textStyle="bold"/>
 
                                 <TextView
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="Telma"
-                                    android:textColor="@color/black"/>
-                            </TableRow>
-
-                            <!-- Ligne 2 -->
-                            <TableRow
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="8dp"
-                                android:background="#F5F5F5">
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Retrait"
-                                    android:textColor="@color/black"/>
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="-20000"
-                                    android:textColor="@color/black"/>
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="02-10-2023"
-                                    android:textColor="@color/black"/>
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="remboursement"
-                                    android:textColor="@color/black"/>
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="dette"
-                                    android:textColor="@color/black"/>
+                                    android:text="Description"
+                                    android:textColor="@color/black"
+                                    android:alpha="0.7"
+                                    android:textStyle="bold"/>
                             </TableRow>
                         </TableLayout>
-                    </ScrollView>
-                </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0"
+                            android:layout_marginVertical="8dp"/>
+
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="180dp">
+
+                            <TableLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:stretchColumns="*"
+                                android:shrinkColumns="*">
+
+                                <!-- Ligne 1 -->
+                                <TableRow
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="8dp">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Dépot"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="+1000000"
+                                        android:textColor="@color/green"
+                                        android:textStyle="bold"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="02-10-2023"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="-"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Telma"
+                                        android:textColor="@color/black"/>
+                                </TableRow>
+
+                                <!-- Ligne 2 -->
+                                <TableRow
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="8dp"
+                                    android:background="#F8F9FA">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Retrait"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="-20000"
+                                        android:textColor="#EA4335"
+                                        android:textStyle="bold"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="02-10-2023"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="remboursement"
+                                        android:textColor="@color/black"/>
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="dette"
+                                        android:textColor="@color/black"/>
+                                </TableRow>
+                            </TableLayout>
+                        </ScrollView>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
                 <!-- Section Projets -->
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Progression de projet"
-                    android:textColor="@color/grey"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginHorizontal="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Progression de projet"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Voir tout"
+                        android:textColor="#4285F4"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:scrollbars="none">
+                    android:layout_marginTop="12dp"
+                    android:scrollbars="none"
+                    android:clipToPadding="false"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="8dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:background="@drawable/recente_background">
+                        android:orientation="horizontal">
 
                         <!-- Projet 1 -->
-                        <LinearLayout
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="160dp"
-                            android:layout_height="160dp"
-                            android:orientation="vertical"
-                            android:gravity="center"
-                            android:layout_marginRight="16dp"
-                            android:background="@drawable/project_card_background">
+                            android:layout_height="180dp"
+                            android:layout_marginEnd="12dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0dp"
+                            app:cardBackgroundColor="@color/white">
 
-                            <ProgressBar
-                                android:id="@+id/progressBar1"
-                                style="@style/Widget.AppCompat.ProgressBar"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:progress="65"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="16dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Projet A"
-                                android:textSize="14sp"
-                                android:textColor="@color/black"
-                                android:layout_marginTop="8dp"/>
+                                <ProgressBar
+                                    android:id="@+id/progressBar1"
+                                    style="?android:attr/progressBarStyleHorizontal"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:progress="65"
+                                    android:progressDrawable="@drawable/circular_progress_bar"
+                                    android:background="@drawable/circular_progress_background"
+                                    android:rotation="-90"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="65% complété"
-                                android:textSize="12sp"
-                                android:textColor="@color/grey"/>
-                        </LinearLayout>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="65%"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#4285F4"
+                                    android:layout_marginTop="-60dp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Projet A"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:layout_marginTop="40dp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="En cours"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/grey"
+                                    android:layout_marginTop="4dp"/>
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
                         <!-- Projet 2 -->
-                        <LinearLayout
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="160dp"
-                            android:layout_height="160dp"
-                            android:orientation="vertical"
-                            android:gravity="center"
-                            android:layout_marginRight="16dp"
-                            android:background="@drawable/project_card_background">
+                            android:layout_height="180dp"
+                            android:layout_marginEnd="12dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0dp"
+                            app:cardBackgroundColor="@color/white">
 
-                            <ProgressBar
-                                android:id="@+id/progressBar2"
-                                style="@style/Widget.AppCompat.ProgressBar"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:progress="40"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="16dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Projet B"
-                                android:textSize="14sp"
-                                android:textColor="@color/black"
-                                android:layout_marginTop="8dp"/>
+                                <ProgressBar
+                                    android:id="@+id/progressBar2"
+                                    style="?android:attr/progressBarStyleHorizontal"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:progress="40"
+                                    android:progressDrawable="@drawable/circular_progress_bar_orange"
+                                    android:background="@drawable/circular_progress_background"
+                                    android:rotation="-90"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="40% complété"
-                                android:textSize="12sp"
-                                android:textColor="@color/grey"/>
-                        </LinearLayout>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="40%"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#FBBC05"
+                                    android:layout_marginTop="-60dp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Projet B"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:layout_marginTop="40dp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="En cours"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/grey"
+                                    android:layout_marginTop="4dp"/>
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
                         <!-- Projet 3 -->
-                        <LinearLayout
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="160dp"
-                            android:layout_height="160dp"
-                            android:orientation="vertical"
-                            android:gravity="center"
-                            android:layout_marginRight="16dp"
-                            android:background="@drawable/project_card_background">
+                            android:layout_height="180dp"
+                            android:layout_marginEnd="12dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0dp"
+                            app:cardBackgroundColor="@color/white">
 
-                            <ProgressBar
-                                android:id="@+id/progressBar3"
-                                style="@style/Widget.AppCompat.ProgressBar"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:progress="90"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="16dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Projet C"
-                                android:textSize="14sp"
-                                android:textColor="@color/black"
-                                android:layout_marginTop="8dp"/>
+                                <ProgressBar
+                                    android:id="@+id/progressBar3"
+                                    style="?android:attr/progressBarStyleHorizontal"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:progress="90"
+                                    android:progressDrawable="@drawable/circular_progress_bar_green"
+                                    android:background="@drawable/circular_progress_background"
+                                    android:rotation="-90"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="90% complété"
-                                android:textSize="12sp"
-                                android:textColor="@color/grey"/>
-                        </LinearLayout>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="90%"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#34A853"
+                                    android:layout_marginTop="-60dp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Projet C"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:layout_marginTop="40dp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Presque terminé"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/grey"
+                                    android:layout_marginTop="4dp"/>
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
                         <!-- Projet 4 -->
-                        <LinearLayout
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="160dp"
-                            android:layout_height="160dp"
-                            android:orientation="vertical"
-                            android:gravity="center"
-                            android:background="@drawable/project_card_background">
+                            android:layout_height="180dp"
+                            android:layout_marginEnd="12dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0dp"
+                            app:cardBackgroundColor="@color/white">
 
-                            <ProgressBar
-                                android:id="@+id/progressBar4"
-                                style="@style/Widget.AppCompat.ProgressBar"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:progress="25"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="16dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Projet D"
-                                android:textSize="14sp"
-                                android:textColor="@color/black"
-                                android:layout_marginTop="8dp"/>
+                                <ProgressBar
+                                    android:id="@+id/progressBar4"
+                                    style="?android:attr/progressBarStyleHorizontal"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:progress="25"
+                                    android:progressDrawable="@drawable/circular_progress_bar_red"
+                                    android:background="@drawable/circular_progress_background"
+                                    android:rotation="-90"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="25% complété"
-                                android:textSize="12sp"
-                                android:textColor="@color/grey"/>
-                        </LinearLayout>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="25%"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#EA4335"
+                                    android:layout_marginTop="-60dp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Projet D"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:layout_marginTop="40dp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Démarrage"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/grey"
+                                    android:layout_marginTop="4dp"/>
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
                 </HorizontalScrollView>
 
                 <!-- Section Rappels -->
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Rappel :"
-                    android:textColor="@color/grey"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginHorizontal="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Rappel"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Voir tout"
+                        android:textColor="#4285F4"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:padding="18dp"
-                    android:background="@drawable/recente_background">
+                    android:layout_marginTop="12dp"
+                    android:layout_marginHorizontal="16dp">
 
                     <!-- Colonne Emprunt -->
-                    <LinearLayout
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:background="@drawable/project_card_background"
-                        android:padding="8dp">
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="@color/white">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Emprunts"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
-                            android:gravity="center"
-                            android:layout_marginBottom="12dp"/>
+                            android:orientation="vertical"
+                            android:padding="16dp">
 
-                        <!-- En-tête du tableau -->
-                        <TableLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:stretchColumns="*"
-                            >
-
-                            <TableRow
+                            <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:text="Emprunts"
+                                android:textStyle="bold"
+                                android:textSize="16sp"
+                                android:textColor="@color/black"
+                                android:gravity="center"
+                                android:layout_marginBottom="12dp"/>
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Nom"
-                                    android:textColor="@color/black"
-                                    android:textStyle="bold"
-                                    android:padding="8dp"/>
+                            <View
+                                android:layout_width="40dp"
+                                android:layout_height="3dp"
+                                android:background="#EA4335"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="16dp"/>
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Montant"
-                                    android:textColor="@color/black"
-                                    android:textStyle="bold"
-                                    android:padding="8dp"/>
-                            </TableRow>
-                        </TableLayout>
-
-                        <!-- Données Emprunts -->
-                        <ScrollView
-                            android:layout_width="match_parent"
-                            android:layout_height="150dp">
-
+                            <!-- En-tête du tableau -->
                             <TableLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:stretchColumns="*">
 
-                                <!-- Emprunt 1 -->
                                 <TableRow
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:padding="8dp">
+                                    android:layout_height="wrap_content">
 
                                     <TextView
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Jean Dupont"
-                                        android:textColor="@color/black"/>
+                                        android:text="Nom"
+                                        android:textColor="@color/black"
+                                        android:alpha="0.7"
+                                        android:textStyle="bold"
+                                        android:padding="8dp"/>
 
                                     <TextView
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="200,000 MGA"
-                                        android:textColor="@color/red"/>
+                                        android:text="Montant"
+                                        android:textColor="@color/black"
+                                        android:alpha="0.7"
+                                        android:textStyle="bold"
+                                        android:padding="8dp"/>
                                 </TableRow>
-
-                                <!-- Emprunt 2 -->
-                                <TableRow
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:padding="8dp"
-                                    android:background="#F5F5F5">
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="Marie Martin"
-                                        android:textColor="@color/black"/>
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="150,000 MGA"
-                                        android:textColor="@color/red"/>
-                                </TableRow>
-
                             </TableLayout>
-                        </ScrollView>
-                    </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#E0E0E0"
+                                android:layout_marginVertical="8dp"/>
+
+                            <!-- Données Emprunts -->
+                            <ScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="150dp">
+
+                                <TableLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:stretchColumns="*">
+
+                                    <!-- Emprunt 1 -->
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:padding="8dp">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="Jean Dupont"
+                                            android:textColor="@color/black"/>
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="200,000 MGA"
+                                            android:textColor="#EA4335"
+                                            android:textStyle="bold"/>
+                                    </TableRow>
+
+                                    <!-- Emprunt 2 -->
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:padding="8dp"
+                                        android:background="#F8F9FA">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="Marie Martin"
+                                            android:textColor="@color/black"/>
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="150,000 MGA"
+                                            android:textColor="#EA4335"
+                                            android:textStyle="bold"/>
+                                    </TableRow>
+                                </TableLayout>
+                            </ScrollView>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
                     <!-- Colonne Acquittement -->
-                    <LinearLayout
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:padding="8dp"
-                        android:background="@drawable/project_card_background"
-                        android:layout_marginLeft="8dp">
+                        android:layout_marginStart="8dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="@color/white">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Acquittements"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
-                            android:gravity="center"
-                            android:layout_marginBottom="12dp"/>
+                            android:orientation="vertical"
+                            android:padding="16dp">
 
-                        <!-- En-tête du tableau -->
-                        <TableLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:stretchColumns="*">
-
-                            <TableRow
+                            <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:text="Acquittements"
+                                android:textStyle="bold"
+                                android:textSize="16sp"
+                                android:textColor="@color/black"
+                                android:gravity="center"
+                                android:layout_marginBottom="12dp"/>
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Nom"
-                                    android:textColor="@color/black"
-                                    android:textStyle="bold"
-                                    android:padding="8dp"/>
+                            <View
+                                android:layout_width="40dp"
+                                android:layout_height="3dp"
+                                android:background="#34A853"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="16dp"/>
 
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Montant"
-                                    android:textColor="@color/black"
-                                    android:textStyle="bold"
-                                    android:padding="8dp"/>
-                            </TableRow>
-                        </TableLayout>
-
-                        <!-- Données Acquittements -->
-                        <ScrollView
-                            android:layout_width="match_parent"
-                            android:layout_height="150dp">
-
+                            <!-- En-tête du tableau -->
                             <TableLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:stretchColumns="*">
 
-                                <!-- Acquittement 1 -->
                                 <TableRow
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:padding="8dp">
+                                    android:layout_height="wrap_content">
 
                                     <TextView
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Paul Durand"
-                                        android:textColor="@color/black"/>
+                                        android:text="Nom"
+                                        android:textColor="@color/black"
+                                        android:alpha="0.7"
+                                        android:textStyle="bold"
+                                        android:padding="8dp"/>
 
                                     <TextView
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="300,000 MGA"
-                                        android:textColor="@color/green"/>
-                                </TableRow>
-
-                                <!-- Acquittement 2 -->
-                                <TableRow
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:padding="8dp"
-                                    android:background="#F5F5F5">
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="Sophie Lambert"
-                                        android:textColor="@color/black"/>
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="250,000 MGA"
-                                        android:textColor="@color/green"/>
+                                        android:text="Montant"
+                                        android:textColor="@color/black"
+                                        android:alpha="0.7"
+                                        android:textStyle="bold"
+                                        android:padding="8dp"/>
                                 </TableRow>
                             </TableLayout>
-                        </ScrollView>
-                    </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="#E0E0E0"
+                                android:layout_marginVertical="8dp"/>
+
+                            <!-- Données Acquittements -->
+                            <ScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="150dp">
+
+                                <TableLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:stretchColumns="*">
+
+                                    <!-- Acquittement 1 -->
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:padding="8dp">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="Paul Durand"
+                                            android:textColor="@color/black"/>
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="300,000 MGA"
+                                            android:textColor="#34A853"
+                                            android:textStyle="bold"/>
+                                    </TableRow>
+
+                                    <!-- Acquittement 2 -->
+                                    <TableRow
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:padding="8dp"
+                                        android:background="#F8F9FA">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="Sophie Lambert"
+                                            android:textColor="@color/black"/>
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="250,000 MGA"
+                                            android:textColor="#34A853"
+                                            android:textStyle="bold"/>
+                                    </TableRow>
+                                </TableLayout>
+                            </ScrollView>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

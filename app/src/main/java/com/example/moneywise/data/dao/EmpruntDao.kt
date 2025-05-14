@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.example.moneywise.data.entity.Emprunt
 
 @Dao
+@JvmSuppressWildcards
 interface EmpruntDao {
     @Insert
     suspend fun insertEmprunt(emprunt: Emprunt)

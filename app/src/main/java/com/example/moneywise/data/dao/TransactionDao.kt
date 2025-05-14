@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.example.moneywise.data.entity.Transaction
 
 @Dao
+@JvmSuppressWildcards
 interface TransactionDao {
     @Insert
     suspend fun insertTransaction(transaction: Transaction)

@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.example.moneywise.data.entity.Utilisateur
 
 @Dao
+@JvmSuppressWildcards
 interface UtilisateurDao {
     @Insert
     suspend fun insertUtilisateur(utilisateur: Utilisateur)

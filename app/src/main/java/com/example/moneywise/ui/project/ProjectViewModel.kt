@@ -14,20 +14,18 @@ class ProjectViewModel : ViewModel() {
     private val _projects = MutableLiveData<List<Project>>().apply {
         value = listOf(
             Project(
-                id = 1,
-                name = "Construction de maison",
-                totalBudget = "5,000,000 MGA",
-                usedBudget = "3,250,000 MGA",
-                progress = 65,
-                deadline = "15/06/2023"
+                nom = "Construction de maison",
+                montantNecessaire = "5,000,000 MGA",
+                montantActuel = "3,250,000 MGA",
+                progression = 65,
+                dateLimite = "15/06/2023"
             ),
             Project(
-                id = 2,
-                name = "Achat de voiture",
-                totalBudget = "2,500,000 MGA",
-                usedBudget = "2,500,000 MGA",
-                progress = 100,
-                deadline = "10/05/2023"
+                nom = "Achat de voiture",
+                montantNecessaire = "2,500,000 MGA",
+                montantActuel = "2,500,000 MGA",
+                progression = 100,
+                dateLimite = "10/05/2023"
             )
         )
     }
@@ -58,16 +56,15 @@ class ProjectViewModel : ViewModel() {
     }
 
     fun onProjectDetailComplete() {
-        _navigateToProjectDetail.value = null
+        _navigateToProjectDetail.value
     }
 
     // Classe de données pour les projets
     data class Project(
-        val id: Int,
-        val name: String,
-        val totalBudget: String,
-        val usedBudget: String,
-        val progress: Int,
-        val deadline: String
+        val nom: String,
+        val montantNecessaire: String,
+        val montantActuel: String,
+        val progression: Int,
+        val dateLimite: String
     )
 }

@@ -19,22 +19,25 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/Theme.MoneyWise.PopupOverlay">
 
-            <!-- Votre TextView personnalisé -->
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/argent_background"
+                android:background="@drawable/argent_background_improved"
                 android:text="argent"
                 android:drawablePadding="10dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
                 android:drawableStart="@drawable/ic_add"
                 android:drawableEnd="@drawable/ic_profile"
                 android:textColor="@color/black"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-medium"
+                android:elevation="2dp"/>
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>

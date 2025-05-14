@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.example.moneywise.data.entity.Acquittement
 
 @Dao
+@JvmSuppressWildcards
 interface AcquittementDao {
     @Insert
     suspend fun insertAcquittement(acquittement: Acquittement)

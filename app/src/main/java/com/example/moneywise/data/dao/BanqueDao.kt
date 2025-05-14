@@ -6,6 +6,7 @@ import androidx.room.Transaction
 import com.example.moneywise.data.relations.BanqueAvecTransactions
 
 @Dao
+@JvmSuppressWildcards
 interface BanqueDao {
     @Dao
     interface BanqueDao {

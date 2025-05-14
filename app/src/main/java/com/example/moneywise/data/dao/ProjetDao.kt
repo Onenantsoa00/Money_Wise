@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.example.moneywise.data.entity.Projet
 
 @Dao
+@JvmSuppressWildcards
 interface ProjetDao {
     @Insert
     suspend fun insertProjet(projet: Projet)
