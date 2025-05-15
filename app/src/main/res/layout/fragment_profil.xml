@@ -72,12 +72,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="60dp" />
 
-                        <!-- Nom et email -->
                         <TextView
                             android:id="@+id/profileName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.text}"
+                            android:text="@{viewModel.fullName}"
                             android:textSize="22sp"
                             android:textColor="#333333"
                             android:textStyle="bold"
@@ -87,12 +86,11 @@
                             android:id="@+id/profileEmail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.balance}"
+                            android:text="@{viewModel.currentUser != null ? viewModel.currentUser.email : ``}"
                             android:textSize="16sp"
                             android:textColor="#888888"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="16dp" />
-
                         <!-- Ligne de séparation -->
                         <View
                             android:layout_width="80dp"
@@ -351,6 +349,7 @@
 
                     <!-- Bouton de déconnexion -->
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/logoutButton"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:text="Déconnexion"

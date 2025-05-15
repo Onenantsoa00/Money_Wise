@@ -1,23 +1,62 @@
 package com.example.moneywise.ui.profile
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.moneywise.data.AppDatabase
+import com.example.moneywise.data.entity.Utilisateur
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class ProfilViewModel : ViewModel() {
-    private val _text = MutableLiveData<String>().apply {
-        value = "John Doe" // Nom par défaut
+class ProfilViewModel(application: Application) : AndroidViewModel(application) {
+    private val utilisateurDao = AppDatabase.getDatabase(application).utilisateurDao()
+
+    private val _currentUser = MutableStateFlow<Utilisateur?>(null)
+    val currentUser: StateFlow<Utilisateur?> = _currentUser
+
+    // Propriétés pour le data binding
+    val text: String
+        get() = _currentUser.value?.let { "${it.nom} ${it.prenom}" } ?: ""
+
+    val balance: String
+        get() = _currentUser.value?.let { it.email } ?: ""
+
+    init {
+        loadUserData()
     }
 
-    private val _balance = MutableLiveData<String>().apply {
-        value = "john.doe@example.com" // Email par défaut
+    private fun loadUserData() {
+        viewModelScope.launch {
+            try {
+                _currentUser.value = utilisateurDao.getAllUtilisateurs()
+                    .firstOrNull()
+                    ?.firstOrNull()
+            } catch (e: Exception) {
+                e.printStackTrace() // Très important pour voir l’erreur
+                Log.e("ProfilViewModel", "Erreur lors du chargement de l'utilisateur", e)
+            }
+        }
     }
 
-    val text: LiveData<String> = _text
-    val balance: LiveData<String> = _balance
+    val fullName = currentUser.map { user ->
+        user?.let { "${it.nom} ${it.prenom}" } ?: ""
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
-    fun updateProfile(name: String, email: String) {
-        _text.value = name
-        _balance.value = email
+
+    suspend fun updateUser(user: Utilisateur) {
+        utilisateurDao.update(user)
+        _currentUser.value = user
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            _currentUser.value = null
+        }
     }
 }

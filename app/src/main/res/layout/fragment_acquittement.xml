@@ -89,6 +89,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/textTotalRecu"
                                 android:text="800,000 MGA"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
@@ -130,6 +131,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/textNombrePersonnes"
                                 android:text="2"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
@@ -171,6 +173,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/textDernierRemboursement"
                                 android:text="20/06/2023"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
@@ -291,243 +294,21 @@
                                 android:layout_marginStart="16dp"/>
                         </LinearLayout>
                     </HorizontalScrollView>
-
-                    <!-- Liste des acquittements -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-
-                        <!-- Acquittement 1 -->
-                        <HorizontalScrollView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:scrollbars="none"
-                            android:overScrollMode="never">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:padding="16dp"
-                                android:background="@color/white"
-                                android:clickable="true">
-
-                                <LinearLayout
-                                    android:layout_width="120dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical">
-
-                                    <com.google.android.material.card.MaterialCardView
-                                        android:layout_width="36dp"
-                                        android:layout_height="36dp"
-                                        app:cardCornerRadius="18dp"
-                                        app:cardElevation="0dp"
-                                        app:strokeWidth="0dp"
-                                        app:cardBackgroundColor="#E6EEF8"
-                                        android:layout_marginEnd="8dp">
-
-                                        <TextView
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:text="JR"
-                                            android:textColor="#4285F4"
-                                            android:textStyle="bold"
-                                            android:textSize="14sp"
-                                            android:layout_gravity="center"/>
-                                    </com.google.android.material.card.MaterialCardView>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Jean Rakoto"
-                                        android:textColor="#333333"
-                                        android:textSize="14sp"
-                                        android:ellipsize="end"
-                                        android:maxLines="1"/>
-                                </LinearLayout>
-
-                                <TextView
-                                    android:layout_width="120dp"
-                                    android:layout_height="wrap_content"
-                                    android:text="034 12 345 67"
-                                    android:textColor="#666666"
-                                    android:textSize="14sp"/>
-
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:text="500,000 MGA"
-                                    android:textColor="#34A853"
-                                    android:textStyle="bold"
-                                    android:textSize="14sp"
-                                    android:gravity="end"/>
-
-                                <LinearLayout
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:layout_marginStart="16dp">
-
-                                    <ImageView
-                                        android:layout_width="16dp"
-                                        android:layout_height="16dp"
-                                        android:src="@drawable/ic_calendar"
-                                        android:tint="#666666"
-                                        android:layout_marginEnd="4dp"/>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="15/06/2023"
-                                        android:textColor="#666666"
-                                        android:textSize="14sp"/>
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:layout_marginStart="16dp">
-
-                                    <ImageView
-                                        android:layout_width="16dp"
-                                        android:layout_height="16dp"
-                                        android:src="@drawable/ic_check_circle"
-                                        android:tint="#34A853"
-                                        android:layout_marginEnd="4dp"/>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="20/06/2023"
-                                        android:textColor="#34A853"
-                                        android:textStyle="bold"
-                                        android:textSize="14sp"/>
-                                </LinearLayout>
-                            </LinearLayout>
-                        </HorizontalScrollView>
-
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="#F0F0F0"/>
-
-                        <!-- Acquittement 2 -->
-                        <HorizontalScrollView
+                        <!-- Liste des acquittements -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recycler_acquittements"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:scrollbars="none"
-                            android:overScrollMode="never">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:padding="16dp"
-                                android:background="@color/white"
-                                android:clickable="true">
-
-                                <LinearLayout
-                                    android:layout_width="120dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical">
-
-                                    <com.google.android.material.card.MaterialCardView
-                                        android:layout_width="36dp"
-                                        android:layout_height="36dp"
-                                        app:cardCornerRadius="18dp"
-                                        app:cardElevation="0dp"
-                                        app:strokeWidth="0dp"
-                                        app:cardBackgroundColor="#F8E6EE"
-                                        android:layout_marginEnd="8dp">
-
-                                        <TextView
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:text="MR"
-                                            android:textColor="#EA4335"
-                                            android:textStyle="bold"
-                                            android:textSize="14sp"
-                                            android:layout_gravity="center"/>
-                                    </com.google.android.material.card.MaterialCardView>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Marie Randria"
-                                        android:textColor="#333333"
-                                        android:textSize="14sp"
-                                        android:ellipsize="end"
-                                        android:maxLines="1"/>
-                                </LinearLayout>
-
-                                <TextView
-                                    android:layout_width="120dp"
-                                    android:layout_height="wrap_content"
-                                    android:text="032 98 765 43"
-                                    android:textColor="#666666"
-                                    android:textSize="14sp"/>
-
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:text="300,000 MGA"
-                                    android:textColor="#34A853"
-                                    android:textStyle="bold"
-                                    android:textSize="14sp"
-                                    android:gravity="end"/>
-
-                                <LinearLayout
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:layout_marginStart="16dp">
-
-                                    <ImageView
-                                        android:layout_width="16dp"
-                                        android:layout_height="16dp"
-                                        android:src="@drawable/ic_calendar"
-                                        android:tint="#666666"
-                                        android:layout_marginEnd="4dp"/>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="10/06/2023"
-                                        android:textColor="#666666"
-                                        android:textSize="14sp"/>
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:layout_marginStart="16dp">
-
-                                    <ImageView
-                                        android:layout_width="16dp"
-                                        android:layout_height="16dp"
-                                        android:src="@drawable/ic_check_circle"
-                                        android:tint="#34A853"
-                                        android:layout_marginEnd="4dp"/>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="15/06/2023"
-                                        android:textColor="#34A853"
-                                        android:textStyle="bold"
-                                        android:textSize="14sp"/>
-                                </LinearLayout>
-                            </LinearLayout>
-                        </HorizontalScrollView>
+                            android:clipToPadding="false"
+                            android:paddingBottom="16dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

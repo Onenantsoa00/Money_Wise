@@ -9,12 +9,10 @@ import androidx.room.Update
 import com.example.moneywise.data.entity.Projet
 
 @Dao
-@JvmSuppressWildcards
 interface ProjetDao {
     @Insert
     suspend fun insertProjet(projet: Projet)
 
-    //READ
     @Query("SELECT * FROM Projet")
     fun getAllProjet(): LiveData<List<Projet>>
 
@@ -29,4 +27,14 @@ interface ProjetDao {
 
     @Query("DELETE FROM Projet")
     suspend fun deleteAllProjet()
+
+    // Nouvelles requêtes pour les statistiques
+    @Query("SELECT COUNT(*) FROM Projet WHERE progression < 100 AND progression >= 50")
+    fun countActiveProjects(): LiveData<Int>
+
+    @Query("SELECT COUNT(*) FROM Projet WHERE progression < 50 AND progression > 0")
+    fun countOngoingProjects(): LiveData<Int>
+
+    @Query("SELECT COUNT(*) FROM Projet WHERE progression = 100")
+    fun countCompletedProjects(): LiveData<Int>
 }

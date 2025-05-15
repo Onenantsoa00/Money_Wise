@@ -20,5 +20,10 @@
     <string name="menu_Login">Login</string>
     <string name="menu_Signing">Signing</string>
 
+    <string name="error_name_required">Le nom est requis</string>
+    <string name="error_firstname_required">Le prénom est requis</string>
+    <string name="error_email_required">L\'email est requis</string>
+    <string name="error_password_required">Le mot de passe est requis</string>
+    <string name="error_password_mismatch">Les mots de passe ne correspondent pas</string>
 
 </resources>
