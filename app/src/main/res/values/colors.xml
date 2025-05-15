@@ -17,4 +17,16 @@
     <color name="black">#000000</color>
     <color name="grey_dark">#616161</color>
 
+    <!-- Nouvelles couleurs pour les statuts des projets -->
+    <color name="active_text">#34A853</color>
+    <color name="active_bg">#E6F8EE</color>
+    <color name="active_light_bg">#E6F8EE</color>
+
+    <color name="ongoing_text">#EA4335</color>
+    <color name="ongoing_bg">#FFF0E6</color>
+    <color name="ongoing_light_bg">#FFF0E6</color>
+
+    <color name="completed_text">#FBBC05</color>
+    <color name="completed_bg">#FFF8E0</color>
+    <color name="completed_light_bg">#FFF8E0</color>
 </resources>

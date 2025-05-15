@@ -5,11 +5,11 @@ import androidx.room.Relation
 import com.example.moneywise.data.entity.Banque
 import com.example.moneywise.data.entity.Transaction
 
-class BanqueAvecTransactions(
+data class BanqueAvecTransactions(
     @Embedded val banque: Banque,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "banqueId"
+        parentColumn = "id", // La colonne ID dans Banque
+        entityColumn = "id_banque" // La colonne de référence dans Transaction
     )
     val transactions: List<Transaction>
 )

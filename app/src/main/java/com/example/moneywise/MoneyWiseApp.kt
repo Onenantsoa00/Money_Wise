@@ -1,12 +1,7 @@
 package com.example.moneywise
 
 import android.app.Application
-import com.example.moneywise.data.AppDatabase
+import dagger.hilt.android.HiltAndroidApp
 
-class MoneyWiseApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        // Initialisation de la base de données
-        AppDatabase.getDatabase(this)
-    }
-}
+@HiltAndroidApp
+class MoneyWiseApp : Application()

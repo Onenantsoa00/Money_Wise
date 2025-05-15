@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.moneywise.data.dao.AcquittementDao
+import com.example.moneywise.data.dao.BanqueDao
 import com.example.moneywise.data.dao.EmpruntDao
 import com.example.moneywise.data.dao.ProjetDao
 import com.example.moneywise.data.dao.UtilisateurDao
@@ -26,6 +27,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun empruntDao(): EmpruntDao
     abstract fun AcquittementDao(): AcquittementDao
     abstract fun ProjetDao(): ProjetDao
+    abstract fun banqueDao(): BanqueDao
 
     companion object {
         @Volatile

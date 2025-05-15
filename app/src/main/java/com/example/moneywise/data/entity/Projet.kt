@@ -25,3 +25,4 @@ data class Projet(
     @ColumnInfo(name = "date_limite") val date_limite: Date,
     @ColumnInfo(name = "id_utilisateur", defaultValue = "1") val id_utilisateur: Int? = null // Rend nullable
 )
+

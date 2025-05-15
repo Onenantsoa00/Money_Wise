@@ -1,40 +1,30 @@
 package com.example.moneywise.ui.project
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.moneywise.data.AppDatabase
+import com.example.moneywise.data.entity.Projet
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class ProjectViewModel : ViewModel() {
+class ProjectViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Données des projets
-    private val _activeProjects = MutableLiveData<Int>().apply { value = 12 }
-    private val _ongoingProjects = MutableLiveData<Int>().apply { value = 3 }
-    private val _completedProjects = MutableLiveData<Int>().apply { value = 7 }
+    private val database = AppDatabase.getDatabase(application)
+    private val projetDao = database.ProjetDao()
 
-    private val _projects = MutableLiveData<List<Project>>().apply {
-        value = listOf(
-            Project(
-                nom = "Construction de maison",
-                montantNecessaire = "5,000,000 MGA",
-                montantActuel = "3,250,000 MGA",
-                progression = 65,
-                dateLimite = "15/06/2023"
-            ),
-            Project(
-                nom = "Achat de voiture",
-                montantNecessaire = "2,500,000 MGA",
-                montantActuel = "2,500,000 MGA",
-                progression = 100,
-                dateLimite = "10/05/2023"
-            )
-        )
-    }
+    // Statistiques des projets
+    val activeProjects: LiveData<Int> = projetDao.countActiveProjects()
+    val ongoingProjects: LiveData<Int> = projetDao.countOngoingProjects()
+    val completedProjects: LiveData<Int> = projetDao.countCompletedProjects()
 
-    // LiveData exposés
-    val activeProjects: LiveData<Int> = _activeProjects
-    val ongoingProjects: LiveData<Int> = _ongoingProjects
-    val completedProjects: LiveData<Int> = _completedProjects
-    val projects: LiveData<List<Project>> = _projects
+    // Liste des projets
+    val projects: LiveData<List<Projet>> = projetDao.getAllProjet()
 
     // Événements
     private val _navigateToAddProject = MutableLiveData<Boolean>()
@@ -42,6 +32,49 @@ class ProjectViewModel : ViewModel() {
 
     private val _navigateToProjectDetail = MutableLiveData<Int>()
     val navigateToProjectDetail: LiveData<Int> = _navigateToProjectDetail
+
+    // Fonction pour calculer automatiquement la progression
+    fun calculateProgression(montantActuel: Double, montantNecessaire: Double): Int {
+        if (montantNecessaire <= 0) return 0
+        return ((montantActuel / montantNecessaire) * 100).toInt().coerceIn(0, 100)
+    }
+
+    // Fonction pour insérer un nouveau projet
+    fun insertProjet(
+        nom: String,
+        montantNecessaire: Double,
+        montantActuel: Double,
+        dateLimite: Date,
+        idUtilisateur: Int = 1
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            // Calcul automatique de la progression
+            val progression = calculateProgression(montantActuel, montantNecessaire)
+
+            val projet = Projet(
+                nom = nom,
+                montant_necessaire = montantNecessaire,
+                montant_actuel = montantActuel,
+                progression = progression,
+                date_limite = dateLimite,
+                id_utilisateur = idUtilisateur
+            )
+            projetDao.insertProjet(projet)
+        }
+    }
+
+    // Fonction pour convertir une chaîne de date en objet Date
+    fun parseDate(dateString: String): Date? {
+        return try {
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(dateString)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun onProjectClicked(projet: Projet) {
+        _navigateToProjectDetail.value = projet.id
+    }
 
     fun onAddProjectClicked() {
         _navigateToAddProject.value = true
@@ -51,20 +84,7 @@ class ProjectViewModel : ViewModel() {
         _navigateToAddProject.value = false
     }
 
-    fun onProjectClicked(projectId: Int) {
-        _navigateToProjectDetail.value = projectId
-    }
-
     fun onProjectDetailComplete() {
         _navigateToProjectDetail.value
     }
-
-    // Classe de données pour les projets
-    data class Project(
-        val nom: String,
-        val montantNecessaire: String,
-        val montantActuel: String,
-        val progression: Int,
-        val dateLimite: String
-    )
 }

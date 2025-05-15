@@ -7,80 +7,47 @@
     android:padding="16dp">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilNom"
+        android:id="@+id/tilType"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Nom du projet"
+        android:hint="Type"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_nom"
+            android:id="@+id/edit_Type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilMontantNecessaire"
+        android:id="@+id/tilMontant"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Montant nécessaire (MGA)"
+        android:hint="Montant"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_montant_necessaire"
+            android:id="@+id/edit_montant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilMontantActuel"
+        android:id="@+id/tilDate"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Montant actuel (MGA)"
+        android:hint="Date"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_montant_actuel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilProgression"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Progression (%)"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_progress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:enabled="false" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilDateLimite"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Date limite"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_date_limite"
+            android:id="@+id/edit_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="false"

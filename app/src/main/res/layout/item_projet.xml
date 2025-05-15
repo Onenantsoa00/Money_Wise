@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="16dp"
+    app:strokeWidth="0dp"
+    android:layout_marginBottom="16dp"
+    android:id="@+id/card_project">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                android:id="@+id/card_icon_background"
+                app:cardBackgroundColor="#E6F8EE"
+                android:layout_marginEnd="16dp">
+
+                <ImageView
+                    android:id="@+id/img_project_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_home"
+                    android:tint="#34A853"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_project_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nom du projet"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_status_background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="#E6F8EE">
+
+                <TextView
+                    android:id="@+id/tv_project_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="En cours"
+                    android:textSize="12sp"
+                    android:textColor="#34A853"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"/>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F0F0F0"
+            android:layout_marginVertical="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Budget: "
+                android:textSize="15sp"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:id="@+id/tv_budget_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 MGA"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" / "
+                android:textSize="15sp"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:id="@+id/tv_budget_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 MGA"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#34A853"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Progression"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="0dp"
+                android:layout_height="10dp"
+                android:layout_weight="1"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:progress="0"
+                android:progressTint="#34A853"
+                android:progressBackgroundTint="#E0E0E0"
+                android:layout_marginEnd="12dp"/>
+
+            <TextView
+                android:id="@+id/tv_progress_percent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0%"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#34A853"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_attent"
+                android:tint="#666666"/>
+
+            <TextView
+                android:id="@+id/tv_deadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Échéance: --/--/----"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
