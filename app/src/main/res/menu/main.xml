@@ -2,14 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/Banque"
         android:orderInCategory="100"
         android:title="Ajouter Banque"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/banque_setting"
+        android:orderInCategory="100"
+        android:title="Banque setting"
         app:showAsAction="never" />
 </menu>

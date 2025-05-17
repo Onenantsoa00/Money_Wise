@@ -19,10 +19,4 @@ object AppModule {
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
         return AppDatabase.getDatabase(context)
     }
-
-    @Singleton
-    @Provides
-    fun provideBanqueRepository(db: AppDatabase): BanqueRepository {
-        return BanqueRepository(db.banqueDao())
-    }
 }

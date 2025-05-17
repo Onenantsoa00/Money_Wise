@@ -15,4 +15,12 @@ class BanqueRepository @Inject constructor(
     fun getAllBanques(): Flow<List<Banque>> {
         return banqueDao.getAllBanques()
     }
+
+    suspend fun deleteBanque(banque: Banque) {
+        banqueDao.deleteBanque(banque)
+    }
+
+    suspend fun updateBanque(banque: Banque) {
+        banqueDao.updateBanque(banque)
+    }
 }

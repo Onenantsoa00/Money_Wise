@@ -26,4 +26,16 @@ class BanqueViewModel @Inject constructor(
             banqueRepository.insertBanque(Banque(nom = nom))
         }
     }
+
+    fun deleteBanque(banque: Banque) {
+        viewModelScope.launch {
+            banqueRepository.deleteBanque(banque)
+        }
+    }
+
+    fun updateBanque(banque: Banque) {
+        viewModelScope.launch {
+            banqueRepository.updateBanque(banque)
+        }
+    }
 }

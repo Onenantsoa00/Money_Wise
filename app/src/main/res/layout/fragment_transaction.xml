@@ -88,6 +88,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/textDepositAmount"
                                 android:text="+500,000"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
@@ -129,6 +130,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/textWithdrawalAmount"
                                 android:text="-350,000"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
@@ -170,6 +172,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/textBalanceAmount"
                                 android:text="+150,000"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
@@ -225,259 +228,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Transaction 1 (Dépôt) -->
-                <com.google.android.material.card.MaterialCardView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/transactionsRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardElevation="1dp"
-                    app:cardCornerRadius="16dp"
-                    app:strokeWidth="0dp"
-                    android:layout_marginBottom="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:background="@color/white"
-                        android:clickable="true">
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardElevation="0dp"
-                            app:strokeWidth="0dp"
-                            app:cardBackgroundColor="#E6F8EE"
-                            android:layout_marginEnd="16dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_depot"
-                                android:tint="#34A853"/>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Dépôt"
-                                android:textColor="#333333"
-                                android:textSize="16sp"
-                                android:textStyle="bold"/>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginTop="4dp">
-
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:src="@drawable/ic_calendar"
-                                    android:tint="#666666"
-                                    android:layout_marginEnd="4dp"/>
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="15/06/2023"
-                                    android:textColor="#666666"
-                                    android:textSize="14sp"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="+500,000 MGA"
-                            android:textColor="#34A853"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center_vertical"/>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Transaction 2 (Retrait) -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardElevation="1dp"
-                    app:cardCornerRadius="16dp"
-                    app:strokeWidth="0dp"
-                    android:layout_marginBottom="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:background="@color/white"
-                        android:clickable="true">
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardElevation="0dp"
-                            app:strokeWidth="0dp"
-                            app:cardBackgroundColor="#FFF0E6"
-                            android:layout_marginEnd="16dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_retrait"
-                                android:tint="#EA4335"/>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Retrait"
-                                android:textColor="#333333"
-                                android:textSize="16sp"
-                                android:textStyle="bold"/>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginTop="4dp">
-
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:src="@drawable/ic_calendar"
-                                    android:tint="#666666"
-                                    android:layout_marginEnd="4dp"/>
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="14/06/2023"
-                                    android:textColor="#666666"
-                                    android:textSize="14sp"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="-150,000 MGA"
-                            android:textColor="#EA4335"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center_vertical"/>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Transaction 3 (Transfert) -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardElevation="1dp"
-                    app:cardCornerRadius="16dp"
-                    app:strokeWidth="0dp"
-                    android:layout_marginBottom="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:background="@color/white"
-                        android:clickable="true">
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardElevation="0dp"
-                            app:strokeWidth="0dp"
-                            app:cardBackgroundColor="#E6EEF8"
-                            android:layout_marginEnd="16dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_transfer"
-                                android:tint="#4285F4"/>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Transfert"
-                                android:textColor="#333333"
-                                android:textSize="16sp"
-                                android:textStyle="bold"/>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginTop="4dp">
-
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:src="@drawable/ic_calendar"
-                                    android:tint="#666666"
-                                    android:layout_marginEnd="4dp"/>
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="13/06/2023"
-                                    android:textColor="#666666"
-                                    android:textSize="14sp"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="-200,000 MGA"
-                            android:textColor="#EA4335"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center_vertical"/>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    android:layout_marginBottom="8dp"/>
 
                 <!-- Bouton Voir plus -->
                 <com.google.android.material.button.MaterialButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/btnSeeAllTransactions"
                     android:text="Voir toutes les transactions"
                     android:textColor="#4285F4"
                     android:textAllCaps="false"

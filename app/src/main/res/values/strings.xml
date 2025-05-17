@@ -26,4 +26,7 @@
     <string name="error_password_required">Le mot de passe est requis</string>
     <string name="error_password_mismatch">Les mots de passe ne correspondent pas</string>
 
+    <string name="edit">Modifier</string>
+    <string name="delete">Supprimer</string>
+
 </resources>

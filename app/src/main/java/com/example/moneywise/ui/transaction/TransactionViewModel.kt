@@ -1,21 +1,70 @@
-package com.example.moneywise.ui.transaction
+package com.example.moneywise.expenses
 
 import androidx.lifecycle.ViewModel
-import com.example.moneywise.R
+import androidx.lifecycle.viewModelScope
+import com.example.moneywise.data.AppDatabase
+import com.example.moneywise.data.dao.BanqueDao
+import com.example.moneywise.data.entity.Transaction
+import com.example.moneywise.data.entity.Utilisateur
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import java.util.Date
+import javax.inject.Inject
 
-class TransactionViewModel : ViewModel() {
-    // Données statiques pour les transactions
-    val transactions = listOf(
-        Transaction("Dépôt", "15/06/2023", "+500,000 MGA", true, R.drawable.ic_depot),
-        Transaction("Retrait", "14/06/2023", "-150,000 MGA", false, R.drawable.ic_retrait),
-        Transaction("Transfert", "13/06/2023", "-200,000 MGA", false, R.drawable.ic_transfer)
-    )
+@HiltViewModel
+class TransactionViewModel @Inject constructor(
+    private val db: AppDatabase,
+    private val banqueDao: BanqueDao  // Ajoutez cette ligne
+) : ViewModel() {
 
-    data class Transaction(
-        val type: String,
-        val date: String,
-        val montant: String,
-        val isDepot: Boolean,
-        val iconRes: Int
-    )
+    suspend fun getCurrentUser(): Utilisateur? {
+        return db.utilisateurDao().getFirstUtilisateur()
+    }
+
+    suspend fun getBanks(): List<String> {
+        return banqueDao.getAllBanques()
+            .first() // Prend la première valeur du Flow
+            .map { it.nom }
+    }
+
+    fun addTransaction(
+        type: String,
+        amount: Double,
+        date: Date,
+        userId: Int,
+        bankId: Int?,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val transaction = Transaction(
+                    type = type,
+                    montants = amount.toString(),
+                    date = date,
+                    id_utilisateur = userId,
+                    id_banque = bankId ?: 0
+                )
+
+                db.transactionDao().insertTransaction(transaction)
+
+                val user = db.utilisateurDao().getUserById(userId)
+                user?.let {
+                    val newBalance = when (type) {
+                        "Dépôt" -> it.solde + amount
+                        "Retrait" -> it.solde - amount
+                        else -> it.solde
+                    }
+                    db.utilisateurDao().update(it.copy(solde = newBalance))
+                }
+
+                onSuccess()
+            } catch (e: Exception) {
+                onError(e.message ?: "Erreur inconnue")
+            }
+        }
+    }
 }

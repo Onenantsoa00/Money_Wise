@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.moneywise.data.entity.Transaction
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 @JvmSuppressWildcards
@@ -14,9 +15,8 @@ interface TransactionDao {
     @Insert
     suspend fun insertTransaction(transaction: Transaction)
 
-    //READ
-    @Query("SELECT * FROM 'Transaction'")
-    fun getAllTransaction(): LiveData<List<Transaction>>
+    @Query("SELECT * FROM 'Transaction' ORDER BY date DESC")
+    fun getAllTransaction(): Flow<List<Transaction>>
 
     @Query("SELECT * FROM 'Transaction' WHERE id = :id")
     suspend fun getTransactionById(id: Int): Transaction?

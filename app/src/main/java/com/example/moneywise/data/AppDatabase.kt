@@ -9,6 +9,7 @@ import com.example.moneywise.data.dao.AcquittementDao
 import com.example.moneywise.data.dao.BanqueDao
 import com.example.moneywise.data.dao.EmpruntDao
 import com.example.moneywise.data.dao.ProjetDao
+import com.example.moneywise.data.dao.TransactionDao
 import com.example.moneywise.data.dao.UtilisateurDao
 import com.example.moneywise.data.database.Converters
 import com.example.moneywise.data.entity.Acquittement
@@ -28,6 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun AcquittementDao(): AcquittementDao
     abstract fun ProjetDao(): ProjetDao
     abstract fun banqueDao(): BanqueDao
+    abstract fun transactionDao(): TransactionDao
 
     companion object {
         @Volatile
