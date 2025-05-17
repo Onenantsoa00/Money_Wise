@@ -8,8 +8,6 @@ import com.example.moneywise.data.entity.Transaction
 import com.example.moneywise.data.entity.Utilisateur
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
@@ -17,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TransactionViewModel @Inject constructor(
     private val db: AppDatabase,
-    private val banqueDao: BanqueDao  // Ajoutez cette ligne
+    private val banqueDao: BanqueDao
 ) : ViewModel() {
 
     suspend fun getCurrentUser(): Utilisateur? {
@@ -26,7 +24,7 @@ class TransactionViewModel @Inject constructor(
 
     suspend fun getBanks(): List<String> {
         return banqueDao.getAllBanques()
-            .first() // Prend la première valeur du Flow
+            .first()
             .map { it.nom }
     }
 
@@ -41,6 +39,7 @@ class TransactionViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
+                // Créer la transaction
                 val transaction = Transaction(
                     type = type,
                     montants = amount.toString(),
@@ -49,8 +48,10 @@ class TransactionViewModel @Inject constructor(
                     id_banque = bankId ?: 0
                 )
 
+                // Insérer la transaction
                 db.transactionDao().insertTransaction(transaction)
 
+                // Mettre à jour le solde de l'utilisateur
                 val user = db.utilisateurDao().getUserById(userId)
                 user?.let {
                     val newBalance = when (type) {
@@ -63,7 +64,7 @@ class TransactionViewModel @Inject constructor(
 
                 onSuccess()
             } catch (e: Exception) {
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Erreur inconnue lors de l'ajout de la transaction")
             }
         }
     }

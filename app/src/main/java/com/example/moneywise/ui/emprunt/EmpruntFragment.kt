@@ -9,23 +9,26 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moneywise.R
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Emprunt
 import com.example.moneywise.databinding.FragmentEmpruntBinding
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class EmpruntFragment : Fragment() {
 
     private var _binding: FragmentEmpruntBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: EmpruntViewModel
+    private val viewModel: EmpruntViewModel by viewModels()
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    private lateinit var adapter: EmpruntAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,30 +42,48 @@ class EmpruntFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialiser la base de données et le ViewModel
-        val empruntDao = AppDatabase.getDatabase(requireContext()).empruntDao()
-        viewModel = ViewModelProvider(this, EmpruntViewModelFactory(empruntDao)).get(EmpruntViewModel::class.java)
-
         setupRecyclerView()
         setupObservers()
         setupClickListeners()
     }
 
     private fun setupRecyclerView() {
-        adapter = EmpruntAdapter(emptyList())
         binding.recyclerEmprunts.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@EmpruntFragment.adapter
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         }
     }
 
     private fun setupObservers() {
-        viewModel.allEmprunts.observe(viewLifecycleOwner) { emprunts ->
-            adapter = EmpruntAdapter(emprunts)
-            binding.recyclerEmprunts.adapter = adapter
+        viewModel.empruntsNonRembourses.observe(viewLifecycleOwner) { emprunts ->
+            binding.recyclerEmprunts.adapter = EmpruntAdapter(emprunts) { emprunt ->
+                // Gérer le clic sur le bouton Rembourser
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Confirmer le remboursement")
+                    .setMessage("Voulez-vous vraiment marquer cet emprunt comme remboursé?")
+                    .setPositiveButton("Oui") { _, _ ->
+                        viewModel.rembourserEmprunt(
+                            emprunt,
+                            onSuccess = {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Emprunt remboursé avec succès",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            onError = { error ->
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Erreur: $error",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        )
+                    }
+                    .setNegativeButton("Non", null)
+                    .show()
+            }
 
-            // Mettre à jour les résumés
             updateResumes(emprunts)
         }
     }
@@ -72,8 +93,6 @@ class EmpruntFragment : Fragment() {
         val nombreEmprunteurs = emprunts.size
         val prochaineEcheance = emprunts.minByOrNull { it.date_remboursement }?.date_remboursement
 
-        // Mettre à jour les vues avec ces valeurs
-        // (vous devrez ajouter des IDs aux TextView dans votre layout)
         binding.textTotalEmprunte.text = "$totalEmprunte MGA"
         binding.textNombreEmprunteurs.text = nombreEmprunteurs.toString()
         binding.textProchaineEcheance.text = prochaineEcheance?.let { dateFormat.format(it) } ?: "N/A"
@@ -114,14 +133,19 @@ class EmpruntFragment : Fragment() {
                         return@setPositiveButton
                     }
 
-                    // Validation des champs
-                    if (nom.isBlank() || contact.isBlank() || montant <= 0) {
-                        Toast.makeText(requireContext(), "Veuillez remplir tous les champs correctement", Toast.LENGTH_SHORT).show()
-                        return@setPositiveButton
-                    }
-
-                    viewModel.insertEmprunt(nom, contact, montant, dateEmprunt, dateRemboursement)
-                    Toast.makeText(requireContext(), "Emprunt enregistré avec succès", Toast.LENGTH_SHORT).show()
+                    viewModel.ajouterEmprunt(
+                        nom = nom,
+                        contact = contact,
+                        montant = montant,
+                        dateEmprunt = dateEmprunt,
+                        dateRemboursement = dateRemboursement,
+                        onSuccess = {
+                            Toast.makeText(requireContext(), "Emprunt enregistré avec succès", Toast.LENGTH_SHORT).show()
+                        },
+                        onError = { error ->
+                            Toast.makeText(requireContext(), "Erreur: $error", Toast.LENGTH_SHORT).show()
+                        }
+                    )
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Erreur: ${e.message}", Toast.LENGTH_SHORT).show()
                 }

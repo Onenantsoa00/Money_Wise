@@ -113,5 +113,14 @@
                 android:textStyle="bold"
                 android:textSize="14sp"/>
         </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_rembourser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rembourser"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/white"
+            app:backgroundTint="#34A853"
+            app:cornerRadius="8dp"/>
     </LinearLayout>
 </HorizontalScrollView>

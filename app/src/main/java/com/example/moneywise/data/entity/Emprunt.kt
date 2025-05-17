@@ -8,9 +8,10 @@ import java.util.Date
 @Entity(tableName = "Emprunt")
 data class Emprunt (
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "nom_emprunte") val nom_emprunte : String,
-    @ColumnInfo(name = "contacte") val contacte : String,
-    @ColumnInfo(name = "montant") val montant : Double,
-    @ColumnInfo(name = "date_emprunt") val date_emprunt : Date,
-    @ColumnInfo(name = "date_remboursement") val date_remboursement : Date,
+    @ColumnInfo(name = "nom_emprunte") val nom_emprunte: String,
+    @ColumnInfo(name = "contacte") val contacte: String,
+    @ColumnInfo(name = "montant") val montant: Double,
+    @ColumnInfo(name = "date_emprunt") val date_emprunt: Date,
+    @ColumnInfo(name = "date_remboursement") val date_remboursement: Date,
+    @ColumnInfo(name = "est_rembourse", defaultValue = "0") val estRembourse: Boolean = false
 )

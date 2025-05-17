@@ -1,11 +1,16 @@
 package com.example.moneywise
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -17,6 +22,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Banque
 import com.example.moneywise.databinding.ActivityMainBinding
 import com.example.moneywise.databinding.ItemBanqueBinding
@@ -25,8 +31,16 @@ import com.example.moneywise.ui.Banque.BanqueAdapter
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.activity.viewModels
+import com.example.moneywise.data.entity.Transaction
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -36,6 +50,9 @@ class MainActivity : AppCompatActivity() {
     private val banqueViewModel: BanqueViewModel by viewModels()
     private val banqueNames = mutableListOf<String>()
 
+    @Inject
+    lateinit var db: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,7 +60,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.appBarMain.toolbar)
+        observeUserBalance()
 
+        setupNavigation()
+    }
+
+    private fun setupNavigation() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -55,13 +77,131 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_projet,
                 R.id.nav_historique,
                 R.id.nav_emprunt,
-                R.id.nav_acquittement,
+                R.id.nav_acquittement
             ),
             drawerLayout
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    private fun observeUserBalance() {
+        lifecycleScope.launchWhenStarted {
+            db.utilisateurDao().getAllUtilisateurs().collect { users ->
+                users.firstOrNull()?.let { user ->
+                    updateBalanceInToolbar(user.solde)
+                }
+            }
+        }
+        val balanceText = binding.appBarMain.toolbar.findViewById<TextView>(R.id.textView3)
+        balanceText.setOnClickListener {
+            showAddTransactionDialog()
+        }
+    }
+
+    private fun showAddTransactionDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_transaction, null)
+
+        val transactionTypes = arrayOf("Dépôt", "Retrait", "Transfert")
+        val typeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, transactionTypes)
+        val typeDropdown = dialogView.findViewById<AutoCompleteTextView>(R.id.transactionTypeDropdown)
+        typeDropdown.setAdapter(typeAdapter)
+
+        val dateEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.transactionDate)
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        dateEditText.setText(dateFormat.format(calendar.time))
+
+        dateEditText.setOnClickListener {
+            DatePickerDialog(
+                this,
+                { _, year, month, day ->
+                    calendar.set(year, month, day)
+                    dateEditText.setText(dateFormat.format(calendar.time))
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
+
+        lifecycleScope.launch {
+            val banks = db.banqueDao().getAllBanques().first().map { it.nom }
+            if (banks.isNotEmpty()) {
+                val bankAdapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_dropdown_item_1line, banks)
+                val bankDropdown = dialogView.findViewById<AutoCompleteTextView>(R.id.transactionBankDropdown)
+                bankDropdown.setAdapter(bankAdapter)
+                bankDropdown.setText(banks.first(), false)
+            }
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Ajouter une transaction")
+            .setView(dialogView)
+            .setPositiveButton("Ajouter") { dialog, _ ->
+                val type = typeDropdown.text.toString()
+                val amountText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.transactionAmount).text.toString()
+                val date = calendar.time
+
+                if (type.isBlank() || amountText.isBlank()) {
+                    Toast.makeText(this@MainActivity, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val amount = amountText.toDoubleOrNull() ?: run {
+                    Toast.makeText(this@MainActivity, "Montant invalide", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                lifecycleScope.launch {
+                    val currentUser = db.utilisateurDao().getFirstUtilisateur()
+                    currentUser?.let { user ->
+                        val bankName = dialogView.findViewById<AutoCompleteTextView>(R.id.transactionBankDropdown).text.toString()
+                        val bankId = if (bankName.isNotBlank()) {
+                            db.banqueDao().getBanqueByNom(bankName)?.id ?: 0
+                        } else {
+                            0
+                        }
+
+                        try {
+                            // Créer la transaction
+                            val transaction = Transaction(
+                                type = type,
+                                montants = amount.toString(),
+                                date = date,
+                                id_utilisateur = user.id,
+                                id_banque = bankId
+                            )
+
+                            // Insérer la transaction
+                            db.transactionDao().insertTransaction(transaction)
+
+                            // Mettre à jour le solde de l'utilisateur
+                            val newBalance = when (type) {
+                                "Dépôt" -> user.solde + amount
+                                "Retrait" -> user.solde - amount
+                                else -> user.solde
+                            }
+                            db.utilisateurDao().update(user.copy(solde = newBalance))
+
+                            Toast.makeText(this@MainActivity, "Transaction ajoutée", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Toast.makeText(this@MainActivity, "Erreur: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    } ?: run {
+                        Toast.makeText(this@MainActivity, "Utilisateur non trouvé", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    private fun updateBalanceInToolbar(balance: Double) {
+        val balanceText = binding.appBarMain.toolbar.findViewById<TextView>(R.id.textView3)
+        val formatter = NumberFormat.getInstance(Locale.getDefault())
+        balanceText.text = "${formatter.format(balance)} MGA"
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -99,7 +239,6 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.adapter = adapter
 
-        // Collecter le Flow dans un coroutine scope
         lifecycleScope.launch {
             banqueViewModel.allBanques.collectLatest { banques ->
                 adapter.submitList(banques)

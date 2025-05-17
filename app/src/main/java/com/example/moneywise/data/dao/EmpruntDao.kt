@@ -29,4 +29,11 @@ interface EmpruntDao {
 
     @Query("DELETE FROM Emprunt")
     suspend fun deleteAllEmprunt()
+
+    @Query("UPDATE Emprunt SET est_rembourse = :estRembourse WHERE id = :id")
+    suspend fun updateRemboursementStatus(id: Int, estRembourse: Boolean)
+
+    @Query("SELECT * FROM Emprunt WHERE est_rembourse = 0")
+    fun getEmpruntsNonRembourses(): LiveData<List<Emprunt>>
+
 }
