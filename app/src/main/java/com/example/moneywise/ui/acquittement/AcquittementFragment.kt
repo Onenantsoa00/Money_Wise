@@ -10,12 +10,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moneywise.R
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Acquittement
 import com.example.moneywise.databinding.FragmentAcquittementBinding
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -26,6 +30,7 @@ class AcquittementFragment : Fragment() {
     private var _binding: FragmentAcquittementBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: AcquittementViewModel
+    private lateinit var adapter: AcquittementAdapter
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
     override fun onCreateView(
@@ -40,9 +45,13 @@ class AcquittementFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val acquittementDao = AppDatabase.getDatabase(requireContext()).AcquittementDao()
-        viewModel = ViewModelProvider(this, AcquittementViewModelFactory(acquittementDao))
-            .get(AcquittementViewModel::class.java)
+        val database = AppDatabase.getDatabase(requireContext())
+        val acquittementDao = database.AcquittementDao()
+
+        viewModel = ViewModelProvider(
+            this,
+            AcquittementViewModelFactory(acquittementDao, database)
+        ).get(AcquittementViewModel::class.java)
 
         setupRecyclerView()
         setupObservers()
@@ -50,20 +59,20 @@ class AcquittementFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        adapter = AcquittementAdapter(emptyList()) { acquittement ->
+            viewModel.rembourserAcquittement(acquittement)
+        }
+
         binding.recyclerAcquittements.apply {
             layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-            // Adapter sera mis à jour dans setupObservers()
+            adapter = this@AcquittementFragment.adapter
         }
     }
 
     private fun setupObservers() {
         viewModel.allAcquittements.observe(viewLifecycleOwner) { acquittements ->
-            // Mettre à jour le RecyclerView
-            val adapter = AcquittementAdapter(acquittements)
-            binding.recyclerAcquittements.adapter = adapter
-
-            // Mettre à jour les résumés
+            adapter.updateList(acquittements)
             updateResumes(acquittements)
         }
     }
@@ -84,10 +93,6 @@ class AcquittementFragment : Fragment() {
         }
     }
 
-    private fun setupUI() {
-        // Ici vous pouvez peupler votre UI avec les données du ViewModel
-    }
-
     private fun showAddAcquittementDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_acquittement, null)
 
@@ -97,7 +102,6 @@ class AcquittementFragment : Fragment() {
         val editDateCredit = dialogView.findViewById<EditText>(R.id.edit_date_credit)
         val editDateRemise = dialogView.findViewById<EditText>(R.id.edit_date_remise)
 
-        // Configurer les sélecteurs de date
         editDateCredit.setOnClickListener { showDatePicker(editDateCredit) }
         editDateRemise.setOnClickListener { showDatePicker(editDateRemise) }
 
@@ -108,20 +112,50 @@ class AcquittementFragment : Fragment() {
                 try {
                     val nom = editNom.text.toString()
                     val contact = editContact.text.toString()
-                    val montant = editMontant.text.toString().toDouble()
-                    val dateCredit = dateFormat.parse(editDateCredit.text.toString()) ?: Date()
-                    val dateRemise = dateFormat.parse(editDateRemise.text.toString()) ?: Date()
+                    val montant = editMontant.text.toString().toDoubleOrNull() ?: 0.0
+                    val dateCredit = editDateCredit.text.toString().let {
+                        if (it.isNotBlank()) dateFormat.parse(it) else Date()
+                    } ?: Date()
+                    val dateRemise = editDateRemise.text.toString().let {
+                        if (it.isNotBlank()) dateFormat.parse(it) else Date()
+                    } ?: Date()
 
-                    // Validation des champs
                     if (nom.isBlank() || contact.isBlank() || montant <= 0) {
-                        Toast.makeText(requireContext(), "Veuillez remplir tous les champs correctement", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(),
+                            "Veuillez remplir tous les champs correctement",
+                            Toast.LENGTH_SHORT).show()
                         return@setPositiveButton
                     }
 
-                    viewModel.insertAcquittement(nom, contact, montant, dateCredit, dateRemise)
-                    Toast.makeText(requireContext(), "Acquittement enregistré avec succès", Toast.LENGTH_SHORT).show()
+                    // Utilisation de Coroutines pour la gestion asynchrone
+                    lifecycleScope.launch {
+                        when (val result = viewModel.insertAcquittement(
+                            nom, contact, montant, dateCredit, dateRemise
+                        )) {
+                            is AcquittementViewModel.AcquittementResult.Success -> {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Acquittement enregistré avec succès",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                            is AcquittementViewModel.AcquittementResult.Error -> {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        result.message,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
                 } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Erreur: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(),
+                        "Erreur: ${e.message}",
+                        Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("Annuler", null)
@@ -142,5 +176,4 @@ class AcquittementFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

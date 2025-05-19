@@ -7,21 +7,25 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moneywise.R
 import com.example.moneywise.data.entity.Acquittement
+import com.google.android.material.button.MaterialButton
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
-class AcquittementAdapter(private val acquittements: List<Acquittement>) :
-    RecyclerView.Adapter<AcquittementAdapter.AcquittementViewHolder>() {
+class AcquittementAdapter(
+    private var acquittements: List<Acquittement>,
+    private val onRembourserClick: (Acquittement) -> Unit
+) : RecyclerView.Adapter<AcquittementAdapter.AcquittementViewHolder>() {
 
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-    class AcquittementViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textNom: TextView = itemView.findViewById(R.id.text_nom)
-        val textContact: TextView = itemView.findViewById(R.id.text_contact)
-        val textMontant: TextView = itemView.findViewById(R.id.text_montant)
-        val textDateCredit: TextView = itemView.findViewById(R.id.text_date_credit)
-        val textDateRemise: TextView = itemView.findViewById(R.id.text_date_remise)
-        val initials: TextView = itemView.findViewById(R.id.initials)
+    class AcquittementViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val textNom: TextView = view.findViewById(R.id.text_nom)
+        val textContact: TextView = view.findViewById(R.id.text_contact)
+        val textMontant: TextView = view.findViewById(R.id.text_montant)
+        val textDateCredit: TextView = view.findViewById(R.id.text_date_credit)
+        val textDateRemise: TextView = view.findViewById(R.id.text_date_remise)
+        val initials: TextView = view.findViewById(R.id.initials)
+        val btnRembourser: MaterialButton = view.findViewById(R.id.btn_rembourser)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcquittementViewHolder {
@@ -33,22 +37,27 @@ class AcquittementAdapter(private val acquittements: List<Acquittement>) :
     override fun onBindViewHolder(holder: AcquittementViewHolder, position: Int) {
         val acquittement = acquittements[position]
 
-        // Extraire les initiales avec gestion des cas vides
-        val initials = try {
-            acquittement.personne_acquittement.split(" ").take(2)
-                .filter { it.isNotEmpty() }
-                .joinToString("") { it.first().toString().uppercase() }
-        } catch (e: Exception) {
-            "?"
-        }
-
-        holder.initials.text = initials
         holder.textNom.text = acquittement.personne_acquittement
         holder.textContact.text = acquittement.contacte
         holder.textMontant.text = "${acquittement.montant} MGA"
         holder.textDateCredit.text = dateFormat.format(acquittement.date_crédit)
         holder.textDateRemise.text = dateFormat.format(acquittement.date_remise_crédit)
+
+        val initials = acquittement.personne_acquittement.split(" ")
+            .take(2)
+            .joinToString("") { it.firstOrNull()?.toString() ?: "" }
+            .uppercase()
+        holder.initials.text = initials
+
+        holder.btnRembourser.setOnClickListener {
+            onRembourserClick(acquittement)
+        }
     }
 
     override fun getItemCount() = acquittements.size
+
+    fun updateList(newList: List<Acquittement>) {
+        acquittements = newList
+        notifyDataSetChanged()
+    }
 }
