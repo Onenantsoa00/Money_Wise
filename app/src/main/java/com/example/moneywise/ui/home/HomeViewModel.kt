@@ -7,6 +7,7 @@ import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Acquittement
 import com.example.moneywise.data.entity.Emprunt
 import com.example.moneywise.data.entity.Projet
+import com.example.moneywise.data.entity.Transaction
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -26,6 +27,9 @@ class HomeViewModel(private val db: AppDatabase) : ViewModel() {
 
     //pour récupérer les projets
     val projetsRecents: LiveData<List<Projet>> = db.ProjetDao().getRecentProjects()
+
+    // Ajout pour les transactions
+    val transactionsRecentes: LiveData<List<Transaction>> = db.transactionDao().getRecentTransactions()
 
     fun refreshData() {
         viewModelScope.launch {

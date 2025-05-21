@@ -13,6 +13,7 @@ import com.example.moneywise.databinding.FragmentHomeBinding
 import com.example.moneywise.ui.home.adapters.AcquittementHomeAdapter
 import com.example.moneywise.ui.home.adapters.EmpruntHomeAdapter
 import com.example.moneywise.ui.home.adapters.ProjetHomeAdapter
+import com.example.moneywise.ui.transaction.TransactionHomeAdapter
 import java.text.NumberFormat
 import java.util.*
 
@@ -24,6 +25,7 @@ class HomeFragment : Fragment() {
     private lateinit var empruntAdapter: EmpruntHomeAdapter
     private lateinit var acquittementAdapter: AcquittementHomeAdapter
     private lateinit var projetAdapter: ProjetHomeAdapter
+    private lateinit var transactionAdapter: TransactionHomeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,6 +78,14 @@ class HomeFragment : Fragment() {
             setHasFixedSize(true)
         }
 
+        // Adapter pour les transactions
+        transactionAdapter = TransactionHomeAdapter(emptyList())
+        binding.recyclerTransactionsHome.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = transactionAdapter
+            setHasFixedSize(true)
+        }
+
         // Masquer l'ancien HorizontalScrollView statique
         binding.horizontalScrollViewProjects.visibility = View.GONE
     }
@@ -121,6 +131,14 @@ class HomeFragment : Fragment() {
             projets?.let {
                 projetAdapter.updateList(it)
                 binding.recyclerProjectsHome.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+            }
+        }
+
+        // Observateur pour les transactions récentes
+        viewModel.transactionsRecentes.observe(viewLifecycleOwner) { transactions ->
+            transactions?.let {
+                transactionAdapter.updateList(it)
+                binding.recyclerTransactionsHome.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
             }
         }
     }

@@ -29,4 +29,7 @@ interface TransactionDao {
 
     @Query("DELETE FROM 'Transaction'")
     suspend fun deleteAllTransaction()
+
+    @Query("SELECT * FROM 'Transaction' ORDER BY date DESC LIMIT 5")
+    fun getRecentTransactions(): LiveData<List<Transaction>>
 }
