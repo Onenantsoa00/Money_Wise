@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Emprunt
+import com.example.moneywise.data.entity.Historique
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -44,6 +45,17 @@ class EmpruntViewModel @Inject constructor(
                     db.utilisateurDao().update(user.copy(solde = newBalance))
                 }
 
+                // Ajout dans l'historique
+                db.historiqueDao().insert(
+                    Historique(
+                        typeTransaction = "EMPRUNT",
+                        montant = montant,
+                        dateHeure = Date(),
+                        motif = "Emprunt de $nom",
+                        details = "À rembourser le $dateRemboursement | Contact: $contact"
+                    )
+                )
+
                 onSuccess()
             } catch (e: Exception) {
                 onError(e.message ?: "Erreur inconnue")
@@ -64,6 +76,17 @@ class EmpruntViewModel @Inject constructor(
                     val newBalance = user.solde - emprunt.montant
                     db.utilisateurDao().update(user.copy(solde = newBalance))
                 }
+
+                // Ajout du remboursement dans l'historique
+                db.historiqueDao().insert(
+                    Historique(
+                        typeTransaction = "REMBOURSEMENT_EMPRUNT",
+                        montant = emprunt.montant,
+                        dateHeure = Date(),
+                        motif = "Remboursement par ${emprunt.nom_emprunte}",
+                        details = "Emprunt initial le ${emprunt.date_emprunt}"
+                    )
+                )
 
                 onSuccess()
             } catch (e: Exception) {

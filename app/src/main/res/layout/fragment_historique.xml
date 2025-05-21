@@ -87,6 +87,7 @@
                             </com.google.android.material.card.MaterialCardView>
 
                             <TextView
+                                android:id="@+id/textCredit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="+500,000"
@@ -128,6 +129,7 @@
                             </com.google.android.material.card.MaterialCardView>
 
                             <TextView
+                                android:id="@+id/textDebit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="-150,000"
@@ -169,6 +171,7 @@
                             </com.google.android.material.card.MaterialCardView>
 
                             <TextView
+                                android:id="@+id/textSolde"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="+350,000"
@@ -280,159 +283,12 @@
                             android:textSize="14sp"/>
                     </LinearLayout>
 
-                    <!-- Liste des transactions -->
-                    <LinearLayout
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerHistorique"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <!-- Transaction 1 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:padding="16dp"
-                            android:background="@color/white"
-                            android:clickable="true">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.5"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
-
-                                <com.google.android.material.card.MaterialCardView
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    app:cardCornerRadius="16dp"
-                                    app:cardElevation="0dp"
-                                    app:strokeWidth="0dp"
-                                    app:cardBackgroundColor="#E6F8EE"
-                                    android:layout_marginEnd="8dp">
-
-                                    <ImageView
-                                        android:layout_width="16dp"
-                                        android:layout_height="16dp"
-                                        android:layout_gravity="center"
-                                        android:src="@drawable/ic_arrow_down"
-                                        android:tint="#34A853"/>
-                                </com.google.android.material.card.MaterialCardView>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Dépot"
-                                    android:textColor="#333333"
-                                    android:textSize="14sp"/>
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="+500,000"
-                                android:textColor="#34A853"
-                                android:textStyle="bold"
-                                android:textSize="14sp"
-                                android:gravity="end"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.5"
-                                android:text="15/06/2023"
-                                android:textColor="#666666"
-                                android:textSize="14sp"
-                                android:gravity="center"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="2"
-                                android:text="Vente produit A"
-                                android:textColor="#333333"
-                                android:textSize="14sp"
-                                android:ellipsize="end"
-                                android:maxLines="1"/>
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#F0F0F0"/>
-
-                        <!-- Transaction 2 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:padding="16dp"
-                            android:background="@color/white"
-                            android:clickable="true">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.5"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
-
-                                <com.google.android.material.card.MaterialCardView
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    app:cardCornerRadius="16dp"
-                                    app:cardElevation="0dp"
-                                    app:strokeWidth="0dp"
-                                    app:cardBackgroundColor="#FFF0E6"
-                                    android:layout_marginEnd="8dp">
-
-                                    <ImageView
-                                        android:layout_width="16dp"
-                                        android:layout_height="16dp"
-                                        android:layout_gravity="center"
-                                        android:src="@drawable/ic_arrow_up"
-                                        android:tint="#EA4335"/>
-                                </com.google.android.material.card.MaterialCardView>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Retrait"
-                                    android:textColor="#333333"
-                                    android:textSize="14sp"/>
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="-150,000"
-                                android:textColor="#EA4335"
-                                android:textStyle="bold"
-                                android:textSize="14sp"
-                                android:gravity="end"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1.5"
-                                android:text="14/06/2023"
-                                android:textColor="#666666"
-                                android:textSize="14sp"
-                                android:gravity="center"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="2"
-                                android:text="Achat matériel"
-                                android:ellipsize="end"
-                                android:textColor="#333333"
-                                android:textSize="14sp"
-                                android:maxLines="1"/>
-                        </LinearLayout>
-                    </LinearLayout>
+                        android:clipToPadding="false"
+                        android:paddingBottom="16dp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

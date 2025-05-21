@@ -29,4 +29,7 @@ interface AcquittementDao {
 
     @Query("DELETE FROM Acquittement")
     suspend fun deleteAllAcquittement()
+
+    @Query("SELECT * FROM Acquittement ORDER BY date_remise_crédit DESC LIMIT 5")
+    fun getRecentAcquittements(): LiveData<List<Acquittement>>
 }

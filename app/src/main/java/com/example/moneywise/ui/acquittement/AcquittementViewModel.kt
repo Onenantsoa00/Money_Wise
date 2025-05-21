@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.dao.AcquittementDao
 import com.example.moneywise.data.entity.Acquittement
+import com.example.moneywise.data.entity.Historique
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -44,6 +45,18 @@ class AcquittementViewModel(
                 val newBalance = currentUser.solde - montant
                 userDao.update(currentUser.copy(solde = newBalance))
                 acquittementDao.insertAcquittement(nouvelAcquittement)
+
+                // Ajout dans l'historique
+                database.historiqueDao().insert(
+                    Historique(
+                        typeTransaction = "ACQUITTEMENT",
+                        montant = montant,
+                        dateHeure = Date(),
+                        motif = "Acquittement à $nom",
+                        details = "Contact: $contact | Date crédit: ${dateCredit} | Date remise: ${dateRemise}"
+                    )
+                )
+
                 AcquittementResult.Success
             } else {
                 AcquittementResult.Error("Solde insuffisant. Votre solde actuel est ${currentUser.solde} MGA")
@@ -62,6 +75,17 @@ class AcquittementViewModel(
                 val newBalance = user.solde + acquittement.montant
                 userDao.update(user.copy(solde = newBalance))
                 acquittementDao.deleteAcquittement(acquittement)
+
+                // Ajout du remboursement dans l'historique
+                database.historiqueDao().insert(
+                    Historique(
+                        typeTransaction = "REMBOURSEMENT_ACQUITTEMENT",
+                        montant = acquittement.montant,
+                        dateHeure = Date(),
+                        motif = "Remboursement à ${acquittement.personne_acquittement}",
+                        details = "Contact: ${acquittement.contacte}"
+                    )
+                )
             }
         }
     }

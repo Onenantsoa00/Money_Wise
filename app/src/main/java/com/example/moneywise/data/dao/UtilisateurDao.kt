@@ -16,6 +16,12 @@ interface UtilisateurDao {
     @Query("SELECT * FROM Utilisateur WHERE email = :email")
     suspend fun getUserByEmail(email: String): Utilisateur?
 
+    @Query("SELECT solde FROM utilisateur LIMIT 1")
+    fun getSoldeUtilisateur(): LiveData<Double?>
+
+    @Query("SELECT nom FROM utilisateur LIMIT 1")
+    fun getNomUtilisateur(): LiveData<String?>
+
     @Query("SELECT * FROM utilisateur")
     fun getAllUtilisateurs(): Flow<List<Utilisateur>>
 

@@ -24,6 +24,10 @@
     <color name="transfer">#4285F4</color>
     <color name="transfer_bg">#E6EEF8</color>
 
+    <color name="green_light">#A5D6A7</color>
+    <color name="blue_light">#90CAF9</color>
+    <color name="gray_light">#E0E0E0</color>
+
     <color name="primaryColor">#6200EE</color>
     <color name="errorColor">#B00020</color>
 
