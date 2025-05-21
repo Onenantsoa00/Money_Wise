@@ -1,20 +1,28 @@
 package com.example.moneywise.ui.home
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.moneywise.R
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.databinding.FragmentHomeBinding
 import com.example.moneywise.ui.home.adapters.AcquittementHomeAdapter
 import com.example.moneywise.ui.home.adapters.EmpruntHomeAdapter
 import com.example.moneywise.ui.home.adapters.ProjetHomeAdapter
 import com.example.moneywise.ui.transaction.TransactionHomeAdapter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class HomeFragment : Fragment() {
@@ -50,6 +58,7 @@ class HomeFragment : Fragment() {
 
         setupAdapters()
         setupObservers()
+        setupClickListeners()
         viewModel.refreshData()
     }
 
@@ -141,6 +150,95 @@ class HomeFragment : Fragment() {
                 binding.recyclerTransactionsHome.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
             }
         }
+    }
+
+    private fun setupClickListeners() {
+        // Bouton Add (Dépôt)
+        binding.buttonAdd.setOnClickListener {
+            showTransactionDialog("Dépôt")
+        }
+
+        // Bouton Send (Retrait)
+        binding.buttonSend.setOnClickListener {
+            showTransactionDialog("Retrait")
+        }
+
+        // Bouton Rembourser (Navigation vers Emprunt)
+        binding.buttonRembourser.setOnClickListener {
+            findNavController().navigate(R.id.nav_emprunt)
+        }
+    }
+
+    private fun showTransactionDialog(fixedType: String) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_transaction, null)
+
+        // Configurer le type de transaction fixe
+        val typeDropdown = dialogView.findViewById<AutoCompleteTextView>(R.id.transactionTypeDropdown)
+        typeDropdown.setText(fixedType)
+        typeDropdown.isEnabled = false // Désactiver la modification
+
+        val dateEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.transactionDate)
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        dateEditText.setText(dateFormat.format(calendar.time))
+
+        dateEditText.setOnClickListener {
+            DatePickerDialog(
+                requireContext(),
+                { _, year, month, day ->
+                    calendar.set(year, month, day)
+                    dateEditText.setText(dateFormat.format(calendar.time))
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
+
+        // Configurer les banques
+        val bankDropdown = dialogView.findViewById<AutoCompleteTextView>(R.id.transactionBankDropdown)
+
+        viewModel.banks.observe(viewLifecycleOwner) { banks ->
+            if (banks.isNotEmpty()) {
+                val bankAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, banks)
+                bankDropdown.setAdapter(bankAdapter)
+                bankDropdown.setText(banks.first(), false)
+            }
+        }
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Ajouter une transaction")
+            .setView(dialogView)
+            .setPositiveButton("Ajouter") { dialog, _ ->
+                val amountText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.transactionAmount).text.toString()
+                val date = calendar.time
+                val selectedBank = bankDropdown.text.toString()
+
+                if (amountText.isBlank()) {
+                    Toast.makeText(requireContext(), "Veuillez saisir un montant", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val amount = amountText.toDoubleOrNull() ?: run {
+                    Toast.makeText(requireContext(), "Montant invalide", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                viewModel.addTransaction(
+                    type = fixedType,
+                    amount = amount,
+                    date = date,
+                    bankName = selectedBank,
+                    onSuccess = {
+                        Toast.makeText(requireContext(), "Transaction ajoutée", Toast.LENGTH_SHORT).show()
+                    },
+                    onError = { error ->
+                        Toast.makeText(requireContext(), "Erreur: $error", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
     }
 
     override fun onDestroyView() {

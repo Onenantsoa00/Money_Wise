@@ -114,6 +114,7 @@
                                 android:padding="12dp">
 
                                 <LinearLayout
+                                    android:id="@+id/buttonAdd"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -145,6 +146,7 @@
                                 </LinearLayout>
 
                                 <LinearLayout
+                                    android:id="@+id/buttonSend"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -176,6 +178,7 @@
                                 </LinearLayout>
 
                                 <LinearLayout
+                                    android:id="@+id/buttonRembourser"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -200,38 +203,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Receive"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/black"
-                                        android:layout_marginTop="8dp"/>
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical"
-                                    android:gravity="center">
-
-                                    <com.google.android.material.card.MaterialCardView
-                                        android:layout_width="48dp"
-                                        android:layout_height="48dp"
-                                        app:cardCornerRadius="24dp"
-                                        app:cardElevation="0dp"
-                                        app:cardBackgroundColor="#F8E6EE">
-
-                                        <ImageView
-                                            android:layout_width="24dp"
-                                            android:layout_height="24dp"
-                                            android:layout_gravity="center"
-                                            android:src="@drawable/ic_buy"
-                                            android:tint="#EA4335"/>
-                                    </com.google.android.material.card.MaterialCardView>
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Buy"
+                                        android:text="Rembourser"
                                         android:textSize="12sp"
                                         android:textColor="@color/black"
                                         android:layout_marginTop="8dp"/>

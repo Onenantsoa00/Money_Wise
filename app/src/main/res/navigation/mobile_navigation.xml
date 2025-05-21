@@ -9,41 +9,82 @@
         android:id="@+id/nav_home"
         android:name="com.example.moneywise.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_empruntFragment"
+            app:destination="@id/nav_emprunt" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.moneywise.ui.profile.ProfilFragment"
         android:label="@string/menu_Profil"
-        tools:layout="@layout/fragment_profil" />
+        tools:layout="@layout/fragment_profil">
+        <action
+            android:id="@+id/action_profilFragment_to_homeFragment"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="true"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_projet"
         android:name="com.example.moneywise.ui.project.ProjectFragment"
         android:label="@string/menu_Projet"
-        tools:layout="@layout/fragment_projet" />
+        tools:layout="@layout/fragment_projet">
+        <action
+            android:id="@+id/action_projectFragment_to_homeFragment"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="true"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_historique"
         android:name="com.example.moneywise.ui.historique.HistoriqueFragment"
         android:label="@string/menu_Historique"
-        tools:layout="@layout/fragment_historique" />
+        tools:layout="@layout/fragment_historique">
+        <action
+            android:id="@+id/action_historiqueFragment_to_homeFragment"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="true"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_emprunt"
         android:name="com.example.moneywise.ui.emprunt.EmpruntFragment"
         android:label="@string/menu_Emprunt"
-        tools:layout="@layout/fragment_emprunt" />
+        tools:layout="@layout/fragment_emprunt">
+        <action
+            android:id="@+id/action_empruntFragment_to_homeFragment"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="true"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_acquittement"
         android:name="com.example.moneywise.ui.acquittement.AcquittementFragment"
         android:label="@string/menu_Acquittement"
-        tools:layout="@layout/fragment_acquittement" />
+        tools:layout="@layout/fragment_acquittement">
+        <action
+            android:id="@+id/action_acquittementFragment_to_homeFragment"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="true"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_transaction"
         android:name="com.example.moneywise.ui.transaction.TransactionFragment"
         android:label="@string/menu_Transaction"
-        tools:layout="@layout/fragment_transaction" />
+        tools:layout="@layout/fragment_transaction">
+        <action
+            android:id="@+id/action_transactionFragment_to_homeFragment"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="true"/>
+    </fragment>
 </navigation>
