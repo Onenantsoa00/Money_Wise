@@ -18,22 +18,12 @@ interface EmpruntDao {
     @Query("SELECT * FROM Emprunt")
     fun getAllEmprunt(): LiveData<List<Emprunt>>
 
-    @Query("SELECT * FROM Emprunt WHERE id = :id")
-    suspend fun getEmpruntById(id: Int): Emprunt?
-
-    @Update
-    suspend fun updateEmprunt(emprunt: Emprunt)
-
-    @Delete
-    suspend fun deleteEmprunt(emprunt: Emprunt)
-
-    @Query("DELETE FROM Emprunt")
-    suspend fun deleteAllEmprunt()
-
     @Query("UPDATE Emprunt SET est_rembourse = :estRembourse WHERE id = :id")
     suspend fun updateRemboursementStatus(id: Int, estRembourse: Boolean)
 
     @Query("SELECT * FROM Emprunt WHERE est_rembourse = 0")
     fun getEmpruntsNonRembourses(): LiveData<List<Emprunt>>
 
+    @Query("SELECT * FROM Emprunt WHERE est_rembourse = 0 ORDER BY id DESC LIMIT 5")
+    fun getRecentEmpruntsNonRembourses(): LiveData<List<Emprunt>>
 }

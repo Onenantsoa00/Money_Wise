@@ -37,4 +37,7 @@ interface ProjetDao {
 
     @Query("SELECT COUNT(*) FROM Projet WHERE progression = 100")
     fun countCompletedProjects(): LiveData<Int>
+
+    @Query("SELECT * FROM Projet ORDER BY date_limite ASC LIMIT 4")
+    fun getRecentProjects(): LiveData<List<Projet>>
 }

@@ -4,16 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.moneywise.R
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.databinding.FragmentHomeBinding
 import com.example.moneywise.ui.home.adapters.AcquittementHomeAdapter
 import com.example.moneywise.ui.home.adapters.EmpruntHomeAdapter
+import com.example.moneywise.ui.home.adapters.ProjetHomeAdapter
 import java.text.NumberFormat
 import java.util.*
 
@@ -24,6 +23,7 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var empruntAdapter: EmpruntHomeAdapter
     private lateinit var acquittementAdapter: AcquittementHomeAdapter
+    private lateinit var projetAdapter: ProjetHomeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,45 +37,18 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialisation de la base de données et du ViewModel
         val database = AppDatabase.getDatabase(requireContext())
         viewModel = ViewModelProvider(
             this,
             HomeViewModelFactory(database)
         ).get(HomeViewModel::class.java)
 
-        // Liaison du ViewModel avec le binding
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        // Initialisation de l'UI
-        initUI()
         setupAdapters()
         setupObservers()
-
-        // Rafraîchir les données
         viewModel.refreshData()
-    }
-
-    private fun initUI() {
-        // Formatage de la devise
-        val format = NumberFormat.getCurrencyInstance()
-        format.maximumFractionDigits = 0
-        format.currency = Currency.getInstance("MGA")
-
-        // Observer le solde de l'utilisateur
-        viewModel.soldeUtilisateur.observe(viewLifecycleOwner) { solde ->
-            solde?.let {
-                binding.textSolde.text = format.format(it)
-            }
-        }
-
-        // Observer le nom de l'utilisateur
-        viewModel.getNomUtilisateur().observe(viewLifecycleOwner) { nom ->
-            nom?.let {
-                binding.textNomUtilisateur.findViewById<TextView>(R.id.textNomUtilisateurText).text = "Bonjour $nom"
-            }
-        }
     }
 
     private fun setupAdapters() {
@@ -84,6 +57,7 @@ class HomeFragment : Fragment() {
         binding.recyclerEmprunts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = empruntAdapter
+            setHasFixedSize(true)
         }
 
         // Adapter pour les acquittements
@@ -91,21 +65,62 @@ class HomeFragment : Fragment() {
         binding.recyclerAcquittements.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = acquittementAdapter
+            setHasFixedSize(true)
         }
+
+        // Adapter pour les projets
+        projetAdapter = ProjetHomeAdapter(emptyList())
+        binding.recyclerProjectsHome.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = projetAdapter
+            setHasFixedSize(true)
+        }
+
+        // Masquer l'ancien HorizontalScrollView statique
+        binding.horizontalScrollViewProjects.visibility = View.GONE
     }
 
     private fun setupObservers() {
-        // Observer les emprunts non remboursés
-        viewModel.empruntsNonRembourses.observe(viewLifecycleOwner) { emprunts ->
-            emprunts?.let {
-                empruntAdapter.updateList(it)
+        // Formatage de la devise
+        val format = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
+            maximumFractionDigits = 0
+        }
+
+        // Observateur pour le solde utilisateur
+        viewModel.soldeUtilisateur.observe(viewLifecycleOwner) { solde ->
+            solde?.let {
+                binding.textSolde.text = "${format.format(it)} MGA"
             }
         }
 
-        // Observer les acquittements récents
+        // Observateur pour le nom utilisateur
+        viewModel.nomUtilisateur.observe(viewLifecycleOwner) { nom ->
+            nom?.let {
+                binding.textNomUtilisateurText.text = "Bonjour $it"
+            }
+        }
+
+        // Observateur pour les emprunts récents
+        viewModel.empruntsRecents.observe(viewLifecycleOwner) { emprunts ->
+            emprunts?.let {
+                empruntAdapter.updateList(it)
+                binding.recyclerEmprunts.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+            }
+        }
+
+        // Observateur pour les acquittements récents
         viewModel.acquittementsRecents.observe(viewLifecycleOwner) { acquittements ->
             acquittements?.let {
                 acquittementAdapter.updateList(it)
+                binding.recyclerAcquittements.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+            }
+        }
+
+        // Observateur pour les projets récents
+        viewModel.projetsRecents.observe(viewLifecycleOwner) { projets ->
+            projets?.let {
+                projetAdapter.updateList(it)
+                binding.recyclerProjectsHome.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
             }
         }
     }

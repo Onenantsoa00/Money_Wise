@@ -472,240 +472,25 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <HorizontalScrollView
+                <!-- RecyclerView horizontal pour les projets -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerProjectsHome"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:scrollbars="none"
                     android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:paddingStart="16dp"
-                    android:paddingEnd="8dp">
+                    android:paddingEnd="8dp"/>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- Projet 1 -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="160dp"
-                            android:layout_height="180dp"
-                            android:layout_marginEnd="12dp"
-                            app:cardCornerRadius="20dp"
-                            app:cardElevation="2dp"
-                            app:strokeWidth="0dp"
-                            app:cardBackgroundColor="@color/white">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                android:gravity="center"
-                                android:padding="16dp">
-
-                                <ProgressBar
-                                    android:id="@+id/progressBar1"
-                                    style="?android:attr/progressBarStyleHorizontal"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
-                                    android:progress="65"
-                                    android:progressDrawable="@drawable/circular_progress_bar"
-                                    android:background="@drawable/circular_progress_background"
-                                    android:rotation="-90"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="65%"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#4285F4"
-                                    android:layout_marginTop="-60dp"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Projet A"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black"
-                                    android:layout_marginTop="40dp"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="En cours"
-                                    android:textSize="12sp"
-                                    android:textColor="@color/grey"
-                                    android:layout_marginTop="4dp"/>
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <!-- Projet 2 -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="160dp"
-                            android:layout_height="180dp"
-                            android:layout_marginEnd="12dp"
-                            app:cardCornerRadius="20dp"
-                            app:cardElevation="2dp"
-                            app:strokeWidth="0dp"
-                            app:cardBackgroundColor="@color/white">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                android:gravity="center"
-                                android:padding="16dp">
-
-                                <ProgressBar
-                                    android:id="@+id/progressBar2"
-                                    style="?android:attr/progressBarStyleHorizontal"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
-                                    android:progress="40"
-                                    android:progressDrawable="@drawable/circular_progress_bar_orange"
-                                    android:background="@drawable/circular_progress_background"
-                                    android:rotation="-90"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="40%"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#FBBC05"
-                                    android:layout_marginTop="-60dp"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Projet B"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black"
-                                    android:layout_marginTop="40dp"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="En cours"
-                                    android:textSize="12sp"
-                                    android:textColor="@color/grey"
-                                    android:layout_marginTop="4dp"/>
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <!-- Projet 3 -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="160dp"
-                            android:layout_height="180dp"
-                            android:layout_marginEnd="12dp"
-                            app:cardCornerRadius="20dp"
-                            app:cardElevation="2dp"
-                            app:strokeWidth="0dp"
-                            app:cardBackgroundColor="@color/white">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                android:gravity="center"
-                                android:padding="16dp">
-
-                                <ProgressBar
-                                    android:id="@+id/progressBar3"
-                                    style="?android:attr/progressBarStyleHorizontal"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
-                                    android:progress="90"
-                                    android:progressDrawable="@drawable/circular_progress_bar_green"
-                                    android:background="@drawable/circular_progress_background"
-                                    android:rotation="-90"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="90%"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#34A853"
-                                    android:layout_marginTop="-60dp"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Projet C"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black"
-                                    android:layout_marginTop="40dp"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Presque terminé"
-                                    android:textSize="12sp"
-                                    android:textColor="@color/grey"
-                                    android:layout_marginTop="4dp"/>
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <!-- Projet 4 -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="160dp"
-                            android:layout_height="180dp"
-                            android:layout_marginEnd="12dp"
-                            app:cardCornerRadius="20dp"
-                            app:cardElevation="2dp"
-                            app:strokeWidth="0dp"
-                            app:cardBackgroundColor="@color/white">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                android:gravity="center"
-                                android:padding="16dp">
-
-                                <ProgressBar
-                                    android:id="@+id/progressBar4"
-                                    style="?android:attr/progressBarStyleHorizontal"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
-                                    android:progress="25"
-                                    android:progressDrawable="@drawable/circular_progress_bar_red"
-                                    android:background="@drawable/circular_progress_background"
-                                    android:rotation="-90"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="25%"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#EA4335"
-                                    android:layout_marginTop="-60dp"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Projet D"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/black"
-                                    android:layout_marginTop="40dp"/>
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Démarrage"
-                                    android:textSize="12sp"
-                                    android:textColor="@color/grey"
-                                    android:layout_marginTop="4dp"/>
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
-                    </LinearLayout>
+                <!-- Ancien HorizontalScrollView (caché) -->
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollViewProjects"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <!-- Contenu original caché -->
                 </HorizontalScrollView>
 
                 <!-- Section Rappels -->
@@ -740,7 +525,6 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginHorizontal="16dp">
 
-                    <!-- Colonne Emprunt -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -760,7 +544,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Emprunts"
+                                android:text="Emprunts récents"
                                 android:textStyle="bold"
                                 android:textSize="16sp"
                                 android:textColor="@color/black"
@@ -774,65 +558,14 @@
                                 android:layout_gravity="center"
                                 android:layout_marginBottom="16dp"/>
 
-                            <!-- En-tête du tableau -->
-                            <TableLayout
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recycler_emprunts"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:stretchColumns="*">
-
-                                <TableRow
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="Nom"
-                                        android:textColor="@color/black"
-                                        android:alpha="0.7"
-                                        android:textStyle="bold"
-                                        android:padding="8dp"/>
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="Montant"
-                                        android:textColor="@color/black"
-                                        android:alpha="0.7"
-                                        android:textStyle="bold"
-                                        android:padding="8dp"/>
-                                </TableRow>
-                            </TableLayout>
-
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:background="#E0E0E0"
-                                android:layout_marginVertical="8dp"/>
-
-                            <!-- Données Emprunts -->
-                            <ScrollView
-                                android:layout_width="match_parent"
-                                android:layout_height="150dp">
-
-                                <TableLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:stretchColumns="*">
-
-                                    <androidx.recyclerview.widget.RecyclerView
-                                        android:id="@+id/recycler_emprunts"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="150dp"
-                                        android:layout_marginTop="8dp"
-                                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                        tools:listitem="@layout/item_emprunt" />
-
-
-                                </TableLayout>
-                            </ScrollView>
+                                android:layout_height="150dp"
+                                android:clipToPadding="false"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -856,7 +589,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Acquittements"
+                                android:text="Acquittements récents"
                                 android:textStyle="bold"
                                 android:textSize="16sp"
                                 android:textColor="@color/black"
@@ -870,63 +603,14 @@
                                 android:layout_gravity="center"
                                 android:layout_marginBottom="16dp"/>
 
-                            <!-- En-tête du tableau -->
-                            <TableLayout
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recycler_acquittements"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:stretchColumns="*">
-
-                                <TableRow
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="Nom"
-                                        android:textColor="@color/black"
-                                        android:alpha="0.7"
-                                        android:textStyle="bold"
-                                        android:padding="8dp"/>
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="Montant"
-                                        android:textColor="@color/black"
-                                        android:alpha="0.7"
-                                        android:textStyle="bold"
-                                        android:padding="8dp"/>
-                                </TableRow>
-                            </TableLayout>
-
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:background="#E0E0E0"
-                                android:layout_marginVertical="8dp"/>
-
-                            <!-- Données Acquittements -->
-                            <ScrollView
-                                android:layout_width="match_parent"
-                                android:layout_height="150dp">
-
-                                <TableLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:stretchColumns="*">
-
-                                    <androidx.recyclerview.widget.RecyclerView
-                                        android:id="@+id/recycler_acquittements"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="150dp"
-                                        android:layout_marginTop="8dp"
-                                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                        tools:listitem="@layout/item_acquittement" />
-                                </TableLayout>
-                            </ScrollView>
+                                android:layout_height="150dp"
+                                android:clipToPadding="false"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
