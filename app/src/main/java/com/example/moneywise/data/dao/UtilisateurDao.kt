@@ -22,6 +22,9 @@ interface UtilisateurDao {
     @Query("SELECT nom FROM utilisateur LIMIT 1")
     fun getNomUtilisateur(): LiveData<String?>
 
+    @Query("SELECT avatar FROM utilisateur LIMIT 1")
+    fun getAvatarUtilisateur(): LiveData<String?>
+
     @Query("SELECT * FROM utilisateur")
     fun getAllUtilisateurs(): Flow<List<Utilisateur>>
 
@@ -42,4 +45,8 @@ interface UtilisateurDao {
 
     @Delete
     suspend fun delete(user: Utilisateur)
+
+    // Nouvelle méthode pour mettre à jour seulement l'avatar
+    @Query("UPDATE Utilisateur SET avatar = :avatarPath WHERE id = :userId")
+    suspend fun updateAvatar(userId: Int, avatarPath: String?)
 }

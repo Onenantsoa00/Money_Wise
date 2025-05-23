@@ -13,5 +13,6 @@ data class Utilisateur (
     @ColumnInfo(name = "solde") val solde: Double = 0.0, // Valeur par défaut 0
     @ColumnInfo(name = "email") val email: String,
     @ColumnInfo(name = "password") val password: String,
-    @ColumnInfo(name = "date_creation") val dateCreation: Date = Date()
+    @ColumnInfo(name = "date_creation") val dateCreation: Date = Date(),
+    @ColumnInfo(name = "avatar") val avatar: String? = null // Nouveau champ pour l'avatar (chemin ou URI)
 )

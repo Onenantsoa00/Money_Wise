@@ -21,7 +21,7 @@ import com.example.moneywise.data.entity.*
         Acquittement::class,
         Historique::class
     ],
-    version = 6,
+    version = 7, // Augmenté à 7 pour le champ avatar
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -38,10 +38,24 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        // Migration from version 1 to 2 (exemple)
+        // Migration from version 1 to 2
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // Initial schema creation if needed
+            }
+        }
+
+        // Migration from version 2 to 3
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Ajout de nouvelles tables ou colonnes si nécessaire
+            }
+        }
+
+        // Migration from version 3 to 4
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Ajout de nouvelles tables ou colonnes si nécessaire
             }
         }
 
@@ -94,10 +108,166 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // Migration from version 6 to 7 - Ajout du champ avatar
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Ajouter la colonne avatar à la table Utilisateur
+                database.execSQL("""
+                    ALTER TABLE Utilisateur ADD COLUMN avatar TEXT
+                """.trimIndent())
+            }
+        }
+
+        // Migration alternative pour les cas où la base de données n'existe pas encore
+        private val MIGRATION_1_7 = object : Migration(1, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Créer toutes les tables avec le schéma le plus récent
+                createAllTables(database)
+            }
+        }
+
+        private val MIGRATION_2_7 = object : Migration(2, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Appliquer toutes les migrations de 2 à 7
+                MIGRATION_2_3.migrate(database)
+                MIGRATION_3_4.migrate(database)
+                MIGRATION_4_5.migrate(database)
+                MIGRATION_5_6.migrate(database)
+                MIGRATION_6_7.migrate(database)
+            }
+        }
+
+        private val MIGRATION_3_7 = object : Migration(3, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Appliquer toutes les migrations de 3 à 7
+                MIGRATION_3_4.migrate(database)
+                MIGRATION_4_5.migrate(database)
+                MIGRATION_5_6.migrate(database)
+                MIGRATION_6_7.migrate(database)
+            }
+        }
+
+        private val MIGRATION_4_7 = object : Migration(4, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Appliquer toutes les migrations de 4 à 7
+                MIGRATION_4_5.migrate(database)
+                MIGRATION_5_6.migrate(database)
+                MIGRATION_6_7.migrate(database)
+            }
+        }
+
+        private val MIGRATION_5_7 = object : Migration(5, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Appliquer toutes les migrations de 5 à 7
+                MIGRATION_5_6.migrate(database)
+                MIGRATION_6_7.migrate(database)
+            }
+        }
+
+        private fun createAllTables(database: SupportSQLiteDatabase) {
+            // Créer la table Utilisateur avec le champ avatar
+            database.execSQL("""
+                CREATE TABLE IF NOT EXISTS Utilisateur (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    nom TEXT NOT NULL,
+                    prenom TEXT NOT NULL,
+                    solde REAL NOT NULL DEFAULT 0.0,
+                    email TEXT NOT NULL,
+                    password TEXT NOT NULL,
+                    date_creation INTEGER NOT NULL,
+                    avatar TEXT
+                )
+            """.trimIndent())
+
+            // Créer la table Transaction
+            database.execSQL("""
+                CREATE TABLE IF NOT EXISTS `Transaction` (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    type TEXT NOT NULL,
+                    montants TEXT NOT NULL,
+                    date INTEGER NOT NULL,
+                    motif TEXT,
+                    description TEXT,
+                    id_utilisateur INTEGER NOT NULL,
+                    id_banque INTEGER NOT NULL DEFAULT 0,
+                    FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur(id) ON DELETE CASCADE
+                )
+            """.trimIndent())
+
+            // Créer la table Projet
+            database.execSQL("""
+                CREATE TABLE IF NOT EXISTS Projet (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    nom TEXT NOT NULL,
+                    montant_necessaire REAL NOT NULL,
+                    montant_actuel REAL NOT NULL DEFAULT 0.0,
+                    progression INTEGER NOT NULL DEFAULT 0,
+                    date_limite INTEGER NOT NULL,
+                    id_utilisateur INTEGER DEFAULT 1,
+                    FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur(id) ON DELETE CASCADE
+                )
+            """.trimIndent())
+
+            // Créer la table Banque
+            database.execSQL("""
+                CREATE TABLE IF NOT EXISTS Banque (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    nom TEXT NOT NULL,
+                    type TEXT NOT NULL,
+                    numero_compte TEXT,
+                    solde REAL NOT NULL DEFAULT 0.0
+                )
+            """.trimIndent())
+
+            // Créer la table Emprunt
+            database.execSQL("""
+                CREATE TABLE IF NOT EXISTS Emprunt (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    nom_emprunte TEXT NOT NULL,
+                    contacte TEXT NOT NULL,
+                    montant REAL NOT NULL,
+                    date_emprunt INTEGER NOT NULL,
+                    date_remboursement INTEGER NOT NULL,
+                    est_rembourse INTEGER NOT NULL DEFAULT 0
+                )
+            """.trimIndent())
+
+            // Créer la table Acquittement
+            database.execSQL("""
+                CREATE TABLE IF NOT EXISTS Acquittement (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    nom_acquittement TEXT NOT NULL,
+                    montant REAL NOT NULL,
+                    date_acquittement INTEGER NOT NULL,
+                    description TEXT
+                )
+            """.trimIndent())
+
+            // Créer la table Historique
+            database.execSQL("""
+                CREATE TABLE IF NOT EXISTS Historique (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    type_transaction TEXT NOT NULL,
+                    montant REAL NOT NULL,
+                    date_heure INTEGER NOT NULL,
+                    motif TEXT NOT NULL,
+                    details TEXT
+                )
+            """.trimIndent())
+        }
+
         private val ALL_MIGRATIONS = arrayOf(
             MIGRATION_1_2,
+            MIGRATION_2_3,
+            MIGRATION_3_4,
             MIGRATION_4_5,
-            MIGRATION_5_6
+            MIGRATION_5_6,
+            MIGRATION_6_7,
+            MIGRATION_1_7,
+            MIGRATION_2_7,
+            MIGRATION_3_7,
+            MIGRATION_4_7,
+            MIGRATION_5_7
         )
 
         fun getDatabase(context: Context): AppDatabase {
@@ -108,10 +278,19 @@ abstract class AppDatabase : RoomDatabase() {
                     "moneywise"
                 )
                     .addMigrations(*ALL_MIGRATIONS)
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration() // En cas d'échec de migration
                     .build()
                 INSTANCE = instance
                 instance
+            }
+        }
+
+        // Méthode utilitaire pour réinitialiser la base de données (utile en développement)
+        fun resetDatabase(context: Context) {
+            synchronized(this) {
+                INSTANCE?.close()
+                context.deleteDatabase("moneywise")
+                INSTANCE = null
             }
         }
     }

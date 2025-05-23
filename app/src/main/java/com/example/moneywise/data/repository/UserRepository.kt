@@ -12,7 +12,8 @@ class UserRepository(private val utilisateurDao: UtilisateurDao) {
         nom: String,
         prenom: String,
         email: String,
-        password: String
+        password: String,
+        avatar: String? = null
     ): Result<Utilisateur> = withContext(Dispatchers.IO) {
         try {
             // Vérifie si l'email existe déjà
@@ -25,7 +26,8 @@ class UserRepository(private val utilisateurDao: UtilisateurDao) {
                 prenom = prenom,
                 email = email,
                 password = password,
-                solde = 0.0
+                solde = 0.0,
+                avatar = avatar
             )
 
             utilisateurDao.insert(newUser)
@@ -46,6 +48,27 @@ class UserRepository(private val utilisateurDao: UtilisateurDao) {
             } else {
                 Result.failure(Exception("Email ou mot de passe incorrect"))
             }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateUserAvatar(
+        userId: Int,
+        avatarPath: String?
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            utilisateurDao.updateAvatar(userId, avatarPath)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateUser(user: Utilisateur): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            utilisateurDao.update(user)
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
