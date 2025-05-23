@@ -13,8 +13,17 @@
 
         <action
             android:id="@+id/action_homeFragment_to_empruntFragment"
-            app:destination="@id/nav_emprunt"
-           />
+            app:destination="@id/nav_emprunt" />
+
+        <!-- Nouvelle action pour naviguer vers TransactionFragment -->
+        <action
+            android:id="@+id/action_homeFragment_to_transactionFragment"
+            app:destination="@id/nav_transaction" />
+
+        <!-- Nouvelle action pour naviguer vers ProjectFragment -->
+        <action
+            android:id="@+id/action_homeFragment_to_projectFragment"
+            app:destination="@id/nav_projet" />
     </fragment>
 
     <fragment

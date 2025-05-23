@@ -2,11 +2,14 @@ package com.example.moneywise.ui.home
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -15,12 +18,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moneywise.R
 import com.example.moneywise.data.AppDatabase
+import com.example.moneywise.data.entity.Projet
 import com.example.moneywise.databinding.FragmentHomeBinding
 import com.example.moneywise.ui.home.adapters.AcquittementHomeAdapter
 import com.example.moneywise.ui.home.adapters.EmpruntHomeAdapter
 import com.example.moneywise.ui.home.adapters.ProjetHomeAdapter
 import com.example.moneywise.ui.transaction.TransactionHomeAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,6 +40,9 @@ class HomeFragment : Fragment() {
     private lateinit var acquittementAdapter: AcquittementHomeAdapter
     private lateinit var projetAdapter: ProjetHomeAdapter
     private lateinit var transactionAdapter: TransactionHomeAdapter
+    private val numberFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
+        maximumFractionDigits = 0
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,8 +88,10 @@ class HomeFragment : Fragment() {
             setHasFixedSize(true)
         }
 
-        // Adapter pour les projets
-        projetAdapter = ProjetHomeAdapter(emptyList())
+        // Adapter pour les projets avec gestion des clics
+        projetAdapter = ProjetHomeAdapter(emptyList()) { projet ->
+            showInvestProjectDialog(projet)
+        }
         binding.recyclerProjectsHome.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = projetAdapter
@@ -163,14 +174,35 @@ class HomeFragment : Fragment() {
             showTransactionDialog("Retrait")
         }
 
-        // Bouton Rembourser (Navigation vers Emprunt) - CORRECTION ICI
+        // Bouton Rembourser (Navigation vers Emprunt)
         binding.buttonRembourser.setOnClickListener {
             try {
-                // Utiliser l'action définie dans le navigation graph
                 findNavController().navigate(R.id.action_homeFragment_to_empruntFragment)
             } catch (e: Exception) {
-                // Fallback si l'action n'existe pas
                 findNavController().navigate(R.id.nav_emprunt)
+            }
+        }
+
+        // NOUVEAUX CLICK LISTENERS AJOUTÉS
+        // Navigation vers TransactionFragment quand on clique sur "Voir tout" des transactions
+        binding.voirToutTransactions.setOnClickListener {
+            try {
+                findNavController().navigate(R.id.action_homeFragment_to_transactionFragment)
+            } catch (e: Exception) {
+                // Fallback si l'action n'existe pas
+                findNavController().navigate(R.id.nav_transaction)
+                Toast.makeText(requireContext(), "Navigation vers les transactions", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Navigation vers ProjectFragment quand on clique sur "Voir tout" des projets
+        binding.voirToutProjet.setOnClickListener {
+            try {
+                findNavController().navigate(R.id.action_homeFragment_to_projectFragment)
+            } catch (e: Exception) {
+                // Fallback si l'action n'existe pas
+                findNavController().navigate(R.id.nav_projet)
+                Toast.makeText(requireContext(), "Navigation vers les projets", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -245,6 +277,137 @@ class HomeFragment : Fragment() {
             }
             .setNegativeButton("Annuler", null)
             .show()
+    }
+
+    // Nouvelle méthode pour afficher le dialogue d'investissement dans un projet
+    private fun showInvestProjectDialog(projet: Projet) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_invest_project, null)
+
+        // Récupérer les vues du dialogue
+        val tvProjectTitle = dialogView.findViewById<TextView>(R.id.tvProjectTitle)
+        val tvCurrentAmount = dialogView.findViewById<TextView>(R.id.tvCurrentAmount)
+        val tvNeededAmount = dialogView.findViewById<TextView>(R.id.tvNeededAmount)
+        val inputLayoutAmount = dialogView.findViewById<TextInputLayout>(R.id.inputLayoutAmount)
+        val etInvestAmount = dialogView.findViewById<TextInputEditText>(R.id.etInvestAmount)
+        val tvAvailableBalance = dialogView.findViewById<TextView>(R.id.tvAvailableBalance)
+
+        // Configurer les informations du projet
+        tvProjectTitle.text = "Investir dans ${projet.nom}"
+        tvCurrentAmount.text = "${numberFormat.format(projet.montant_actuel)} MGA"
+        tvNeededAmount.text = "${numberFormat.format(projet.montant_necessaire)} MGA"
+
+        // Afficher le solde disponible
+        viewModel.soldeUtilisateur.observe(viewLifecycleOwner) { solde ->
+            solde?.let {
+                tvAvailableBalance.text = "Solde disponible: ${numberFormat.format(it)} MGA"
+            }
+        }
+
+        // Calculer le montant restant nécessaire
+        val montantRestantNecessaire = projet.montant_necessaire - projet.montant_actuel
+
+        // Ajouter un TextWatcher pour valider l'entrée en temps réel
+        etInvestAmount.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val montantText = s.toString()
+                if (montantText.isEmpty()) {
+                    inputLayoutAmount.error = null
+                    return
+                }
+
+                val montant = montantText.toDoubleOrNull()
+                if (montant == null) {
+                    inputLayoutAmount.error = "Montant invalide"
+                    return
+                }
+
+                // Vérifier si le montant est négatif
+                if (montant <= 0) {
+                    inputLayoutAmount.error = "Le montant doit être positif"
+                    return
+                }
+
+                // Vérifier si le montant dépasse le solde disponible
+                viewModel.soldeUtilisateur.value?.let { solde ->
+                    if (montant > solde) {
+                        inputLayoutAmount.error = "Montant supérieur au solde disponible"
+                        return
+                    }
+                }
+
+                // Vérifier si le montant dépasse ce qui est nécessaire
+                if (montant > montantRestantNecessaire) {
+                    inputLayoutAmount.error = "Montant supérieur à ce qui est nécessaire (${numberFormat.format(montantRestantNecessaire)} MGA)"
+                    return
+                }
+
+                // Tout est valide
+                inputLayoutAmount.error = null
+            }
+        })
+
+        // Créer et afficher le dialogue
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Investissement")
+            .setView(dialogView)
+            .setPositiveButton("Investir", null) // On définit le comportement plus tard
+            .setNegativeButton("Annuler", null)
+            .create()
+
+        dialog.show()
+
+        // Configurer le bouton positif pour éviter qu'il ne ferme le dialogue en cas d'erreur
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val montantText = etInvestAmount.text.toString()
+
+            if (montantText.isEmpty()) {
+                inputLayoutAmount.error = "Veuillez saisir un montant"
+                return@setOnClickListener
+            }
+
+            val montant = montantText.toDoubleOrNull()
+            if (montant == null) {
+                inputLayoutAmount.error = "Montant invalide"
+                return@setOnClickListener
+            }
+
+            // Vérifier si le montant est négatif
+            if (montant <= 0) {
+                inputLayoutAmount.error = "Le montant doit être positif"
+                return@setOnClickListener
+            }
+
+            // Vérifier si le montant dépasse le solde disponible
+            viewModel.soldeUtilisateur.value?.let { solde ->
+                if (montant > solde) {
+                    inputLayoutAmount.error = "Montant supérieur au solde disponible"
+                    return@setOnClickListener
+                }
+            }
+
+            // Vérifier si le montant dépasse ce qui est nécessaire
+            if (montant > montantRestantNecessaire) {
+                inputLayoutAmount.error = "Montant supérieur à ce qui est nécessaire"
+                return@setOnClickListener
+            }
+
+            // Tout est valide, procéder à l'investissement
+            viewModel.investInProject(
+                projetId = projet.id,
+                montantInvestissement = montant,
+                onSuccess = {
+                    Toast.makeText(requireContext(), "Investissement réussi", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                },
+                onError = { error ->
+                    Toast.makeText(requireContext(), "Erreur: $error", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
     }
 
     override fun onDestroyView() {

@@ -59,6 +59,10 @@ class HomeViewModel(private val db: AppDatabase) : ViewModel() {
         return db.utilisateurDao().getFirstUtilisateur()
     }
 
+    private suspend fun getCurrentBanque(): Banque? {
+        return db.banqueDao().getBanqueByNom("Banque de Test")
+    }
+
     // Ajoute une transaction
     fun addTransaction(
         type: String,
@@ -114,6 +118,80 @@ class HomeViewModel(private val db: AppDatabase) : ViewModel() {
         viewModelScope.launch {
             loadBanks()
             // Les LiveData se mettront à jour automatiquement
+        }
+    }
+
+    // Nouvelle méthode pour investir dans un projet
+    fun investInProject(
+        projetId: Int,
+        montantInvestissement: Double,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                // Récupérer l'utilisateur courant
+                val user = getCurrentUser()
+                val banque = getCurrentBanque()
+
+                if (user == null) {
+                    onError("Aucun utilisateur trouvé")
+                    return@launch
+                }
+
+                // Vérifier si l'utilisateur a assez d'argent
+                if (user.solde < montantInvestissement) {
+                    onError("Solde insuffisant")
+                    return@launch
+                }
+
+                // Récupérer le projet
+                val projet = db.ProjetDao().getProjetById(projetId)
+                if (projet == null) {
+                    onError("Projet non trouvé")
+                    return@launch
+                }
+
+                // Vérifier si le montant d'investissement ne dépasse pas ce qui est nécessaire
+                val montantRestantNecessaire = projet.montant_necessaire - projet.montant_actuel
+                if (montantInvestissement > montantRestantNecessaire) {
+                    onError("Le montant dépasse ce qui est nécessaire pour compléter le projet")
+                    return@launch
+                }
+
+                // Mettre à jour le montant actuel du projet
+                val nouveauMontantActuel = projet.montant_actuel + montantInvestissement
+
+                // Calculer la nouvelle progression (en pourcentage)
+                val nouvelleProgression = ((nouveauMontantActuel / projet.montant_necessaire) * 100).toInt()
+
+                // Mettre à jour le projet
+                db.ProjetDao().updateProjetMontantAndProgression(
+                    projetId = projetId,
+                    montantActuel = nouveauMontantActuel,
+                    progression = nouvelleProgression
+                )
+
+                // Créer une transaction pour l'investissement
+                val transaction = Transaction(
+                    type = "Investissement",
+                    montants = montantInvestissement.toString(),
+                    date = Date(),
+                    id_utilisateur = user.id,
+                    id_banque = 1
+                )
+
+                // Insérer la transaction
+                db.transactionDao().insertTransaction(transaction)
+
+                // Mettre à jour le solde de l'utilisateur
+                val nouveauSolde = user.solde - montantInvestissement
+                db.utilisateurDao().update(user.copy(solde = nouveauSolde))
+
+                onSuccess()
+            } catch (e: Exception) {
+                onError(e.message ?: "Une erreur est survenue lors de l'investissement")
+            }
         }
     }
 }

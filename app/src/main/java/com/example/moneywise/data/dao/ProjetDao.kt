@@ -28,11 +28,11 @@ interface ProjetDao {
     @Query("DELETE FROM Projet")
     suspend fun deleteAllProjet()
 
-    // Nouvelles requêtes pour les statistiques
+    // Requêtes pour les statistiques
     @Query("SELECT COUNT(*) FROM Projet WHERE progression < 100 AND progression >= 50")
     fun countActiveProjects(): LiveData<Int>
 
-    @Query("SELECT COUNT(*) FROM Projet WHERE progression < 50 AND progression > 0")
+    @Query("SELECT COUNT(*) FROM Projet WHERE progression < 50 AND progression >= 0")
     fun countOngoingProjects(): LiveData<Int>
 
     @Query("SELECT COUNT(*) FROM Projet WHERE progression = 100")
@@ -40,4 +40,21 @@ interface ProjetDao {
 
     @Query("SELECT * FROM Projet ORDER BY date_limite ASC LIMIT 4")
     fun getRecentProjects(): LiveData<List<Projet>>
+
+    // Nouvelle méthode pour mettre à jour le montant actuel et la progression
+    @Query("UPDATE Projet SET montant_actuel = :montantActuel, progression = :progression WHERE id = :projetId")
+    suspend fun updateProjetMontantAndProgression(projetId: Int, montantActuel: Double, progression: Int)
+
+    // NOUVELLES REQUÊTES POUR LE FILTRAGE
+    @Query("SELECT * FROM Projet WHERE progression >= 50 AND progression < 100 ORDER BY date_limite DESC")
+    fun getActiveProjects(): LiveData<List<Projet>>
+
+    @Query("SELECT * FROM Projet WHERE progression < 50 AND progression >= 0 ORDER BY date_limite DESC")
+    fun getOngoingProjects(): LiveData<List<Projet>>
+
+    @Query("SELECT * FROM Projet WHERE progression = 100 ORDER BY date_limite DESC")
+    fun getCompletedProjects(): LiveData<List<Projet>>
+
+    @Query("SELECT * FROM Projet ORDER BY date_limite DESC")
+    fun getAllProjectsOrdered(): LiveData<List<Projet>>
 }

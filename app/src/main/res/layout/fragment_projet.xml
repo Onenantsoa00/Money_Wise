@@ -64,20 +64,27 @@
                             android:orientation="horizontal"
                             android:weightSum="3">
 
-                            <!-- Stat Projets Actifs -->
+                            <!-- Stat Projets Actifs - CLIQUABLE -->
                             <LinearLayout
+                                android:id="@+id/layout_active_projects"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:orientation="vertical"
-                                android:gravity="center">
+                                android:gravity="center"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="8dp">
 
                                 <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/card_active_projects"
                                     android:layout_width="64dp"
                                     android:layout_height="64dp"
                                     app:cardCornerRadius="32dp"
                                     app:cardElevation="0dp"
-                                    app:strokeWidth="0dp"
+                                    app:strokeWidth="2dp"
+                                    app:strokeColor="@android:color/transparent"
                                     app:cardBackgroundColor="#E6F8EE">
 
                                     <TextView
@@ -92,6 +99,7 @@
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <TextView
+                                    android:id="@+id/tv_active_projects_label"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Projets Actifs"
@@ -100,20 +108,27 @@
                                     android:layout_marginTop="8dp"/>
                             </LinearLayout>
 
-                            <!-- Stat En Cours -->
+                            <!-- Stat En Cours - CLIQUABLE -->
                             <LinearLayout
+                                android:id="@+id/layout_ongoing_projects"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:orientation="vertical"
-                                android:gravity="center">
+                                android:gravity="center"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="8dp">
 
                                 <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/card_ongoing_projects"
                                     android:layout_width="64dp"
                                     android:layout_height="64dp"
                                     app:cardCornerRadius="32dp"
                                     app:cardElevation="0dp"
-                                    app:strokeWidth="0dp"
+                                    app:strokeWidth="2dp"
+                                    app:strokeColor="@android:color/transparent"
                                     app:cardBackgroundColor="#FFF0E6">
 
                                     <TextView
@@ -128,6 +143,7 @@
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <TextView
+                                    android:id="@+id/tv_ongoing_projects_label"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="En Cours"
@@ -136,20 +152,27 @@
                                     android:layout_marginTop="8dp"/>
                             </LinearLayout>
 
-                            <!-- Stat Complétés -->
+                            <!-- Stat Complétés - CLIQUABLE -->
                             <LinearLayout
+                                android:id="@+id/layout_completed_projects"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:orientation="vertical"
-                                android:gravity="center">
+                                android:gravity="center"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="8dp">
 
                                 <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/card_completed_projects"
                                     android:layout_width="64dp"
                                     android:layout_height="64dp"
                                     app:cardCornerRadius="32dp"
                                     app:cardElevation="0dp"
-                                    app:strokeWidth="0dp"
+                                    app:strokeWidth="2dp"
+                                    app:strokeColor="@android:color/transparent"
                                     app:cardBackgroundColor="#FFF8E0">
 
                                     <TextView
@@ -164,6 +187,7 @@
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <TextView
+                                    android:id="@+id/tv_completed_projects_label"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Complétés"
@@ -184,6 +208,7 @@
                     android:layout_marginBottom="16dp">
 
                     <TextView
+                        android:id="@+id/tv_projects_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -199,6 +224,9 @@
                         android:text="Voir tout"
                         android:textSize="14sp"
                         android:textColor="#4285F4"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:padding="8dp"/>
                 </LinearLayout>
 

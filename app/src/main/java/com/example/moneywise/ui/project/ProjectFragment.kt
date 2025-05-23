@@ -8,15 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moneywise.R
 import com.example.moneywise.data.entity.Projet
 import com.example.moneywise.databinding.FragmentProjetBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import java.text.NumberFormat
 import java.util.Calendar
+import java.util.Locale
 
 class ProjectFragment : Fragment() {
 
@@ -24,6 +31,9 @@ class ProjectFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: ProjectViewModel
     private lateinit var projectAdapter: ProjectAdapter
+    private val numberFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
+        maximumFractionDigits = 0
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,29 +78,233 @@ class ProjectFragment : Fragment() {
             binding.tvCompletedProjectsCount.text = count.toString()
         }
 
-        // Observer la liste des projets
+        // Observer la liste des projets filtrée
         viewModel.projects.observe(viewLifecycleOwner) { projects ->
             projectAdapter.submitList(projects)
         }
 
-        // Observer les événements de navigation
-        viewModel.navigateToProjectDetail.observe(viewLifecycleOwner) { projectId ->
-            projectId?.let {
-                // Naviguer vers les détails du projet (à implémenter)
-                // findNavController().navigate(...)
-                viewModel.onProjectDetailComplete()
+        // Observer le filtre actuel pour mettre à jour l'UI
+        viewModel.currentFilter.observe(viewLifecycleOwner) { filter ->
+            updateFilterUI(filter)
+            updateProjectsTitle(filter)
+        }
+
+        // Observer l'événement d'affichage du dialogue d'investissement
+        viewModel.showInvestDialog.observe(viewLifecycleOwner) { projet ->
+            projet?.let {
+                showInvestProjectDialog(it)
+                viewModel.onInvestDialogComplete()
             }
         }
     }
 
+    private fun updateFilterUI(filter: ProjectFilter) {
+        // Réinitialiser tous les styles
+        resetFilterStyles()
+
+        // Appliquer le style actif au filtre sélectionné
+        when (filter) {
+            ProjectFilter.ACTIVE -> highlightFilter(
+                binding.cardActiveProjects,
+                binding.tvActiveProjectsLabel
+            )
+            ProjectFilter.ONGOING -> highlightFilter(
+                binding.cardOngoingProjects,
+                binding.tvOngoingProjectsLabel
+            )
+            ProjectFilter.COMPLETED -> highlightFilter(
+                binding.cardCompletedProjects,
+                binding.tvCompletedProjectsLabel
+            )
+            ProjectFilter.ALL -> {
+                // Style spécial pour "Voir tout"
+                binding.tvViewAll.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_color))
+                binding.tvViewAll.setBackgroundResource(R.drawable.bg_filter_selected)
+            }
+        }
+    }
+
+    private fun resetFilterStyles() {
+        // Réinitialiser les cartes de statistiques
+        binding.cardActiveProjects.strokeColor = ContextCompat.getColor(requireContext(), android.R.color.transparent)
+        binding.cardOngoingProjects.strokeColor = ContextCompat.getColor(requireContext(), android.R.color.transparent)
+        binding.cardCompletedProjects.strokeColor = ContextCompat.getColor(requireContext(), android.R.color.transparent)
+
+        // Réinitialiser les labels
+        binding.tvActiveProjectsLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        binding.tvOngoingProjectsLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        binding.tvCompletedProjectsLabel.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+
+        // Réinitialiser "Voir tout"
+        binding.tvViewAll.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_color))
+        binding.tvViewAll.background = null
+    }
+
+    private fun highlightFilter(card: com.google.android.material.card.MaterialCardView, label: TextView) {
+        card.strokeColor = ContextCompat.getColor(requireContext(), R.color.primary_color)
+        label.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary_color))
+        label.textSize = 15f
+    }
+
+    private fun updateProjectsTitle(filter: ProjectFilter) {
+        val title = when (filter) {
+            ProjectFilter.ALL -> "Tous les Projets"
+            ProjectFilter.ACTIVE -> "Projets Actifs"
+            ProjectFilter.ONGOING -> "Projets en Cours"
+            ProjectFilter.COMPLETED -> "Projets Complétés"
+        }
+        binding.tvProjectsTitle.text = title
+    }
+
     private fun setupClickListeners() {
+        // Bouton d'ajout de projet
         binding.fabAddProject.setOnClickListener {
             showAddProjectDialog()
         }
 
+        // Filtres cliquables
+        binding.layoutActiveProjects.setOnClickListener {
+            viewModel.showActiveProjects()
+        }
+
+        binding.layoutOngoingProjects.setOnClickListener {
+            viewModel.showOngoingProjects()
+        }
+
+        binding.layoutCompletedProjects.setOnClickListener {
+            viewModel.showCompletedProjects()
+        }
+
         binding.tvViewAll.setOnClickListener {
-            // Naviguer vers une vue complète des projets (à implémenter)
-            // findNavController().navigate(...)
+            viewModel.showAllProjects()
+        }
+    }
+
+    private fun showInvestProjectDialog(projet: Projet) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_invest_project, null)
+
+        // Récupérer les vues du dialogue
+        val tvProjectTitle = dialogView.findViewById<TextView>(R.id.tvProjectTitle)
+        val tvCurrentAmount = dialogView.findViewById<TextView>(R.id.tvCurrentAmount)
+        val tvNeededAmount = dialogView.findViewById<TextView>(R.id.tvNeededAmount)
+        val inputLayoutAmount = dialogView.findViewById<TextInputLayout>(R.id.inputLayoutAmount)
+        val etInvestAmount = dialogView.findViewById<TextInputEditText>(R.id.etInvestAmount)
+        val tvAvailableBalance = dialogView.findViewById<TextView>(R.id.tvAvailableBalance)
+
+        // Configurer les informations du projet
+        tvProjectTitle.text = "Investir dans ${projet.nom}"
+        tvCurrentAmount.text = "${numberFormat.format(projet.montant_actuel)} MGA"
+        tvNeededAmount.text = "${numberFormat.format(projet.montant_necessaire)} MGA"
+
+        // Afficher le solde disponible
+        viewModel.userBalance.observe(viewLifecycleOwner) { solde ->
+            tvAvailableBalance.text = "Solde disponible: ${numberFormat.format(solde)} MGA"
+        }
+
+        // Calculer le montant restant nécessaire
+        val montantRestantNecessaire = projet.montant_necessaire - projet.montant_actuel
+
+        // Ajouter un TextWatcher pour valider l'entrée en temps réel
+        etInvestAmount.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val montantText = s.toString()
+                if (montantText.isEmpty()) {
+                    inputLayoutAmount.error = null
+                    return
+                }
+
+                val montant = montantText.toDoubleOrNull()
+                if (montant == null) {
+                    inputLayoutAmount.error = "Montant invalide"
+                    return
+                }
+
+                // Vérifier si le montant est négatif
+                if (montant <= 0) {
+                    inputLayoutAmount.error = "Le montant doit être positif"
+                    return
+                }
+
+                // Vérifier si le montant dépasse le solde disponible
+                viewModel.userBalance.value?.let { solde ->
+                    if (montant > solde) {
+                        inputLayoutAmount.error = "Montant supérieur au solde disponible"
+                        return
+                    }
+                }
+
+                // Vérifier si le montant dépasse ce qui est nécessaire
+                if (montant > montantRestantNecessaire) {
+                    inputLayoutAmount.error = "Montant supérieur à ce qui est nécessaire (${numberFormat.format(montantRestantNecessaire)} MGA)"
+                    return
+                }
+
+                // Tout est valide
+                inputLayoutAmount.error = null
+            }
+        })
+
+        // Créer et afficher le dialogue
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Investissement")
+            .setView(dialogView)
+            .setPositiveButton("Investir", null)
+            .setNegativeButton("Annuler", null)
+            .create()
+
+        dialog.show()
+
+        // Configurer le bouton positif pour éviter qu'il ne ferme le dialogue en cas d'erreur
+        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val montantText = etInvestAmount.text.toString()
+
+            if (montantText.isEmpty()) {
+                inputLayoutAmount.error = "Veuillez saisir un montant"
+                return@setOnClickListener
+            }
+
+            val montant = montantText.toDoubleOrNull()
+            if (montant == null) {
+                inputLayoutAmount.error = "Montant invalide"
+                return@setOnClickListener
+            }
+
+            // Vérifier si le montant est négatif
+            if (montant <= 0) {
+                inputLayoutAmount.error = "Le montant doit être positif"
+                return@setOnClickListener
+            }
+
+            // Vérifier si le montant dépasse le solde disponible
+            viewModel.userBalance.value?.let { solde ->
+                if (montant > solde) {
+                    inputLayoutAmount.error = "Montant supérieur au solde disponible"
+                    return@setOnClickListener
+                }
+            }
+
+            // Vérifier si le montant dépasse ce qui est nécessaire
+            if (montant > montantRestantNecessaire) {
+                inputLayoutAmount.error = "Montant supérieur à ce qui est nécessaire"
+                return@setOnClickListener
+            }
+
+            // Tout est valide, procéder à l'investissement
+            viewModel.investInProject(
+                projetId = projet.id,
+                montantInvestissement = montant,
+                onSuccess = {
+                    Toast.makeText(requireContext(), "Investissement réussi", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                },
+                onError = { error ->
+                    Toast.makeText(requireContext(), "Erreur: $error", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
     }
 
@@ -161,7 +375,6 @@ class ProjectFragment : Fragment() {
                     }
 
                     // Insérer le projet dans la base de données
-                    // La progression est calculée automatiquement dans le ViewModel
                     viewModel.insertProjet(
                         nom = nom,
                         montantNecessaire = montantNecessaire,

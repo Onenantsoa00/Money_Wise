@@ -9,10 +9,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moneywise.R
 import com.example.moneywise.data.entity.Projet
+import com.google.android.material.card.MaterialCardView
 import java.text.NumberFormat
 import java.util.Locale
 
-class ProjetHomeAdapter(private var projets: List<Projet>) : RecyclerView.Adapter<ProjetHomeAdapter.ProjetViewHolder>() {
+class ProjetHomeAdapter(
+    private var projets: List<Projet>,
+    private val onProjetClick: (Projet) -> Unit
+) : RecyclerView.Adapter<ProjetHomeAdapter.ProjetViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjetViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -21,7 +25,9 @@ class ProjetHomeAdapter(private var projets: List<Projet>) : RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: ProjetViewHolder, position: Int) {
-        holder.bind(projets[position])
+        val projet = projets[position]
+        holder.bind(projet)
+        holder.itemView.setOnClickListener { onProjetClick(projet) }
     }
 
     override fun getItemCount(): Int = projets.size
@@ -32,6 +38,7 @@ class ProjetHomeAdapter(private var projets: List<Projet>) : RecyclerView.Adapte
     }
 
     class ProjetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val cardView: MaterialCardView = itemView as MaterialCardView
         private val progressBar: ProgressBar = itemView.findViewById(R.id.progressBar)
         private val tvPercentage: TextView = itemView.findViewById(R.id.tvPercentage)
         private val tvProjectName: TextView = itemView.findViewById(R.id.tvProjectName)
