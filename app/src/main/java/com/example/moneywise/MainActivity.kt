@@ -13,19 +13,19 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Banque
 import com.example.moneywise.databinding.ActivityMainBinding
-import com.example.moneywise.databinding.ItemBanqueBinding
 import com.example.moneywise.expenses.BanqueViewModel
 import com.example.moneywise.ui.Banque.BanqueAdapter
 import com.google.android.material.navigation.NavigationView
@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
     private val banqueViewModel: BanqueViewModel by viewModels()
     private val banqueNames = mutableListOf<String>()
 
@@ -68,8 +69,9 @@ class MainActivity : AppCompatActivity() {
     private fun setupNavigation() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        navController = findNavController(R.id.nav_host_fragment_content_main)
 
+        // Configuration des destinations de niveau supérieur
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home,
@@ -77,13 +79,119 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_projet,
                 R.id.nav_historique,
                 R.id.nav_emprunt,
-                R.id.nav_acquittement
+                R.id.nav_acquittement,
+                R.id.nav_transaction
             ),
             drawerLayout
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+
+        // CORRECTION PRINCIPALE : Gestion personnalisée de la navigation du drawer
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_home -> {
+                    // Nettoyer la pile de navigation et aller au home
+                    if (navController.currentDestination?.id != R.id.nav_home) {
+                        navController.popBackStack(R.id.nav_home, false)
+                        if (navController.currentDestination?.id != R.id.nav_home) {
+                            navController.navigate(R.id.nav_home)
+                        }
+                    }
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_emprunt -> {
+                    // Naviguer vers emprunt
+                    if (navController.currentDestination?.id != R.id.nav_emprunt) {
+                        try {
+                            navController.navigate(R.id.nav_emprunt)
+                        } catch (e: Exception) {
+                            // Si la navigation échoue, essayer de nettoyer la pile d'abord
+                            navController.popBackStack(R.id.nav_home, false)
+                            navController.navigate(R.id.nav_emprunt)
+                        }
+                    }
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_profile -> {
+                    if (navController.currentDestination?.id != R.id.nav_profile) {
+                        try {
+                            navController.navigate(R.id.nav_profile)
+                        } catch (e: Exception) {
+                            navController.popBackStack(R.id.nav_home, false)
+                            navController.navigate(R.id.nav_profile)
+                        }
+                    }
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_projet -> {
+                    if (navController.currentDestination?.id != R.id.nav_projet) {
+                        try {
+                            navController.navigate(R.id.nav_projet)
+                        } catch (e: Exception) {
+                            navController.popBackStack(R.id.nav_home, false)
+                            navController.navigate(R.id.nav_projet)
+                        }
+                    }
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_historique -> {
+                    if (navController.currentDestination?.id != R.id.nav_historique) {
+                        try {
+                            navController.navigate(R.id.nav_historique)
+                        } catch (e: Exception) {
+                            navController.popBackStack(R.id.nav_home, false)
+                            navController.navigate(R.id.nav_historique)
+                        }
+                    }
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_acquittement -> {
+                    if (navController.currentDestination?.id != R.id.nav_acquittement) {
+                        try {
+                            navController.navigate(R.id.nav_acquittement)
+                        } catch (e: Exception) {
+                            navController.popBackStack(R.id.nav_home, false)
+                            navController.navigate(R.id.nav_acquittement)
+                        }
+                    }
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_transaction -> {
+                    if (navController.currentDestination?.id != R.id.nav_transaction) {
+                        try {
+                            navController.navigate(R.id.nav_transaction)
+                        } catch (e: Exception) {
+                            navController.popBackStack(R.id.nav_home, false)
+                            navController.navigate(R.id.nav_transaction)
+                        }
+                    }
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Écouter les changements de destination pour mettre à jour l'état du drawer
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            // Mettre à jour l'élément sélectionné dans le drawer
+            when (destination.id) {
+                R.id.nav_home -> navView.setCheckedItem(R.id.nav_home)
+                R.id.nav_profile -> navView.setCheckedItem(R.id.nav_profile)
+                R.id.nav_projet -> navView.setCheckedItem(R.id.nav_projet)
+                R.id.nav_historique -> navView.setCheckedItem(R.id.nav_historique)
+                R.id.nav_emprunt -> navView.setCheckedItem(R.id.nav_emprunt)
+                R.id.nav_acquittement -> navView.setCheckedItem(R.id.nav_acquittement)
+                R.id.nav_transaction -> navView.setCheckedItem(R.id.nav_transaction)
+            }
+        }
     }
 
     private fun observeUserBalance() {
@@ -348,7 +456,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onBackPressed() {
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            // Gérer le bouton retour pour revenir au home si on n'y est pas
+            if (navController.currentDestination?.id != R.id.nav_home) {
+                navController.popBackStack(R.id.nav_home, false)
+                if (navController.currentDestination?.id != R.id.nav_home) {
+                    navController.navigate(R.id.nav_home)
+                }
+            } else {
+                super.onBackPressed()
+            }
+        }
     }
 }

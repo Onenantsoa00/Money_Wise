@@ -163,9 +163,15 @@ class HomeFragment : Fragment() {
             showTransactionDialog("Retrait")
         }
 
-        // Bouton Rembourser (Navigation vers Emprunt)
+        // Bouton Rembourser (Navigation vers Emprunt) - CORRECTION ICI
         binding.buttonRembourser.setOnClickListener {
-            findNavController().navigate(R.id.nav_emprunt)
+            try {
+                // Utiliser l'action définie dans le navigation graph
+                findNavController().navigate(R.id.action_homeFragment_to_empruntFragment)
+            } catch (e: Exception) {
+                // Fallback si l'action n'existe pas
+                findNavController().navigate(R.id.nav_emprunt)
+            }
         }
     }
 
