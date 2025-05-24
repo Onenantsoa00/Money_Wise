@@ -6,6 +6,7 @@
     app:cardElevation="2dp"
     app:cardCornerRadius="16dp"
     app:strokeWidth="0dp"
+    app:cardBackgroundColor="?attr/cardBackgroundColor"
     android:layout_marginBottom="16dp"
     android:id="@+id/card_project">
 
@@ -13,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/white"
+        android:background="?attr/cardBackgroundColor"
         android:padding="20dp">
 
         <LinearLayout
@@ -49,7 +50,7 @@
                 android:text="Nom du projet"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#333333"/>
+                android:textColor="?attr/textColorPrimary"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_status_background"
@@ -75,7 +76,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#F0F0F0"
+            android:background="?attr/dividerColor"
             android:layout_marginVertical="16dp"/>
 
         <LinearLayout
@@ -89,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:text="Budget: "
                 android:textSize="15sp"
-                android:textColor="#666666"/>
+                android:textColor="?attr/textColorSecondary"/>
 
             <TextView
                 android:id="@+id/tv_budget_total"
@@ -98,14 +99,14 @@
                 android:text="0 MGA"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="#333333"/>
+                android:textColor="?attr/textColorPrimary"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" / "
                 android:textSize="15sp"
-                android:textColor="#666666"/>
+                android:textColor="?attr/textColorSecondary"/>
 
             <TextView
                 android:id="@+id/tv_budget_current"
@@ -122,7 +123,7 @@
             android:layout_height="wrap_content"
             android:text="Progression"
             android:textSize="14sp"
-            android:textColor="#666666"
+            android:textColor="?attr/textColorSecondary"
             android:layout_marginBottom="8dp"/>
 
         <LinearLayout
@@ -163,7 +164,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@drawable/ic_attent"
-                android:tint="#666666"/>
+                android:tint="?attr/textColorSecondary"/>
 
             <TextView
                 android:id="@+id/tv_deadline"
@@ -171,7 +172,7 @@
                 android:layout_height="wrap_content"
                 android:text="Échéance: --/--/----"
                 android:textSize="14sp"
-                android:textColor="#666666"
+                android:textColor="?attr/textColorSecondary"
                 android:layout_marginStart="8dp"/>
         </LinearLayout>
     </LinearLayout>

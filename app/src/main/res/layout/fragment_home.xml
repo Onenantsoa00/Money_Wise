@@ -12,7 +12,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_grey"
+        android:background="?attr/backgroundColorPrimary"
         tools:context=".MainActivity">
 
         <!-- App Bar avec Toolbar -->
@@ -52,7 +52,7 @@
                     app:cardCornerRadius="24dp"
                     app:cardElevation="4dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="@color/white">
+                    app:cardBackgroundColor="?attr/cardBackgroundColor">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -75,7 +75,7 @@
                                 android:text="Hello Your Name"
                                 android:textSize="24sp"
                                 android:textStyle="bold"
-                                android:textColor="@color/black"
+                                android:textColor="?attr/textColorPrimary"
                                 android:layout_marginBottom="16dp"/>
 
                             <TextView
@@ -84,7 +84,7 @@
                                 android:text="BALANCE"
                                 android:textSize="14sp"
                                 android:alpha="0.7"
-                                android:textColor="@color/black"
+                                android:textColor="?attr/textColorSecondary"
                                 android:layout_marginBottom="8dp"/>
 
                             <TextView
@@ -94,7 +94,7 @@
                                 android:text="1.000.000.000 MGA"
                                 android:textSize="32sp"
                                 android:textStyle="bold"
-                                android:textColor="@color/black"/>
+                                android:textColor="?attr/textColorPrimary"/>
                         </LinearLayout>
 
                         <!-- Boutons d'action -->
@@ -104,7 +104,7 @@
                             app:cardCornerRadius="16dp"
                             app:cardElevation="0dp"
                             android:layout_marginTop="8dp"
-                            app:cardBackgroundColor="#F5F7FA">
+                            app:cardBackgroundColor="?attr/colorSurface">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -141,7 +141,7 @@
                                         android:layout_height="wrap_content"
                                         android:text="Add"
                                         android:textSize="12sp"
-                                        android:textColor="@color/black"
+                                        android:textColor="?attr/textColorPrimary"
                                         android:layout_marginTop="8dp"/>
                                 </LinearLayout>
 
@@ -173,7 +173,7 @@
                                         android:layout_height="wrap_content"
                                         android:text="Send"
                                         android:textSize="12sp"
-                                        android:textColor="@color/black"
+                                        android:textColor="?attr/textColorPrimary"
                                         android:layout_marginTop="8dp"/>
                                 </LinearLayout>
 
@@ -205,7 +205,7 @@
                                         android:layout_height="wrap_content"
                                         android:text="Rembourser"
                                         android:textSize="12sp"
-                                        android:textColor="@color/black"
+                                        android:textColor="?attr/textColorPrimary"
                                         android:layout_marginTop="8dp"/>
                                 </LinearLayout>
                             </LinearLayout>
@@ -226,7 +226,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Dernières transactions"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/textColorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -247,7 +247,7 @@
                     app:cardCornerRadius="20dp"
                     app:cardElevation="2dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="@color/white">
+                    app:cardBackgroundColor="?attr/cardBackgroundColor">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -271,7 +271,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="Type"
-                                    android:textColor="@color/black"
+                                    android:textColor="?attr/textColorSecondary"
                                     android:alpha="0.7"
                                     android:textStyle="bold"/>
 
@@ -280,7 +280,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="Montant"
-                                    android:textColor="@color/black"
+                                    android:textColor="?attr/textColorSecondary"
                                     android:alpha="0.7"
                                     android:textStyle="bold"/>
 
@@ -289,7 +289,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="Date"
-                                    android:textColor="@color/black"
+                                    android:textColor="?attr/textColorSecondary"
                                     android:alpha="0.7"
                                     android:textStyle="bold"/>
 
@@ -298,7 +298,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="Motif"
-                                    android:textColor="@color/black"
+                                    android:textColor="?attr/textColorSecondary"
                                     android:alpha="0.7"
                                     android:textStyle="bold"/>
 
@@ -307,7 +307,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="Description"
-                                    android:textColor="@color/black"
+                                    android:textColor="?attr/textColorSecondary"
                                     android:alpha="0.7"
                                     android:textStyle="bold"/>
                             </TableRow>
@@ -316,7 +316,7 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="#E0E0E0"
+                            android:background="?attr/dividerColor"
                             android:layout_marginVertical="8dp"/>
 
                         <androidx.recyclerview.widget.RecyclerView
@@ -343,7 +343,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Progression de projet"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/textColorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -390,7 +390,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Rappel"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/textColorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -411,7 +411,7 @@
                         app:cardCornerRadius="20dp"
                         app:cardElevation="2dp"
                         app:strokeWidth="0dp"
-                        app:cardBackgroundColor="@color/white">
+                        app:cardBackgroundColor="?attr/cardBackgroundColor">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -425,7 +425,7 @@
                                 android:text="Emprunts récents"
                                 android:textStyle="bold"
                                 android:textSize="16sp"
-                                android:textColor="@color/black"
+                                android:textColor="?attr/textColorPrimary"
                                 android:gravity="center"
                                 android:layout_marginBottom="12dp"/>
 
@@ -456,7 +456,7 @@
                         app:cardCornerRadius="20dp"
                         app:cardElevation="2dp"
                         app:strokeWidth="0dp"
-                        app:cardBackgroundColor="@color/white">
+                        app:cardBackgroundColor="?attr/cardBackgroundColor">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -470,7 +470,7 @@
                                 android:text="Acquittements récents"
                                 android:textStyle="bold"
                                 android:textSize="16sp"
-                                android:textColor="@color/black"
+                                android:textColor="?attr/textColorPrimary"
                                 android:gravity="center"
                                 android:layout_marginBottom="12dp"/>
 

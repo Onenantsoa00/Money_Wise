@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:background="@color/white"
+        android:background="?attr/cardBackgroundColor"
         android:clickable="true">
 
         <!-- Structure identique à votre emprunt existant mais avec des IDs -->
@@ -45,7 +45,7 @@
                 android:id="@+id/text_nom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#333333"
+                android:textColor="?attr/textColorPrimary"
                 android:textSize="14sp"
                 android:ellipsize="end"
                 android:maxLines="1"/>
@@ -55,7 +55,7 @@
             android:id="@+id/text_contact"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:textColor="#666666"
+            android:textColor="?attr/textColorSecondary"
             android:textSize="14sp"/>
 
         <TextView
@@ -79,14 +79,14 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_calendar"
-                android:tint="#666666"
+                android:tint="?attr/textColorSecondary"
                 android:layout_marginEnd="4dp"/>
 
             <TextView
                 android:id="@+id/text_date_emprunt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#666666"
+                android:textColor="?attr/textColorSecondary"
                 android:textSize="14sp"/>
         </LinearLayout>
 
@@ -113,6 +113,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"/>
         </LinearLayout>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_rembourser"
             android:layout_width="wrap_content"

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="?attr/backgroundColorPrimary">
 
     <!-- App Bar avec titre -->
     <com.google.android.material.appbar.AppBarLayout
@@ -39,13 +39,14 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
                 app:strokeWidth="0dp"
+                app:cardBackgroundColor="?attr/cardBackgroundColor"
                 android:layout_marginBottom="24dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@color/white"
+                    android:background="?attr/cardBackgroundColor"
                     android:padding="20dp">
 
                     <TextView
@@ -54,7 +55,7 @@
                         android:text="Résumé des acquittements"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="#333333"
+                        android:textColor="?attr/textColorPrimary"
                         android:layout_marginBottom="16dp"/>
 
                     <LinearLayout
@@ -101,7 +102,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Total reçu"
                                 android:textSize="14sp"
-                                android:textColor="#666666"/>
+                                android:textColor="?attr/textColorSecondary"/>
                         </LinearLayout>
 
                         <!-- Nombre de personnes -->
@@ -143,7 +144,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Personnes"
                                 android:textSize="14sp"
-                                android:textColor="#666666"/>
+                                android:textColor="?attr/textColorSecondary"/>
                         </LinearLayout>
 
                         <!-- Dernier remboursement -->
@@ -185,7 +186,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Dernier remboursement"
                                 android:textSize="14sp"
-                                android:textColor="#666666"/>
+                                android:textColor="?attr/textColorSecondary"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -206,7 +207,7 @@
                     android:text="Liste des acquittements"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="#333333"/>
+                    android:textColor="?attr/textColorPrimary"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:layout_width="wrap_content"
@@ -219,7 +220,7 @@
                     app:iconGravity="textStart"
                     app:strokeColor="#4285F4"
                     app:strokeWidth="1dp"
-                    android:backgroundTint="#FFFFFF"
+                    android:backgroundTint="?attr/cardBackgroundColor"
                     app:cornerRadius="20dp"/>
             </LinearLayout>
 
@@ -229,7 +230,8 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:strokeWidth="0dp">
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="?attr/cardBackgroundColor">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -246,7 +248,7 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="#F0F4F9"
+                            android:background="?attr/colorSurface"
                             android:padding="16dp"
                             android:orientation="horizontal">
 
@@ -254,7 +256,7 @@
                                 android:layout_width="120dp"
                                 android:layout_height="wrap_content"
                                 android:text="Nom"
-                                android:textColor="#666666"
+                                android:textColor="?attr/textColorSecondary"
                                 android:textStyle="bold"
                                 android:textSize="14sp"/>
 
@@ -262,7 +264,7 @@
                                 android:layout_width="120dp"
                                 android:layout_height="wrap_content"
                                 android:text="Contact"
-                                android:textColor="#666666"
+                                android:textColor="?attr/textColorSecondary"
                                 android:textStyle="bold"
                                 android:textSize="14sp"/>
 
@@ -270,7 +272,7 @@
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
                                 android:text="Montant"
-                                android:textColor="#666666"
+                                android:textColor="?attr/textColorSecondary"
                                 android:textStyle="bold"
                                 android:textSize="14sp"
                                 android:gravity="end"/>
@@ -279,7 +281,7 @@
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
                                 android:text="Date Crédit"
-                                android:textColor="#666666"
+                                android:textColor="?attr/textColorSecondary"
                                 android:textStyle="bold"
                                 android:textSize="14sp"
                                 android:layout_marginStart="16dp"/>
@@ -288,7 +290,7 @@
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
                                 android:text="Date Remise"
-                                android:textColor="#666666"
+                                android:textColor="?attr/textColorSecondary"
                                 android:textStyle="bold"
                                 android:textSize="14sp"
                                 android:layout_marginStart="16dp"/>
@@ -301,7 +303,7 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="#F0F0F0"/>
+                            android:background="?attr/dividerColor"/>
                         <!-- Liste des acquittements -->
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recycler_acquittements"

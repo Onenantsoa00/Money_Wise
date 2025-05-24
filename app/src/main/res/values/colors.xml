@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Couleurs existantes -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -29,13 +30,11 @@
     <color name="gray_light">#E0E0E0</color>
     <color name="blue">#1626A4</color>
 
-
     <color name="primaryColor">#6200EE</color>
     <color name="errorColor">#B00020</color>
-
     <color name="orange">#DC8D0C</color>
 
-    <!-- Nouvelles couleurs pour les statuts des projets -->
+    <!-- Couleurs pour les statuts des projets -->
     <color name="active_text">#34A853</color>
     <color name="active_bg">#E6F8EE</color>
     <color name="active_light_bg">#E6F8EE</color>
@@ -47,4 +46,23 @@
     <color name="completed_text">#FBBC05</color>
     <color name="completed_bg">#FFF8E0</color>
     <color name="completed_light_bg">#FFF8E0</color>
+
+    <!-- NOUVELLES COULEURS POUR LES THÈMES -->
+    <!-- Mode Clair (Base Gris) -->
+    <color name="light_background">#F8F9FA</color>
+    <color name="light_surface">#FFFFFF</color>
+    <color name="light_card_background">#FFFFFF</color>
+    <color name="light_text_primary">#212121</color>
+    <color name="light_text_secondary">#757575</color>
+    <color name="light_divider">#E0E0E0</color>
+
+    <!-- Mode Sombre (Bleu nuit/Noir) -->
+    <color name="dark_background">#0D1421</color>
+    <color name="dark_surface">#1A2332</color>
+    <color name="dark_card_background">#243447</color>
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#BDBDBD</color>
+    <color name="dark_divider">#37474F</color>
+    <color name="dark_primary">#4FC3F7</color>
+    <color name="dark_primary_variant">#0288D1</color>
 </resources>

@@ -12,7 +12,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F8F9FA">
+        android:background="?attr/backgroundColorPrimary">
 
         <!-- Header courbe avec effet de vague -->
         <FrameLayout
@@ -56,7 +56,7 @@
                     app:cardCornerRadius="60dp"
                     app:cardElevation="6dp"
                     app:strokeWidth="4dp"
-                    app:strokeColor="#FFFFFF">
+                    app:strokeColor="?attr/cardBackgroundColor">
 
                     <ImageView
                         android:id="@+id/profileImage"
@@ -73,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:text="@{viewModel.fullName}"
                     android:textSize="22sp"
-                    android:textColor="#333333"
+                    android:textColor="?attr/textColorPrimary"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp" />
 
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:text="@{viewModel.currentUser != null ? viewModel.currentUser.email : ``}"
                     android:textSize="16sp"
-                    android:textColor="#888888"
+                    android:textColor="?attr/textColorSecondary"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp" />
 
@@ -96,7 +96,7 @@
                     app:cardCornerRadius="24dp"
                     app:cardElevation="4dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#FFFFFF">
+                    app:cardBackgroundColor="?attr/cardBackgroundColor">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -109,7 +109,7 @@
                         <View
                             android:layout_width="80dp"
                             android:layout_height="3dp"
-                            android:background="#E0E0E0"
+                            android:background="?attr/dividerColor"
                             android:layout_marginBottom="24dp" />
 
                         <!-- Statistiques utilisateur -->
@@ -157,7 +157,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Transactions"
                                     android:textSize="12sp"
-                                    android:textColor="#888888" />
+                                    android:textColor="?attr/textColorSecondary" />
                             </LinearLayout>
 
                             <!-- Projets -->
@@ -199,7 +199,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Projets"
                                     android:textSize="12sp"
-                                    android:textColor="#888888" />
+                                    android:textColor="?attr/textColorSecondary" />
                             </LinearLayout>
 
                             <!-- Rappels -->
@@ -241,7 +241,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Rappels"
                                     android:textSize="12sp"
-                                    android:textColor="#888888" />
+                                    android:textColor="?attr/textColorSecondary" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -263,7 +263,7 @@
                         app:cardCornerRadius="16dp"
                         app:cardElevation="2dp"
                         app:strokeWidth="0dp"
-                        app:cardBackgroundColor="#FFFFFF">
+                        app:cardBackgroundColor="?attr/cardBackgroundColor">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -299,14 +299,14 @@
                                 android:textSize="16sp"
                                 android:gravity="start|center_vertical"
                                 android:paddingStart="16dp"
-                                android:textColor="#333333" />
+                                android:textColor="?attr/textColorPrimary" />
 
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_marginEnd="16dp"
                                 android:src="@drawable/ic_arrow_right"
-                                android:tint="#BBBBBB" />
+                                android:tint="?attr/textColorSecondary" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -316,7 +316,7 @@
                         app:cardCornerRadius="16dp"
                         app:cardElevation="2dp"
                         app:strokeWidth="0dp"
-                        app:cardBackgroundColor="#FFFFFF">
+                        app:cardBackgroundColor="?attr/cardBackgroundColor">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -352,14 +352,14 @@
                                 android:textSize="16sp"
                                 android:gravity="start|center_vertical"
                                 android:paddingStart="16dp"
-                                android:textColor="#333333" />
+                                android:textColor="?attr/textColorPrimary" />
 
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_marginEnd="16dp"
                                 android:src="@drawable/ic_arrow_right"
-                                android:tint="#BBBBBB" />
+                                android:tint="?attr/textColorSecondary" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -377,7 +377,7 @@
                         app:iconGravity="textStart"
                         app:strokeColor="#EA4335"
                         app:strokeWidth="1dp"
-                        android:backgroundTint="#FFFFFF"
+                        android:backgroundTint="?attr/cardBackgroundColor"
                         app:cornerRadius="16dp"
                         android:layout_marginTop="24dp"/>
                 </LinearLayout>

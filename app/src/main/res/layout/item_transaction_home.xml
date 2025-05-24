@@ -9,33 +9,34 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/black"/>
+        android:textColor="?attr/textColorPrimary"/>
 
     <TextView
         android:id="@+id/textTransactionAmount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textColor="?attr/textColorPrimary"/>
 
     <TextView
         android:id="@+id/textTransactionDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/black"/>
+        android:textColor="?attr/textColorPrimary"/>
 
     <TextView
         android:id="@+id/textTransactionMotif"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/black"/>
+        android:textColor="?attr/textColorPrimary"/>
 
     <TextView
         android:id="@+id/textTransactionDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/black"/>
+        android:textColor="?attr/textColorPrimary"/>
 </TableRow>

@@ -28,6 +28,7 @@ import com.example.moneywise.data.entity.Banque
 import com.example.moneywise.databinding.ActivityMainBinding
 import com.example.moneywise.expenses.BanqueViewModel
 import com.example.moneywise.ui.Banque.BanqueAdapter
+import com.example.moneywise.utils.ThemeManager
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.activity.viewModels
@@ -55,6 +56,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // NOUVEAU : Appliquer le thème avant super.onCreate()
+        ThemeManager.initializeTheme(this)
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -314,11 +318,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
+        // NOUVEAU : Mettre à jour l'icône du thème
+        updateThemeIcon(menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            // NOUVEAU : Gestion du toggle de thème
+            R.id.theme_toggle -> {
+                ThemeManager.toggleTheme(this)
+                recreate() // Recréer l'activité pour appliquer le nouveau thème
+                true
+            }
             R.id.Banque -> {
                 showAddBanqueDialog()
                 true
@@ -329,6 +341,24 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    // NOUVEAU : Méthode pour mettre à jour l'icône du thème
+    private fun updateThemeIcon(menu: Menu) {
+        val themeItem = menu.findItem(R.id.theme_toggle)
+        if (ThemeManager.isDarkMode(this)) {
+            themeItem.setIcon(R.drawable.ic_light_mode)
+            themeItem.title = "Mode clair"
+        } else {
+            themeItem.setIcon(R.drawable.ic_dark_mode)
+            themeItem.title = "Mode sombre"
+        }
+    }
+
+    // NOUVEAU : Mettre à jour l'icône quand le menu est préparé
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        updateThemeIcon(menu)
+        return super.onPrepareOptionsMenu(menu)
     }
 
     private fun showBanqueSettingsDialog() {
@@ -353,7 +383,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setView(dialogView)
             .setPositiveButton("Fermer", null)
             .show()
@@ -365,7 +395,7 @@ class MainActivity : AppCompatActivity() {
             hint = "Nouveau nom de la banque"
         }
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Modifier la banque")
             .setView(editText)
             .setPositiveButton("Valider") { _, _ ->
@@ -387,7 +417,7 @@ class MainActivity : AppCompatActivity() {
         }
         inputLayout.addView(firstEditText)
 
-        val dialog = AlertDialog.Builder(this)
+        val dialog = MaterialAlertDialogBuilder(this)
             .setTitle("Ajouter des banques")
             .setView(dialogView)
             .setPositiveButton("Valider") { _, _ ->
@@ -422,7 +452,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val dialog = AlertDialog.Builder(this)
+        val dialog = MaterialAlertDialogBuilder(this)
             .setTitle("Ajouter des banques")
             .setView(dialogView)
             .setPositiveButton("Valider") { _, _ ->

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="16dp"
-    android:background="@color/white"
+    android:background="?attr/cardBackgroundColor"
     android:clickable="true">
 
     <LinearLayout
@@ -22,20 +22,22 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:strokeWidth="0dp"
+            app:cardBackgroundColor="?attr/colorSurface"
             android:layout_marginEnd="8dp">
 
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_transaction"/>
+                android:src="@drawable/ic_transaction"
+                android:tint="?attr/textColorSecondary"/>
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/text_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#333333"
+            android:textColor="?attr/textColorPrimary"
             android:textSize="14sp"/>
     </LinearLayout>
 
@@ -46,6 +48,7 @@
         android:layout_weight="1"
         android:textStyle="bold"
         android:textSize="14sp"
+        android:textColor="?attr/textColorPrimary"
         android:gravity="end"/>
 
     <TextView
@@ -53,7 +56,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.5"
-        android:textColor="#666666"
+        android:textColor="?attr/textColorSecondary"
         android:textSize="14sp"
         android:gravity="center"/>
 
@@ -62,7 +65,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:textColor="#333333"
+        android:textColor="?attr/textColorPrimary"
         android:textSize="14sp"
         android:ellipsize="end"
         android:maxLines="1"/>
