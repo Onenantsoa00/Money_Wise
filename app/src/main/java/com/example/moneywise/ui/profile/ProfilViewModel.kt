@@ -4,6 +4,8 @@ import android.app.Application
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Utilisateur
@@ -17,7 +19,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ProfilViewModel(application: Application) : AndroidViewModel(application) {
-    private val utilisateurDao = AppDatabase.getDatabase(application).utilisateurDao()
+    private val database = AppDatabase.getDatabase(application)
+    private val utilisateurDao = database.utilisateurDao()
+    private val transactionDao = database.transactionDao()
+    private val projetDao = database.ProjetDao()
+    private val empruntDao = database.empruntDao()
+    private val acquittementDao = database.AcquittementDao()
     private val userRepository = UserRepository(utilisateurDao)
 
     private val _currentUser = MutableStateFlow<Utilisateur?>(null)
@@ -28,6 +35,29 @@ class ProfilViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
+
+    // Statistiques dynamiques
+    val transactionsCount: LiveData<Int> = transactionDao.getTotalTransactionsCount()
+    val unfinishedProjectsCount: LiveData<Int> = projetDao.getTotalUnfinishedProjectsCount()
+
+    // Combinaison des emprunts et acquittements pour les rappels
+    private val unpaidLoansCount: LiveData<Int> = empruntDao.getUnpaidLoansCount()
+    private val totalAcquittementCount: LiveData<Int> = acquittementDao.getTotalAcquittementCount()
+
+    val remindersCount: LiveData<Int> = MediatorLiveData<Int>().apply {
+        var loansCount = 0
+        var acquittementCount = 0
+
+        addSource(unpaidLoansCount) { count ->
+            loansCount = count ?: 0
+            value = loansCount + acquittementCount
+        }
+
+        addSource(totalAcquittementCount) { count ->
+            acquittementCount = count ?: 0
+            value = loansCount + acquittementCount
+        }
+    }
 
     // Propriétés pour le data binding
     val text: String

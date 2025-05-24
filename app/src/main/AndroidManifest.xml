@@ -3,11 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions pour accéder aux images et à la caméra -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage" />
 
     <!-- Permissions pour l'accès internet (si vous voulez synchroniser les avatars) -->
     <uses-permission android:name="android.permission.INTERNET" />

@@ -38,6 +38,10 @@ interface ProjetDao {
     @Query("SELECT COUNT(*) FROM Projet WHERE progression = 100")
     fun countCompletedProjects(): LiveData<Int>
 
+    // Nouvelle méthode pour compter tous les projets non finis
+    @Query("SELECT COUNT(*) FROM Projet WHERE progression < 100")
+    fun getTotalUnfinishedProjectsCount(): LiveData<Int>
+
     @Query("SELECT * FROM Projet ORDER BY date_limite ASC LIMIT 4")
     fun getRecentProjects(): LiveData<List<Projet>>
 

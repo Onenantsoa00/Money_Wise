@@ -32,4 +32,8 @@ interface TransactionDao {
 
     @Query("SELECT * FROM 'Transaction' ORDER BY date DESC LIMIT 5")
     fun getRecentTransactions(): LiveData<List<Transaction>>
+
+    // Nouvelle méthode pour compter toutes les transactions
+    @Query("SELECT COUNT(*) FROM 'Transaction'")
+    fun getTotalTransactionsCount(): LiveData<Int>
 }

@@ -24,4 +24,7 @@ interface AcquittementDao {
     @Query("SELECT * FROM Acquittement ORDER BY id DESC LIMIT 5")
     fun getRecentAcquittements(): LiveData<List<Acquittement>>
 
+    // Nouvelle méthode pour compter tous les acquittements
+    @Query("SELECT COUNT(*) FROM Acquittement")
+    fun getTotalAcquittementCount(): LiveData<Int>
 }

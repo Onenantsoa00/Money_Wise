@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class ProfilViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ProfilViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
             return ProfilViewModel(application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

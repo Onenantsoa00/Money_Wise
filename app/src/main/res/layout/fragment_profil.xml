@@ -47,14 +47,52 @@
                 <!-- Espace pour aligner avec l'image de profil -->
                 <Space
                     android:layout_width="match_parent"
-                    android:layout_height="160dp" />
+                    android:layout_height="100dp" />
 
-                <!-- Carte de profil -->
+                <!-- Image profil circulaire -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    app:cardCornerRadius="60dp"
+                    app:cardElevation="6dp"
+                    app:strokeWidth="4dp"
+                    app:strokeColor="#FFFFFF">
+
+                    <ImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/icon_acount_circulaire" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Informations utilisateur sous l'avatar -->
+                <TextView
+                    android:id="@+id/profileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewModel.fullName}"
+                    android:textSize="22sp"
+                    android:textColor="#333333"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/profileEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewModel.currentUser != null ? viewModel.currentUser.email : ``}"
+                    android:textSize="16sp"
+                    android:textColor="#888888"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Carte de statistiques -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="-60dp"
+                    android:layout_marginTop="24dp"
                     app:cardCornerRadius="24dp"
                     app:cardElevation="4dp"
                     app:strokeWidth="0dp"
@@ -65,45 +103,20 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center_horizontal"
-                        android:padding="16dp">
+                        android:padding="24dp">
 
-                        <!-- Espace pour l'image de profil -->
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="60dp" />
-
-                        <TextView
-                            android:id="@+id/profileName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{viewModel.fullName}"
-                            android:textSize="22sp"
-                            android:textColor="#333333"
-                            android:textStyle="bold"
-                            android:layout_marginTop="16dp" />
-
-                        <TextView
-                            android:id="@+id/profileEmail"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{viewModel.currentUser != null ? viewModel.currentUser.email : ``}"
-                            android:textSize="16sp"
-                            android:textColor="#888888"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="16dp" />
                         <!-- Ligne de séparation -->
                         <View
                             android:layout_width="80dp"
                             android:layout_height="3dp"
                             android:background="#E0E0E0"
-                            android:layout_marginVertical="16dp" />
+                            android:layout_marginBottom="24dp" />
 
                         <!-- Statistiques utilisateur -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginVertical="16dp">
+                            android:orientation="horizontal">
 
                             <!-- Transactions -->
                             <LinearLayout
@@ -130,9 +143,10 @@
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <TextView
+                                    android:id="@+id/transactionsCountText"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="24"
+                                    android:text="0"
                                     android:textSize="18sp"
                                     android:textStyle="bold"
                                     android:textColor="#4285F4"
@@ -171,9 +185,10 @@
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <TextView
+                                    android:id="@+id/projectsCountText"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="4"
+                                    android:text="0"
                                     android:textSize="18sp"
                                     android:textStyle="bold"
                                     android:textColor="#34A853"
@@ -212,9 +227,10 @@
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <TextView
+                                    android:id="@+id/remindersCountText"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="6"
+                                    android:text="0"
                                     android:textSize="18sp"
                                     android:textStyle="bold"
                                     android:textColor="#FBBC05"
@@ -367,24 +383,5 @@
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
-        <!-- Image profil circulaire (placée en dernier pour être au-dessus) -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="160dp"
-            app:cardCornerRadius="60dp"
-            app:cardElevation="6dp"
-            app:strokeWidth="4dp"
-            app:strokeColor="#FFFFFF">
-
-            <ImageView
-                android:id="@+id/profileImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/icon_acount_circulaire" />
-        </com.google.android.material.card.MaterialCardView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

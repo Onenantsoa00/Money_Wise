@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Dossier pour les images temporaires de la caméra -->
-    <external-cache-path name="camera_images" path="." />
+    <!-- Chemin pour les fichiers externes -->
+    <external-files-path name="my_images" path="Pictures" />
+    <external-files-path name="my_files" path="." />
 
-    <!-- Dossier pour les images de l'application -->
-    <external-files-path name="app_images" path="Pictures" />
+    <!-- Chemin pour le cache externe -->
+    <external-cache-path name="my_cache" path="." />
 
-    <!-- Dossier interne pour les images -->
-    <files-path name="internal_images" path="images/" />
-
-    <!-- Cache interne -->
-    <cache-path name="cache_images" path="images/" />
+    <!-- Chemin pour les fichiers internes -->
+    <files-path name="my_internal" path="." />
 </paths>

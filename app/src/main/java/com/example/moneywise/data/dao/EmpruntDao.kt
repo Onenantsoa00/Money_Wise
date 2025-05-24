@@ -26,4 +26,8 @@ interface EmpruntDao {
 
     @Query("SELECT * FROM Emprunt WHERE est_rembourse = 0 ORDER BY id DESC LIMIT 5")
     fun getRecentEmpruntsNonRembourses(): LiveData<List<Emprunt>>
+
+    // Nouvelle méthode pour compter les emprunts non remboursés
+    @Query("SELECT COUNT(*) FROM Emprunt WHERE est_rembourse = 0")
+    fun getUnpaidLoansCount(): LiveData<Int>
 }
