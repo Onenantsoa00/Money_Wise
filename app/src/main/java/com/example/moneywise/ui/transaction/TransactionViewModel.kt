@@ -6,6 +6,7 @@ import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.dao.BanqueDao
 import com.example.moneywise.data.entity.Transaction
 import com.example.moneywise.data.entity.Utilisateur
+import com.example.moneywise.services.BalanceUpdateService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TransactionViewModel @Inject constructor(
     private val db: AppDatabase,
-    private val banqueDao: BanqueDao
+    private val banqueDao: BanqueDao,
+    private val balanceUpdateService: BalanceUpdateService
 ) : ViewModel() {
 
     suspend fun getCurrentUser(): Utilisateur? {
@@ -51,20 +53,44 @@ class TransactionViewModel @Inject constructor(
                 // Insérer la transaction
                 db.transactionDao().insertTransaction(transaction)
 
-                // Mettre à jour le solde de l'utilisateur
-                val user = db.utilisateurDao().getUserById(userId)
-                user?.let {
-                    val newBalance = when (type) {
-                        "Dépôt" -> it.solde + amount
-                        "Retrait" -> it.solde - amount
-                        else -> it.solde
-                    }
-                    db.utilisateurDao().update(it.copy(solde = newBalance))
+                // 🔥 MISE À JOUR DU SOLDE avec le service
+                val balanceUpdated = balanceUpdateService.updateUserBalance(
+                    context = db.openHelper.writableDatabase.path.let {
+                        // Récupérer le context depuis l'application
+                        android.app.Application().applicationContext
+                    },
+                    userId = userId,
+                    transactionType = type,
+                    amount = amount
+                )
+
+                if (balanceUpdated) {
+                    onSuccess()
+                } else {
+                    onError("Erreur lors de la mise à jour du solde")
                 }
 
-                onSuccess()
             } catch (e: Exception) {
                 onError(e.message ?: "Erreur inconnue lors de l'ajout de la transaction")
+            }
+        }
+    }
+
+    /**
+     * Recalcule le solde total de l'utilisateur
+     */
+    fun recalculateUserBalance(userId: Int, onComplete: (Double) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val newBalance = balanceUpdateService.recalculateBalance(
+                    context = db.openHelper.writableDatabase.path.let {
+                        android.app.Application().applicationContext
+                    },
+                    userId = userId
+                )
+                onComplete(newBalance)
+            } catch (e: Exception) {
+                onComplete(0.0)
             }
         }
     }

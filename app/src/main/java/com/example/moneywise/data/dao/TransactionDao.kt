@@ -21,6 +21,9 @@ interface TransactionDao {
     @Query("SELECT * FROM 'Transaction' WHERE id = :id")
     suspend fun getTransactionById(id: Int): Transaction?
 
+    @Query("SELECT * FROM 'Transaction' WHERE id_utilisateur = :userId ORDER BY date DESC")
+    suspend fun getTransactionsByUserId(userId: Int): List<Transaction>
+
     @Update
     suspend fun updateTransaction(transaction: Transaction)
 
@@ -31,9 +34,15 @@ interface TransactionDao {
     suspend fun deleteAllTransaction()
 
     @Query("SELECT * FROM 'Transaction' ORDER BY date DESC LIMIT 5")
-    fun getRecentTransactions(): LiveData<List<Transaction>>
+    fun getRecentTransactions(): Flow<List<Transaction>>
 
-    // Nouvelle méthode pour compter toutes les transactions
     @Query("SELECT COUNT(*) FROM 'Transaction'")
-    fun getTotalTransactionsCount(): LiveData<Int>
+    fun getTotalTransactionsCount(): Flow<Int>
+
+    // Nouvelles méthodes pour le calcul du solde
+    @Query("SELECT COALESCE(SUM(CAST(montants AS REAL)), 0.0) FROM 'Transaction' WHERE id_utilisateur = :userId AND type IN ('DEPOT', 'CREDIT', 'RECU')")
+    suspend fun getTotalDeposits(userId: Int): Double
+
+    @Query("SELECT COALESCE(SUM(CAST(montants AS REAL)), 0.0) FROM 'Transaction' WHERE id_utilisateur = :userId AND type IN ('RETRAIT', 'DEBIT', 'ENVOYE', 'PAIEMENT', 'TRANSFERT')")
+    suspend fun getTotalWithdrawals(userId: Int): Double
 }

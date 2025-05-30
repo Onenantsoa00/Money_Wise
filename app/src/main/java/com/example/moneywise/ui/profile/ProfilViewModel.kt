@@ -6,10 +6,11 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Utilisateur
-import com.example.moneywise.data.repository.UserRepository
+import com.example.moneywise.data.repository.UtilisateurRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +26,7 @@ class ProfilViewModel(application: Application) : AndroidViewModel(application) 
     private val projetDao = database.ProjetDao()
     private val empruntDao = database.empruntDao()
     private val acquittementDao = database.AcquittementDao()
-    private val userRepository = UserRepository(utilisateurDao)
+    private val UtilisateurRepository = UtilisateurRepository(utilisateurDao)
 
     private val _currentUser = MutableStateFlow<Utilisateur?>(null)
     val currentUser: StateFlow<Utilisateur?> = _currentUser
@@ -37,7 +38,7 @@ class ProfilViewModel(application: Application) : AndroidViewModel(application) 
     val errorMessage: StateFlow<String?> = _errorMessage
 
     // Statistiques dynamiques
-    val transactionsCount: LiveData<Int> = transactionDao.getTotalTransactionsCount()
+    val transactionsCount: LiveData<Int> = transactionDao.getTotalTransactionsCount().asLiveData()
     val unfinishedProjectsCount: LiveData<Int> = projetDao.getTotalUnfinishedProjectsCount()
 
     // Combinaison des emprunts et acquittements pour les rappels
@@ -98,7 +99,7 @@ class ProfilViewModel(application: Application) : AndroidViewModel(application) 
     suspend fun updateUser(user: Utilisateur): Result<Unit> {
         return try {
             _isLoading.value = true
-            val result = userRepository.updateUser(user)
+            val result = UtilisateurRepository.updateUser(user)
             if (result.isSuccess) {
                 _currentUser.value = user
                 _errorMessage.value = null
@@ -121,7 +122,7 @@ class ProfilViewModel(application: Application) : AndroidViewModel(application) 
                 val currentUserValue = _currentUser.value
                 if (currentUserValue != null) {
                     val avatarPath = avatarUri?.toString()
-                    val result = userRepository.updateUserAvatar(currentUserValue.id, avatarPath)
+                    val result = UtilisateurRepository.updateUserAvatar(currentUserValue.id, avatarPath)
 
                     if (result.isSuccess) {
                         _currentUser.value = currentUserValue.copy(avatar = avatarPath)

@@ -1,6 +1,9 @@
 package com.example.moneywise
 
 import android.app.DatePickerDialog
+import android.content.pm.PackageManager
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -32,7 +35,10 @@ import com.example.moneywise.utils.ThemeManager
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.moneywise.data.entity.Transaction
+import com.example.moneywise.utils.Constants
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -64,10 +70,44 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS),
+                100)
+        }
+
         setSupportActionBar(binding.appBarMain.toolbar)
         observeUserBalance()
-
+        checkAndRequestSmsPermissions()
         setupNavigation()
+    }
+
+    private fun checkAndRequestSmsPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val permissionsNeeded = mutableListOf<String>()
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(Manifest.permission.RECEIVE_SMS)
+            }
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(Manifest.permission.READ_SMS)
+            }
+
+            if (permissionsNeeded.isNotEmpty()) {
+                ActivityCompat.requestPermissions(this, permissionsNeeded.toTypedArray(), Constants.SMS_PERMISSION_REQUEST_CODE)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == Constants.SMS_PERMISSION_REQUEST_CODE) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                Toast.makeText(this, "Permissions SMS accordées", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Les permissions SMS sont nécessaires pour le traitement automatique", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun setupNavigation() {

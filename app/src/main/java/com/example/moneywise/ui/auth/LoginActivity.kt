@@ -9,7 +9,9 @@ import com.example.moneywise.R
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.databinding.ActivityLoginBinding
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding

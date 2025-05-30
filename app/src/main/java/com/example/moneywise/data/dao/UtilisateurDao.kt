@@ -46,7 +46,16 @@ interface UtilisateurDao {
     @Delete
     suspend fun delete(user: Utilisateur)
 
-    // Nouvelle méthode pour mettre à jour seulement l'avatar
     @Query("UPDATE Utilisateur SET avatar = :avatarPath WHERE id = :userId")
     suspend fun updateAvatar(userId: Int, avatarPath: String?)
+
+    // Nouvelles méthodes pour la gestion du solde
+    @Query("UPDATE Utilisateur SET solde = :newBalance WHERE id = :userId")
+    suspend fun updateBalance(userId: Int, newBalance: Double)
+
+    @Query("UPDATE Utilisateur SET solde = solde + :amount WHERE id = :userId")
+    suspend fun addToBalance(userId: Int, amount: Double)
+
+    @Query("UPDATE Utilisateur SET solde = solde - :amount WHERE id = :userId")
+    suspend fun subtractFromBalance(userId: Int, amount: Double)
 }

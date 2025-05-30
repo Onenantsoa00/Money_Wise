@@ -1,23 +1,22 @@
 package com.example.moneywise.data.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.Update
+import androidx.room.*
 import com.example.moneywise.data.entity.Banque
-import com.example.moneywise.data.relations.BanqueAvecTransactions
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BanqueDao {
     @Insert
-    suspend fun insertBanque(banque: Banque)
+    suspend fun insert(banque: Banque): Long
 
-    @Transaction
-    @Query("SELECT * FROM Banque WHERE id = :banqueId")
-    fun getBanqueAvecTransactions(banqueId: Int): BanqueAvecTransactions
+    @Query("SELECT * FROM Banque WHERE id = :id")
+    suspend fun getById(id: Int): Banque?
+
+    @Query("SELECT * FROM Banque WHERE code = :code")
+    suspend fun getByCode(code: String): Banque?
+
+    @Query("SELECT * FROM Banque WHERE nom = :nom")
+    suspend fun getByNom(nom: String): Banque?
 
     @Query("SELECT * FROM Banque")
     fun getAllBanques(): Flow<List<Banque>>
@@ -28,7 +27,19 @@ interface BanqueDao {
     @Update
     suspend fun updateBanque(banque: Banque)
 
-    @Query("SELECT * FROM Banque WHERE nom = :nom LIMIT 1")
-    suspend fun getBanqueByNom(nom: String): Banque?
+    @Query("INSERT OR IGNORE INTO Banque (nom, code, type) VALUES ('Telma MVola', 'MVOLA', 'MOBILE_MONEY')")
+    suspend fun insertDefaultMVola()
 
+    @Query("INSERT OR IGNORE INTO Banque (nom, code, type) VALUES ('Airtel Money', 'AIRTEL', 'MOBILE_MONEY')")
+    suspend fun insertDefaultAirtel()
+
+    @Query("INSERT OR IGNORE INTO Banque (nom, code, type) VALUES ('Orange Money', 'ORANGE', 'MOBILE_MONEY')")
+    suspend fun insertDefaultOrange()
+
+    // Méthodes supplémentaires pour compatibilité
+    @Insert
+    suspend fun insertBanque(banque: Banque): Long
+
+    @Query("SELECT * FROM Banque WHERE nom = :nom")
+    suspend fun getBanqueByNom(nom: String): Banque?
 }

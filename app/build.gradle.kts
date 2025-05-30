@@ -3,14 +3,19 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
     id ("dagger.hilt.android.plugin")
+    // Supprimez la ligne Python pour éviter les erreurs
+    // id("com.chaquo.python")
 }
 
 android {
     namespace = "com.example.moneywise"
     compileSdk = 35
+
     kapt {
         correctErrorTypes = true
+        useBuildCache = false
     }
+
     defaultConfig {
         applicationId = "com.example.moneywise"
         minSdk = 25
@@ -19,6 +24,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Supprimez la configuration NDK pour Python
+        // ndk {
+        //     abiFilters += listOf("arm64-v8a", "x86_64")
+        // }
     }
 
     buildTypes {
@@ -44,7 +54,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -58,9 +67,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-
     implementation ("com.google.android.material:material:1.11.0")
-
 
     //hilt
     implementation("com.google.dagger:hilt-android:2.48.1")
@@ -77,7 +84,6 @@ dependencies {
 
     // ViewModel
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-
     implementation ("androidx.activity:activity-ktx:1.6.0")
     implementation ("androidx.fragment:fragment-ktx:1.5.3")
 

@@ -35,7 +35,7 @@ class HomeViewModel(private val db: AppDatabase) : ViewModel() {
     val projetsRecents: LiveData<List<Projet>> = db.ProjetDao().getRecentProjects()
 
     // Pour les transactions récentes
-    val transactionsRecentes: LiveData<List<Transaction>> = db.transactionDao().getRecentTransactions()
+    val transactionsRecentes: LiveData<List<Transaction>> = db.transactionDao().getRecentTransactions().asLiveData()
 
     // Banques disponibles (converti en LiveData)
     private val _banks = MutableLiveData<List<String>>()

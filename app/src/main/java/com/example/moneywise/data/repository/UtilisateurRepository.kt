@@ -1,12 +1,13 @@
 package com.example.moneywise.data.repository
 
+import androidx.lifecycle.LiveData
 import com.example.moneywise.data.dao.UtilisateurDao
 import com.example.moneywise.data.entity.Utilisateur
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import java.util.Date
 
-class UserRepository(private val utilisateurDao: UtilisateurDao) {
+class UtilisateurRepository(private val utilisateurDao: UtilisateurDao) {
 
     suspend fun registerUser(
         nom: String,
@@ -72,5 +73,45 @@ class UserRepository(private val utilisateurDao: UtilisateurDao) {
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    suspend fun getUserByEmail(email: String): Utilisateur? {
+        return utilisateurDao.getUserByEmail(email)
+    }
+
+    fun getSoldeUtilisateur(): LiveData<Double?> {
+        return utilisateurDao.getSoldeUtilisateur()
+    }
+
+    fun getNomUtilisateur(): LiveData<String?> {
+        return utilisateurDao.getNomUtilisateur()
+    }
+
+    fun getAvatarUtilisateur(): LiveData<String?> {
+        return utilisateurDao.getAvatarUtilisateur()
+    }
+
+    fun getAllUtilisateurs(): Flow<List<Utilisateur>> {
+        return utilisateurDao.getAllUtilisateurs()
+    }
+
+    suspend fun getFirstUtilisateur(): Utilisateur? {
+        return utilisateurDao.getFirstUtilisateur()
+    }
+
+    suspend fun getUserById(id: Int): Utilisateur? {
+        return utilisateurDao.getUserById(id)
+    }
+
+    suspend fun update(user: Utilisateur) {
+        utilisateurDao.update(user)
+    }
+
+    suspend fun delete(user: Utilisateur) {
+        utilisateurDao.delete(user)
+    }
+
+    suspend fun updateAvatar(userId: Int, avatarPath: String?) {
+        utilisateurDao.updateAvatar(userId, avatarPath)
     }
 }

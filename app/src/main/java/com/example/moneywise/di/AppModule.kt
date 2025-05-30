@@ -2,7 +2,6 @@ package com.example.moneywise.di
 
 import android.content.Context
 import com.example.moneywise.data.AppDatabase
-import com.example.moneywise.data.repository.BanqueRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

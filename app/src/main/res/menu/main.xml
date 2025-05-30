@@ -17,4 +17,17 @@
         android:orderInCategory="100"
         android:title="Banque setting"
         app:showAsAction="never" />
+
+    <!-- NOUVEAU : Menu pour l'IA -->
+    <item
+        android:id="@+id/ai_transactions"
+        android:icon="@drawable/ic_ai"
+        android:title="Transactions IA"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/ai_settings"
+        android:icon="@drawable/ic_ai_settings"
+        android:title="Paramètres IA"
+        app:showAsAction="never" />
 </menu>

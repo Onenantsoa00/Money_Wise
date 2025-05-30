@@ -11,9 +11,15 @@
         android:maxSdkVersion="28"
         tools:ignore="ScopedStorage" />
 
-    <!-- Permissions pour l'accès internet (si vous voulez synchroniser les avatars) -->
+    <!-- Permissions pour l'accès internet -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Permissions pour SMS -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
 
     <!-- Déclaration que l'appareil photo n'est pas obligatoire -->
     <uses-feature
@@ -36,7 +42,7 @@
         android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
 
-        <!-- Activité de connexion (point d'entrée de l'application) -->
+        <!-- Activité de connexion -->
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="true"
@@ -71,7 +77,7 @@
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop" />
 
-        <!-- Provider pour partager des fichiers (nécessaire pour la caméra sur Android 7+) -->
+        <!-- Provider pour partager des fichiers -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -81,6 +87,16 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- 🔥 RECEIVER SMS PRINCIPAL - Utilise SmsListener qui met à jour le solde -->
+        <receiver
+            android:name=".services.SmsListener"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

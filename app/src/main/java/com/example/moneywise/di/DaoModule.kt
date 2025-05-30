@@ -1,9 +1,9 @@
 package com.example.moneywise.di
 
 import com.example.moneywise.data.AppDatabase
-import com.example.moneywise.data.dao.BanqueDao
-import com.example.moneywise.data.dao.TransactionDao
-import com.example.moneywise.data.dao.UtilisateurDao
+import com.example.moneywise.data.dao.*
+import com.example.moneywise.data.repository.*
+import com.example.moneywise.services.BalanceUpdateService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,21 +14,65 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DaoModule {
 
+    // Providers pour les DAOs
     @Provides
-    @Singleton
-    fun provideUserDao(database: AppDatabase): UtilisateurDao {
-        return database.utilisateurDao()
-    }
-
-    @Provides
-    @Singleton
     fun provideTransactionDao(database: AppDatabase): TransactionDao {
         return database.transactionDao()
     }
 
     @Provides
-    @Singleton
+    fun provideHistoriqueDao(database: AppDatabase): HistoriqueDao {
+        return database.historiqueDao()
+    }
+
+    @Provides
+    fun provideUtilisateurDao(database: AppDatabase): UtilisateurDao {
+        return database.utilisateurDao()
+    }
+
+    @Provides
     fun provideBanqueDao(database: AppDatabase): BanqueDao {
         return database.banqueDao()
+    }
+
+    @Provides
+    fun provideEmpruntDao(database: AppDatabase): EmpruntDao {
+        return database.empruntDao()
+    }
+
+    @Provides
+    fun provideAcquittementDao(database: AppDatabase): AcquittementDao {
+        return database.AcquittementDao()
+    }
+
+    @Provides
+    fun provideProjetDao(database: AppDatabase): ProjetDao {
+        return database.ProjetDao()
+    }
+
+    // Providers pour les Repositories
+    @Provides
+    @Singleton
+    fun provideTransactionRepository(transactionDao: TransactionDao): TransactionRepository {
+        return TransactionRepository(transactionDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHistoriqueRepository(historiqueDao: HistoriqueDao): HistoriqueRepository {
+        return HistoriqueRepository(historiqueDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUtilisateurRepository(utilisateurDao: UtilisateurDao): UtilisateurRepository {
+        return UtilisateurRepository(utilisateurDao)
+    }
+
+    // 🔥 NOUVEAU: Provider pour le service de mise à jour du solde
+    @Provides
+    @Singleton
+    fun provideBalanceUpdateService(): BalanceUpdateService {
+        return BalanceUpdateService()
     }
 }

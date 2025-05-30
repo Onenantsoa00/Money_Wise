@@ -2,10 +2,10 @@ package com.example.moneywise.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moneywise.data.repository.UserRepository
+import com.example.moneywise.data.repository.UtilisateurRepository
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
+class AuthViewModel(private val UtilisateurRepository: UtilisateurRepository) : ViewModel() {
 
     fun registerUser(
         nom: String,
@@ -15,7 +15,7 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
         onResult: (Result<Boolean>) -> Unit
     ) {
         viewModelScope.launch {
-            val result = userRepository.registerUser(nom, prenom, email, password)
+            val result = UtilisateurRepository.registerUser(nom, prenom, email, password)
             result.fold(
                 onSuccess = { onResult(Result.success(true)) },
                 onFailure = { onResult(Result.failure(it)) }
@@ -29,7 +29,7 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
         onResult: (Result<Boolean>) -> Unit
     ) {
         viewModelScope.launch {
-            val result = userRepository.loginUser(email, password)
+            val result = UtilisateurRepository.loginUser(email, password)
             result.fold(
                 onSuccess = { onResult(Result.success(true)) },
                 onFailure = { onResult(Result.failure(it)) }
