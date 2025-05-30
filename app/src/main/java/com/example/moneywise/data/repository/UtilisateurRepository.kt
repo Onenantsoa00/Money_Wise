@@ -3,6 +3,7 @@ package com.example.moneywise.data.repository
 import androidx.lifecycle.LiveData
 import com.example.moneywise.data.dao.UtilisateurDao
 import com.example.moneywise.data.entity.Utilisateur
+import com.example.moneywise.utils.PasswordUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -22,17 +23,27 @@ class UtilisateurRepository(private val utilisateurDao: UtilisateurDao) {
                 return@withContext Result.failure(Exception("Email déjà utilisé"))
             }
 
+            // Hacher le mot de passe avant de l'enregistrer
+            val hashedPassword = PasswordUtils.hashPassword(password)
+
             val newUser = Utilisateur(
                 nom = nom,
                 prenom = prenom,
                 email = email,
-                password = password,
+                password = hashedPassword, // Mot de passe haché
                 solde = 0.0,
                 avatar = avatar
             )
 
             utilisateurDao.insert(newUser)
-            Result.success(newUser)
+
+            // Récupérer l'utilisateur avec son ID généré
+            val createdUser = utilisateurDao.getUserByEmail(email)
+            if (createdUser != null) {
+                Result.success(createdUser)
+            } else {
+                Result.failure(Exception("Erreur lors de la création de l'utilisateur"))
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -43,9 +54,16 @@ class UtilisateurRepository(private val utilisateurDao: UtilisateurDao) {
         password: String
     ): Result<Utilisateur> = withContext(Dispatchers.IO) {
         try {
-            val user = utilisateurDao.login(email, password)
+            // Récupérer l'utilisateur par email
+            val user = utilisateurDao.getUserByEmail(email)
+
             if (user != null) {
-                Result.success(user)
+                // Vérifier le mot de passe
+                if (PasswordUtils.verifyPassword(password, user.password)) {
+                    Result.success(user)
+                } else {
+                    Result.failure(Exception("Email ou mot de passe incorrect"))
+                }
             } else {
                 Result.failure(Exception("Email ou mot de passe incorrect"))
             }

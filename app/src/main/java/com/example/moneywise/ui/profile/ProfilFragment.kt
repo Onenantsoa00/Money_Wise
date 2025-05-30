@@ -1,7 +1,6 @@
 package com.example.moneywise.ui.profile
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -24,25 +23,25 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.moneywise.R
-import com.example.moneywise.data.entity.Utilisateur
 import com.example.moneywise.databinding.DialogEditProfileBinding
 import com.example.moneywise.databinding.FragmentProfilBinding
-import com.example.moneywise.utils.AuthHelper
+import com.example.moneywise.ui.auth.LoginActivity
+import com.example.moneywise.utils.SessionManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@AndroidEntryPoint
 class ProfilFragment : Fragment() {
 
     private var _binding: FragmentProfilBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: ProfilViewModel by viewModels {
-        ProfilViewModelFactory(requireActivity().application)
-    }
-
+    private val viewModel: ProfilViewModel by viewModels()
+    private lateinit var sessionManager: SessionManager
     private var currentPhotoUri: Uri? = null
 
     // Launcher pour les permissions multiples
@@ -110,14 +109,32 @@ class ProfilFragment : Fragment() {
         _binding = FragmentProfilBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        // Initialiser le gestionnaire de session
+        sessionManager = SessionManager(requireContext())
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupUI()
         setupObservers()
         setupClickListeners()
+    }
+
+    private fun setupUI() {
+        // Charger les données de l'utilisateur connecté
+        lifecycleScope.launch {
+            val userId = sessionManager.getUserId()
+            if (userId != -1) {
+                viewModel.loadUserData(userId)
+            } else {
+                // Si pas d'utilisateur connecté, rediriger vers login
+                redirectToLogin()
+            }
+        }
     }
 
     private fun setupObservers() {
@@ -163,7 +180,7 @@ class ProfilFragment : Fragment() {
             binding.transactionsCountText.text = count?.toString() ?: "0"
         }
 
-        viewModel.unfinishedProjectsCount.observe(viewLifecycleOwner) { count ->
+        viewModel.projectsCount.observe(viewLifecycleOwner) { count ->
             binding.projectsCountText.text = count?.toString() ?: "0"
         }
 
@@ -190,6 +207,7 @@ class ProfilFragment : Fragment() {
             showEditProfileDialog()
         }
 
+        // 🔥 NOUVEAU SYSTÈME DE DÉCONNEXION
         binding.logoutButton.setOnClickListener {
             showLogoutConfirmationDialog()
         }
@@ -361,7 +379,7 @@ class ProfilFragment : Fragment() {
                     } else {
                         Toast.makeText(
                             requireContext(),
-                            "Erreur lors de la mise à jour",
+                            "Erreur lors de la mise à jour: ${result.exceptionOrNull()?.message}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -371,17 +389,47 @@ class ProfilFragment : Fragment() {
             .show()
     }
 
+    // 🔥 NOUVELLE MÉTHODE DE DÉCONNEXION AVEC SessionManager
     private fun showLogoutConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Déconnexion")
             .setMessage("Êtes-vous sûr de vouloir vous déconnecter ?")
+            .setIcon(R.drawable.ic_logout)
             .setPositiveButton("Oui") { _, _ ->
-                viewModel.logout()
-                AuthHelper.logout(requireContext())
-                Toast.makeText(requireContext(), "Déconnecté avec succès", Toast.LENGTH_SHORT).show()
+                performLogout()
             }
             .setNegativeButton("Annuler", null)
             .show()
+    }
+
+    // 🔥 MÉTHODE DE DÉCONNEXION AMÉLIORÉE
+    private fun performLogout() {
+        try {
+            // Effacer la session utilisateur
+            sessionManager.logout()
+
+            // Afficher un message de confirmation
+            Toast.makeText(requireContext(), "Déconnecté avec succès", Toast.LENGTH_SHORT).show()
+
+            // Rediriger vers l'écran de connexion
+            redirectToLogin()
+
+        } catch (e: Exception) {
+            Log.e("ProfilFragment", "Erreur lors de la déconnexion", e)
+            Toast.makeText(
+                requireContext(),
+                "Erreur lors de la déconnexion: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    // 🔥 MÉTHODE POUR REDIRIGER VERS LOGIN
+    private fun redirectToLogin() {
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        requireActivity().finish()
     }
 
     override fun onDestroyView() {

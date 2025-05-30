@@ -9,14 +9,18 @@ import androidx.room.Update
 import com.example.moneywise.data.entity.Emprunt
 
 @Dao
-@JvmSuppressWildcards
 interface EmpruntDao {
     @Insert
     suspend fun insertEmprunt(emprunt: Emprunt)
 
-    //READ
     @Query("SELECT * FROM Emprunt")
     fun getAllEmprunt(): LiveData<List<Emprunt>>
+
+    @Query("SELECT * FROM Emprunt")
+    suspend fun getAllEmprunts(): List<Emprunt>
+
+    @Query("SELECT * FROM Emprunt WHERE id = :id")
+    suspend fun getEmpruntById(id: Int): Emprunt?
 
     @Query("UPDATE Emprunt SET est_rembourse = :estRembourse WHERE id = :id")
     suspend fun updateRemboursementStatus(id: Int, estRembourse: Boolean)
@@ -27,7 +31,15 @@ interface EmpruntDao {
     @Query("SELECT * FROM Emprunt WHERE est_rembourse = 0 ORDER BY id DESC LIMIT 5")
     fun getRecentEmpruntsNonRembourses(): LiveData<List<Emprunt>>
 
-    // Nouvelle méthode pour compter les emprunts non remboursés
     @Query("SELECT COUNT(*) FROM Emprunt WHERE est_rembourse = 0")
     fun getUnpaidLoansCount(): LiveData<Int>
+
+    @Update
+    suspend fun updateEmprunt(emprunt: Emprunt)
+
+    @Delete
+    suspend fun deleteEmprunt(emprunt: Emprunt)
+
+    @Query("DELETE FROM Emprunt")
+    suspend fun deleteAllEmprunts()
 }

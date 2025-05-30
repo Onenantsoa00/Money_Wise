@@ -2,150 +2,186 @@ package com.example.moneywise.ui.profile
 
 import android.app.Application
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Utilisateur
 import com.example.moneywise.data.repository.UtilisateurRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProfilViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class ProfilViewModel @Inject constructor(
+    private val utilisateurRepository: UtilisateurRepository,
+    application: Application
+) : AndroidViewModel(application) {
+
     private val database = AppDatabase.getDatabase(application)
-    private val utilisateurDao = database.utilisateurDao()
-    private val transactionDao = database.transactionDao()
-    private val projetDao = database.ProjetDao()
-    private val empruntDao = database.empruntDao()
-    private val acquittementDao = database.AcquittementDao()
-    private val UtilisateurRepository = UtilisateurRepository(utilisateurDao)
 
+    // StateFlow pour l'utilisateur actuel
     private val _currentUser = MutableStateFlow<Utilisateur?>(null)
-    val currentUser: StateFlow<Utilisateur?> = _currentUser
+    val currentUser: StateFlow<Utilisateur?> = _currentUser.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
+    // StateFlow pour les messages d'erreur
     private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    // Statistiques dynamiques
-    val transactionsCount: LiveData<Int> = transactionDao.getTotalTransactionsCount().asLiveData()
-    val unfinishedProjectsCount: LiveData<Int> = projetDao.getTotalUnfinishedProjectsCount()
+    // StateFlow pour l'état de chargement
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    // Combinaison des emprunts et acquittements pour les rappels
-    private val unpaidLoansCount: LiveData<Int> = empruntDao.getUnpaidLoansCount()
-    private val totalAcquittementCount: LiveData<Int> = acquittementDao.getTotalAcquittementCount()
+    // LiveData pour les statistiques
+    private val _transactionsCount = MutableLiveData<Int>()
+    val transactionsCount: LiveData<Int> = _transactionsCount
 
-    val remindersCount: LiveData<Int> = MediatorLiveData<Int>().apply {
-        var loansCount = 0
-        var acquittementCount = 0
+    private val _projectsCount = MutableLiveData<Int>()
+    val projectsCount: LiveData<Int> = _projectsCount
 
-        addSource(unpaidLoansCount) { count ->
-            loansCount = count ?: 0
-            value = loansCount + acquittementCount
-        }
+    private val _remindersCount = MutableLiveData<Int>()
+    val remindersCount: LiveData<Int> = _remindersCount
 
-        addSource(totalAcquittementCount) { count ->
-            acquittementCount = count ?: 0
-            value = loansCount + acquittementCount
-        }
-    }
-
-    // Propriétés pour le data binding
-    val text: String
+    // Propriété calculée pour le nom complet
+    val fullName: String
         get() = _currentUser.value?.let { "${it.nom} ${it.prenom}" } ?: ""
 
-    val balance: String
-        get() = _currentUser.value?.let { it.email } ?: ""
-
     init {
-        loadUserData()
+        loadCurrentUser()
     }
 
-    private fun loadUserData() {
+    /**
+     * Charge les données de l'utilisateur par ID
+     */
+    fun loadUserData(userId: Int) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
-                _currentUser.value = utilisateurDao.getAllUtilisateurs()
-                    .firstOrNull()
-                    ?.firstOrNull()
+                val user = utilisateurRepository.getUserById(userId)
+                _currentUser.value = user
+                if (user != null) {
+                    loadStatistics()
+                }
             } catch (e: Exception) {
-                e.printStackTrace()
-                Log.e("ProfilViewModel", "Erreur lors du chargement de l'utilisateur", e)
-                _errorMessage.value = "Erreur lors du chargement du profil"
+                _errorMessage.value = "Erreur lors du chargement des données: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    val fullName = currentUser.map { user ->
-        user?.let { "${it.nom} ${it.prenom}" } ?: ""
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+    /**
+     * Charge l'utilisateur actuel (le premier dans la base)
+     */
+    private fun loadCurrentUser() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val user = utilisateurRepository.getFirstUtilisateur()
+                _currentUser.value = user
+                if (user != null) {
+                    loadStatistics()
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Erreur lors du chargement de l'utilisateur: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 
-    val avatarUri = currentUser.map { user ->
-        user?.avatar
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-
+    /**
+     * Met à jour les informations de l'utilisateur
+     */
     suspend fun updateUser(user: Utilisateur): Result<Unit> {
         return try {
             _isLoading.value = true
-            val result = UtilisateurRepository.updateUser(user)
+            val result = utilisateurRepository.updateUser(user)
             if (result.isSuccess) {
                 _currentUser.value = user
-                _errorMessage.value = null
-            } else {
-                _errorMessage.value = result.exceptionOrNull()?.message ?: "Erreur lors de la mise à jour"
             }
             result
         } catch (e: Exception) {
-            _errorMessage.value = e.message ?: "Erreur lors de la mise à jour"
             Result.failure(e)
         } finally {
             _isLoading.value = false
         }
     }
 
+    /**
+     * Met à jour l'avatar de l'utilisateur
+     */
     fun updateAvatar(avatarUri: Uri?) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
-                val currentUserValue = _currentUser.value
-                if (currentUserValue != null) {
+                val currentUser = _currentUser.value
+                if (currentUser != null) {
                     val avatarPath = avatarUri?.toString()
-                    val result = UtilisateurRepository.updateUserAvatar(currentUserValue.id, avatarPath)
+                    val result = utilisateurRepository.updateUserAvatar(currentUser.id, avatarPath)
 
                     if (result.isSuccess) {
-                        _currentUser.value = currentUserValue.copy(avatar = avatarPath)
-                        _errorMessage.value = null
+                        // Mettre à jour l'utilisateur local
+                        _currentUser.value = currentUser.copy(avatar = avatarPath)
                     } else {
-                        _errorMessage.value = result.exceptionOrNull()?.message ?: "Erreur lors de la mise à jour de l'avatar"
+                        _errorMessage.value = "Erreur lors de la mise à jour de l'avatar"
                     }
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Erreur lors de la mise à jour de l'avatar"
+                _errorMessage.value = "Erreur lors de la mise à jour de l'avatar: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
+    /**
+     * 🔥 MÉTHODE CORRIGÉE - Charge les statistiques de l'utilisateur
+     */
+    private fun loadStatistics() {
+        viewModelScope.launch {
+            try {
+                val currentUser = _currentUser.value
+                if (currentUser != null) {
+                    // Charger le nombre de transactions
+                    val userTransactions = database.transactionDao().getTransactionsByUserId(currentUser.id)
+                    _transactionsCount.value = userTransactions.size
+
+                    // Charger le nombre de projets non terminés
+                    val userProjects = database.ProjetDao().getProjetsByUserId(currentUser.id)
+                    val unfinishedProjects = userProjects.filter { it.progression < 100 }
+                    _projectsCount.value = unfinishedProjects.size
+
+                    // Charger le nombre de rappels (emprunts non remboursés)
+                    val allEmprunts = database.empruntDao().getAllEmprunts()
+                    val unpaidLoans = allEmprunts.filter { !it.estRembourse }
+                    _remindersCount.value = unpaidLoans.size
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Erreur lors du chargement des statistiques: ${e.message}"
+            }
+        }
+    }
+
+    /**
+     * Efface le message d'erreur
+     */
     fun clearErrorMessage() {
         _errorMessage.value = null
     }
 
+    /**
+     * Méthode de déconnexion (la logique réelle est dans le Fragment)
+     */
     fun logout() {
-        viewModelScope.launch {
-            _currentUser.value = null
-        }
+        // Cette méthode peut être utilisée pour nettoyer les données du ViewModel
+        _currentUser.value = null
+        _transactionsCount.value = 0
+        _projectsCount.value = 0
+        _remindersCount.value = 0
     }
 }

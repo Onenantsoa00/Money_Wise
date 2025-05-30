@@ -8,6 +8,7 @@ import com.example.moneywise.MainActivity
 import com.example.moneywise.R
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.databinding.ActivityLoginBinding
+import com.example.moneywise.utils.SessionManager
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -15,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var sessionManager: SessionManager
     private val viewModel: AuthViewModel by viewModels {
         AuthViewModelFactory(AppDatabase.getDatabase(this).utilisateurDao())
     }
@@ -24,9 +26,14 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text?.toString() ?: "" // Utilisez le safe call
-            val password = binding.etPassword.text?.toString() ?: ""
+        // Initialiser le gestionnaire de session
+        sessionManager = SessionManager(this)
+
+        // Vérifier si l'utilisateur est déjà connecté
+        if (sessionManager.isLoggedIn()) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
         }
 
         setupListeners()
@@ -40,7 +47,10 @@ class LoginActivity : AppCompatActivity() {
             if (validateInputs(email, password)) {
                 viewModel.loginUser(email, password) { result ->
                     result.fold(
-                        onSuccess = {
+                        onSuccess = { user ->
+                            // Enregistrer la session de l'utilisateur
+                            sessionManager.createLoginSession(user.id, user.email)
+
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         },

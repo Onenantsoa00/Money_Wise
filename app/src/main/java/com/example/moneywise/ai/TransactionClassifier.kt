@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import javax.inject.Inject
 import javax.inject.Singleton
+import java.util.regex.Pattern
 
 /**
  * Classe pour représenter le résultat d'une classification avec confiance
@@ -31,21 +32,21 @@ class TransactionClassifier @Inject constructor(
     // Base de données de patterns pour la classification - AMÉLIORÉE
     private val transactionPatterns = mapOf(
         "DEPOT" to listOf(
-            // Français
-            "reçu", "crédit", "dépôt", "versement", "rechargé", "ajouté", "crédité",
+            // Français - PATTERNS SPÉCIFIQUES POUR RÉCEPTION
+            "recu de", "reçu de", "crédit", "dépôt", "versement", "rechargé", "ajouté", "crédité",
             "vous avez reçu", "votre compte a été crédité", "versement effectué",
             "recharge", "depot", "credit",
             // Anglais
-            "received", "credit", "deposit", "credited", "added", "topped up",
+            "received from", "credit", "deposit", "credited", "added", "topped up",
             "you have received", "your account has been credited"
         ),
         "RETRAIT" to listOf(
-            // Français - PATTERNS AMÉLIORÉS POUR VOTRE CAS
-            "envoyé", "envoye", "débit", "retrait", "retiré", "payé", "débité", "prélevé",
+            // Français - PATTERNS SPÉCIFIQUES POUR ENVOI
+            "envoye a", "envoyé à", "débit", "retrait", "retiré", "payé", "débité", "prélevé",
             "vous avez envoyé", "votre compte a été débité", "paiement effectué",
-            "envoye a", "envoyé à", "paiement", "retrait",
+            "paiement", "retrait",
             // Anglais
-            "sent", "debit", "withdrawal", "withdrawn", "paid", "debited",
+            "sent to", "debit", "withdrawal", "withdrawn", "paid", "debited",
             "you have sent", "your account has been debited", "payment made"
         ),
         "TRANSFERT" to listOf(
@@ -62,22 +63,14 @@ class TransactionClassifier @Inject constructor(
             // Anglais
             "purchase", "bought", "order", "invoice", "merchant payment",
             "purchase made", "shop payment", "commercial transaction"
-        ),
-        "FRAIS" to listOf(
-            // Français - PATTERNS PLUS SPÉCIFIQUES
-            "frais de transaction", "commission bancaire", "frais de service",
-            "commission", "taxe", "charge", "coût de service",
-            // Anglais
-            "transaction fee", "bank commission", "service charge",
-            "fee", "commission", "tax", "charge", "cost"
         )
     )
 
     // Patterns spécifiques par opérateur - AMÉLIORÉS
     private val operatorSpecificPatterns = mapOf(
         "mvola" to mapOf(
-            "DEPOT" to listOf("mvola reçu", "compte mvola crédité", "dépôt mvola", "recharge mvola"),
-            "RETRAIT" to listOf("mvola envoyé", "retrait mvola", "paiement mvola", "envoye a", "envoyé à"),
+            "DEPOT" to listOf("recu de", "compte mvola crédité", "dépôt mvola", "recharge mvola"),
+            "RETRAIT" to listOf("envoye a", "retrait mvola", "paiement mvola"),
             "TRANSFERT" to listOf("transfert mvola", "envoi mvola")
         ),
         "airtel" to mapOf(
@@ -93,6 +86,42 @@ class TransactionClassifier @Inject constructor(
     )
 
     /**
+     * 🔥 NOUVELLE FONCTION: Détecte les messages promotionnels
+     */
+    private fun isPromotionalMessage(message: String): Boolean {
+        val messageLower = message.lowercase()
+
+        // Mots-clés de messages promotionnels
+        val promotionalKeywords = listOf(
+            "astuce", "conseil", "tip", "promo", "promotion", "offre", "réduction",
+            "disponible sur", "playstore", "appstore", "téléchargez", "download",
+            "app", "application", "moins cher", "économisez", "gratuit",
+            "nouveau service", "découvrez", "profitez", "bénéficiez"
+        )
+
+        // Patterns de pourcentages promotionnels
+        val promoPatterns = listOf(
+            "-\\d+\\s*%", // -20%, -50%, etc.
+            "\\d+\\s*%\\s*(?:de\\s*)?(?:réduction|remise|rabais)",
+            "jusqu'à\\s*\\d+\\s*%"
+        )
+
+        // Vérifier les mots-clés
+        if (promotionalKeywords.any { messageLower.contains(it) }) {
+            return true
+        }
+
+        // Vérifier les patterns de promotion
+        for (pattern in promoPatterns) {
+            if (Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(message).find()) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    /**
      * Classifie une transaction basée sur le texte du SMS
      */
     fun classifyTransaction(text: String, sender: String = ""): String {
@@ -101,10 +130,24 @@ class TransactionClassifier @Inject constructor(
         val textLower = text.lowercase()
         val operator = getOperatorFromSender(sender)
 
-        // 🔥 LOGIQUE SPÉCIALE POUR LES MESSAGES MVOLA COMME LE VÔTRE
-        if (operator == "mvola" && textLower.contains("envoye a")) {
-            Log.d(TAG, "Detected MVola 'envoye a' pattern - classifying as RETRAIT")
-            return "RETRAIT"
+        // 🔥 VÉRIFICATION PRÉALABLE: Exclure les messages promotionnels
+        if (isPromotionalMessage(text)) {
+            Log.d(TAG, "Promotional message detected - returning PROMOTION")
+            return "PROMOTION"
+        }
+
+        // 🔥 LOGIQUE SPÉCIALE POUR LES MESSAGES MVOLA
+        if (operator == "mvola") {
+            when {
+                textLower.contains("recu de") -> {
+                    Log.d(TAG, "Detected MVola 'recu de' pattern - classifying as DEPOT")
+                    return "DEPOT"
+                }
+                textLower.contains("envoye a") -> {
+                    Log.d(TAG, "Detected MVola 'envoye a' pattern - classifying as RETRAIT")
+                    return "RETRAIT"
+                }
+            }
         }
 
         // Vérifier d'abord les patterns spécifiques à l'opérateur
@@ -139,14 +182,6 @@ class TransactionClassifier @Inject constructor(
             }
         }
 
-        // 🔥 LOGIQUE SPÉCIALE: Si on détecte "frais" ET "envoyé", privilégier RETRAIT
-        if (scores.containsKey("FRAIS") && scores.containsKey("RETRAIT")) {
-            if (textLower.contains("envoye") || textLower.contains("envoyé")) {
-                Log.d(TAG, "Detected both FRAIS and RETRAIT patterns, but 'envoyé' found - prioritizing RETRAIT")
-                return "RETRAIT"
-            }
-        }
-
         // Retourner le type avec le score le plus élevé
         val bestMatch = scores.maxByOrNull { it.value }
         val result = bestMatch?.key ?: "AUTRE"
@@ -164,13 +199,27 @@ class TransactionClassifier @Inject constructor(
         val textLower = text.lowercase()
         val operator = getOperatorFromSender(sender)
 
+        // 🔥 VÉRIFICATION PRÉALABLE: Messages promotionnels
+        if (isPromotionalMessage(text)) {
+            Log.d(TAG, "Promotional message detected - zero confidence")
+            return TransactionClassification("PROMOTION", 0.0)
+        }
+
         val scores = mutableMapOf<String, Double>()
         var maxScore = 0.0
 
-        // 🔥 LOGIQUE SPÉCIALE POUR MVOLA "envoye a"
-        if (operator == "mvola" && textLower.contains("envoye a")) {
-            Log.d(TAG, "MVola 'envoye a' detected - high confidence RETRAIT")
-            return TransactionClassification("RETRAIT", 0.95)
+        // 🔥 LOGIQUE SPÉCIALE POUR MVOLA avec haute confiance
+        if (operator == "mvola") {
+            when {
+                textLower.contains("recu de") -> {
+                    Log.d(TAG, "MVola 'recu de' detected - high confidence DEPOT")
+                    return TransactionClassification("DEPOT", 0.95)
+                }
+                textLower.contains("envoye a") -> {
+                    Log.d(TAG, "MVola 'envoye a' detected - high confidence RETRAIT")
+                    return TransactionClassification("RETRAIT", 0.95)
+                }
+            }
         }
 
         // Vérifier les patterns spécifiques à l'opérateur (bonus de confiance)
@@ -197,14 +246,6 @@ class TransactionClassifier @Inject constructor(
                     }
                     scores[type] = (scores[type] ?: 0.0) + patternScore
                 }
-            }
-        }
-
-        // 🔥 LOGIQUE SPÉCIALE: Privilégier RETRAIT si "envoyé" + "frais"
-        if (scores.containsKey("FRAIS") && scores.containsKey("RETRAIT")) {
-            if (textLower.contains("envoye") || textLower.contains("envoyé")) {
-                scores["RETRAIT"] = (scores["RETRAIT"] ?: 0.0) + 10.0 // Bonus énorme
-                Log.d(TAG, "Boosting RETRAIT score due to 'envoyé' pattern")
             }
         }
 
@@ -238,8 +279,7 @@ class TransactionClassifier @Inject constructor(
             "DEPOT" to (transactionPatterns["DEPOT"]?.size ?: 0),
             "RETRAIT" to (transactionPatterns["RETRAIT"]?.size ?: 0),
             "TRANSFERT" to (transactionPatterns["TRANSFERT"]?.size ?: 0),
-            "ACHAT" to (transactionPatterns["ACHAT"]?.size ?: 0),
-            "FRAIS" to (transactionPatterns["FRAIS"]?.size ?: 0)
+            "ACHAT" to (transactionPatterns["ACHAT"]?.size ?: 0)
         )
     }
 }
