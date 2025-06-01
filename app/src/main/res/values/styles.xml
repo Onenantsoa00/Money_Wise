@@ -7,4 +7,30 @@
     <style name="ShapeAppearanceOverlay.App.CornerSize8" parent="">
         <item name="cornerSize">8dp</item>
     </style>
+
+    <!-- Style pour les textes avec police medium -->
+    <style name="TextAppearance.Medium" parent="TextAppearance.AppCompat">
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Style pour les textes avec police bold -->
+    <style name="TextAppearance.Bold" parent="TextAppearance.AppCompat">
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- Style pour le widget flottant -->
+    <style name="FloatingWidget">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:elevation">8dp</item>
+    </style>
+
+    <!-- Style pour les boutons du widget -->
+    <style name="FloatingWidget.Button">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+    </style>
 </resources>

@@ -26,6 +26,7 @@ import com.example.moneywise.R
 import com.example.moneywise.databinding.DialogEditProfileBinding
 import com.example.moneywise.databinding.FragmentProfilBinding
 import com.example.moneywise.ui.auth.LoginActivity
+import com.example.moneywise.utils.FloatingWidgetManager
 import com.example.moneywise.utils.SessionManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,6 +43,7 @@ class ProfilFragment : Fragment() {
 
     private val viewModel: ProfilViewModel by viewModels()
     private lateinit var sessionManager: SessionManager
+    private lateinit var floatingWidgetManager: FloatingWidgetManager
     private var currentPhotoUri: Uri? = null
 
     // Launcher pour les permissions multiples
@@ -57,15 +59,12 @@ class ProfilFragment : Fragment() {
 
         when {
             cameraGranted && storageGranted -> {
-                // Toutes les permissions accordées, montrer le dialog
                 showAvatarSelectionDialog()
             }
             cameraGranted -> {
-                // Seulement la caméra accordée
                 takePhoto()
             }
             storageGranted -> {
-                // Seulement le stockage accordé
                 imagePickerLauncher.launch("image/*")
             }
             else -> {
@@ -110,8 +109,9 @@ class ProfilFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        // Initialiser le gestionnaire de session
+        // Initialiser les gestionnaires
         sessionManager = SessionManager(requireContext())
+        floatingWidgetManager = FloatingWidgetManager(requireContext())
 
         return binding.root
     }
@@ -131,7 +131,6 @@ class ProfilFragment : Fragment() {
             if (userId != -1) {
                 viewModel.loadUserData(userId)
             } else {
-                // Si pas d'utilisateur connecté, rediriger vers login
                 redirectToLogin()
             }
         }
@@ -145,8 +144,6 @@ class ProfilFragment : Fragment() {
                     user?.let {
                         binding.profileName.text = "${it.nom} ${it.prenom}"
                         binding.profileEmail.text = it.email
-
-                        // Charger l'avatar
                         loadAvatar(it.avatar)
                     }
                 }
@@ -161,16 +158,6 @@ class ProfilFragment : Fragment() {
                         Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                         viewModel.clearErrorMessage()
                     }
-                }
-            }
-        }
-
-        // Observer pour le chargement
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isLoading.collect { isLoading ->
-                    // Vous pouvez afficher un indicateur de chargement ici si nécessaire
-                    // binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
                 }
             }
         }
@@ -207,7 +194,7 @@ class ProfilFragment : Fragment() {
             showEditProfileDialog()
         }
 
-        // 🔥 NOUVEAU SYSTÈME DE DÉCONNEXION
+        // 🔥 DÉCONNEXION AVEC ARRÊT DU WIDGET FLOTTANT
         binding.logoutButton.setOnClickListener {
             showLogoutConfirmationDialog()
         }
@@ -274,27 +261,19 @@ class ProfilFragment : Fragment() {
 
     private fun takePhoto() {
         try {
-            // Créer un fichier pour stocker la photo
             val photoFile = File(
                 requireContext().getExternalFilesDir("Pictures"),
                 "profile_${System.currentTimeMillis()}.jpg"
             )
 
-            // Créer le répertoire s'il n'existe pas
             photoFile.parentFile?.mkdirs()
 
-            Log.d("ProfilFragment", "Chemin du fichier photo: ${photoFile.absolutePath}")
-
-            // Créer l'URI avec FileProvider
             currentPhotoUri = FileProvider.getUriForFile(
                 requireContext(),
                 "${requireContext().packageName}.fileprovider",
                 photoFile
             )
 
-            Log.d("ProfilFragment", "URI de la photo: $currentPhotoUri")
-
-            // Lancer l'appareil photo
             cameraLauncher.launch(currentPhotoUri)
 
         } catch (e: Exception) {
@@ -376,6 +355,8 @@ class ProfilFragment : Fragment() {
                             "Profil mis à jour avec succès",
                             Toast.LENGTH_SHORT
                         ).show()
+                        // Mettre à jour le widget flottant
+                        floatingWidgetManager.updateFloatingWidget()
                     } else {
                         Toast.makeText(
                             requireContext(),
@@ -389,11 +370,11 @@ class ProfilFragment : Fragment() {
             .show()
     }
 
-    // 🔥 NOUVELLE MÉTHODE DE DÉCONNEXION AVEC SessionManager
+    // 🔥 DÉCONNEXION AVEC ARRÊT DU WIDGET FLOTTANT
     private fun showLogoutConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Déconnexion")
-            .setMessage("Êtes-vous sûr de vouloir vous déconnecter ?")
+            .setMessage("Êtes-vous sûr de vouloir vous déconnecter ? Le widget flottant sera également fermé.")
             .setIcon(R.drawable.ic_logout)
             .setPositiveButton("Oui") { _, _ ->
                 performLogout()
@@ -402,9 +383,12 @@ class ProfilFragment : Fragment() {
             .show()
     }
 
-    // 🔥 MÉTHODE DE DÉCONNEXION AMÉLIORÉE
+    // 🔥 MÉTHODE DE DÉCONNEXION AVEC ARRÊT DU WIDGET
     private fun performLogout() {
         try {
+            // 🔥 ARRÊTER LE WIDGET FLOTTANT AVANT LA DÉCONNEXION
+            floatingWidgetManager.stopFloatingWidget()
+
             // Effacer la session utilisateur
             sessionManager.logout()
 
@@ -424,7 +408,6 @@ class ProfilFragment : Fragment() {
         }
     }
 
-    // 🔥 MÉTHODE POUR REDIRIGER VERS LOGIN
     private fun redirectToLogin() {
         val intent = Intent(requireContext(), LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
