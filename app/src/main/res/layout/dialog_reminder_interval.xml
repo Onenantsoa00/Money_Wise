@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⏰ Choisir l'intervalle de rappel"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sélectionnez la fréquence des notifications de rappel :"
+        android:textSize="14sp"
+        android:layout_marginBottom="16dp"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group_interval"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radio_3_hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🕒 Toutes les 3 heures"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioButton
+            android:id="@+id/radio_6_hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🕕 Toutes les 6 heures (recommandé)"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/radio_12_hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🕛 Toutes les 12 heures"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioButton
+            android:id="@+id/radio_24_hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📅 Une fois par jour (24 heures)"
+            android:textSize="16sp"
+            android:padding="12dp"/>
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginVertical="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_current_interval"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Intervalle actuel : 6 heures"
+        android:textStyle="italic"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="💡 Les rappels vous alertent des emprunts, acquittements et projets nécessitant votre attention."
+        android:textSize="12sp"
+        android:gravity="center"/>
+
+</LinearLayout>

@@ -5,8 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.example.moneywise.utils.FloatingWidgetManager
+import com.example.moneywise.utils.NotificationHelper
+import com.example.moneywise.utils.ReminderManager
 import com.example.moneywise.utils.SessionManager
 
+/**
+ * Récepteur de diffusion qui s'exécute au démarrage de l'appareil
+ * pour redémarrer les services nécessaires.
+ *
+ * Note: Les BroadcastReceiver ne supportent pas complètement l'injection Hilt,
+ * donc nous créons les instances manuellement.
+ */
 class BootReceiver : BroadcastReceiver() {
 
     companion object {
@@ -14,19 +23,34 @@ class BootReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d(TAG, "📱 Événement reçu: ${intent.action}")
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED ||
+            intent.action == Intent.ACTION_MY_PACKAGE_REPLACED ||
+            intent.action == "android.intent.action.QUICKBOOT_POWERON") {
 
-        when (intent.action) {
-            Intent.ACTION_BOOT_COMPLETED,
-            Intent.ACTION_MY_PACKAGE_REPLACED,
-            Intent.ACTION_PACKAGE_REPLACED -> {
+            Log.d(TAG, "🔄 Appareil démarré ou application mise à jour")
+
+            try {
                 val sessionManager = SessionManager(context)
-                val floatingWidgetManager = FloatingWidgetManager(context)
-
                 if (sessionManager.isLoggedIn()) {
-                    Log.d(TAG, "🚀 Redémarrage automatique du widget")
+                    Log.d(TAG, "👤 Utilisateur connecté, redémarrage des services")
+
+                    // Créer les instances manuellement (sans injection Hilt)
+                    val notificationHelper = NotificationHelper(context)
+                    val reminderManager = ReminderManager(context, notificationHelper)
+                    val floatingWidgetManager = FloatingWidgetManager(context)
+
+                    // Redémarrer les rappels si activés
+                    reminderManager.restartRemindersIfEnabled()
+
+                    // Redémarrer le widget flottant si activé
                     floatingWidgetManager.startFloatingWidgetIfEnabled()
+
+                    Log.d(TAG, "✅ Services redémarrés avec succès")
+                } else {
+                    Log.d(TAG, "ℹ️ Utilisateur non connecté, aucune action")
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Erreur lors du redémarrage des services: ${e.message}", e)
             }
         }
     }

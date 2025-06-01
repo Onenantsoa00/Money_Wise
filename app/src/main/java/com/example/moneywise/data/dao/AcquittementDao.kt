@@ -18,6 +18,10 @@ interface AcquittementDao {
     @Query("SELECT * FROM Acquittement")
     fun getAllAcquittement(): LiveData<List<Acquittement>>
 
+    // Version synchrone pour les services
+    @Query("SELECT * FROM Acquittement")
+    suspend fun getAllAcquittementSync(): List<Acquittement>
+
     @Delete
     suspend fun deleteAcquittement(acquittement: Acquittement)
 
@@ -27,4 +31,7 @@ interface AcquittementDao {
     // Nouvelle méthode pour compter tous les acquittements
     @Query("SELECT COUNT(*) FROM Acquittement")
     fun getTotalAcquittementCount(): LiveData<Int>
+
+    @Update
+    suspend fun updateAcquittement(acquittement: Acquittement)
 }

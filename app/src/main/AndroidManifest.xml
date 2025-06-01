@@ -28,8 +28,14 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
-    <!-- 🔥 AJOUT: Permission pour redémarrer automatiquement le service -->
+    <!-- 🔥 PERMISSION POUR LES NOTIFICATIONS (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- 🔥 Permission pour redémarrer automatiquement le service -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- 🔥 PERMISSIONS POUR LES ALARMES EXACTES (Android 12+) -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <!-- Déclaration que l'appareil photo n'est pas obligatoire -->
     <uses-feature
@@ -94,7 +100,7 @@
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTop" />
 
-        <!-- 🔥 SERVICE POUR LE WIDGET FLOTTANT AVEC FOREGROUND SERVICE -->
+        <!-- 🔥 SERVICE POUR LE WIDGET FLOTTANT -->
         <service
             android:name=".services.FloatingBalanceService"
             android:enabled="true"
@@ -103,6 +109,17 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Widget flottant pour affichage du solde" />
+        </service>
+
+        <!-- 🔥 NOUVEAU: SERVICE POUR LES RAPPELS -->
+        <service
+            android:name=".services.ReminderNotificationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Service de rappel pour emprunts, acquittements et projets" />
         </service>
 
         <!-- Provider pour partager des fichiers -->
@@ -116,14 +133,18 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!-- 🔥 RECEIVER POUR LE REDÉMARRAGE AUTOMATIQUE (SANS @AndroidEntryPoint) -->
         <receiver
             android:name=".services.BootReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:directBootAware="true">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
@@ -137,7 +158,5 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-
     </application>
-
 </manifest>

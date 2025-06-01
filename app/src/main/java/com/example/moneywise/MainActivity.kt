@@ -18,8 +18,11 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.RadioGroup
+import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
@@ -55,6 +58,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
+import com.example.moneywise.utils.ReminderManager
+import com.example.moneywise.utils.NotificationHelper
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -65,19 +70,33 @@ class MainActivity : AppCompatActivity() {
     private val banqueViewModel: BanqueViewModel by viewModels()
     private val banqueNames = mutableListOf<String>()
 
-    // 🔥 Gestionnaires pour le widget flottant
+    // 🔥 Gestionnaires pour le widget flottant et les notifications
     private lateinit var floatingWidgetManager: FloatingWidgetManager
     private lateinit var sessionManager: SessionManager
 
     @Inject
     lateinit var db: AppDatabase
 
+    @Inject
+    lateinit var reminderManager: ReminderManager
+
+    @Inject
+    lateinit var notificationHelper: NotificationHelper
+
     companion object {
         private const val TAG = "MainActivity"
-        // 🔥 ID constant pour le menu du widget flottant
+        // 🔥 ID constants pour les menus
         private const val MENU_FLOATING_WIDGET = 9999
-        // 🔥 AJOUT: Code de requête pour les permissions d'overlay
+        private const val MENU_NOTIFICATIONS = 9998
+        // 🔥 Codes de requête pour les permissions
         private const val OVERLAY_PERMISSION_REQUEST_CODE = 1001
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1002
+
+        // 🔥 Constantes d'intervalle pour éviter les erreurs de référence
+        private const val THREE_HOURS = 3 * 60 * 60 * 1000L  // 3 heures en millisecondes
+        private const val SIX_HOURS = 6 * 60 * 60 * 1000L    // 6 heures en millisecondes
+        private const val TWELVE_HOURS = 12 * 60 * 60 * 1000L // 12 heures en millisecondes
+        private const val ONE_DAY = 24 * 60 * 60 * 1000L     // 24 heures en millisecondes
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,102 +108,115 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 🔥 Initialiser les gestionnaires pour le widget flottant
+        // 🔥 Initialiser les gestionnaires
         floatingWidgetManager = FloatingWidgetManager(this)
         sessionManager = SessionManager(this)
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS),
-                100)
-        }
+        // Vérifier les permissions
+        checkAndRequestPermissions()
 
         setSupportActionBar(binding.appBarMain.toolbar)
         observeUserBalance()
-        checkAndRequestSmsPermissions()
         setupNavigation()
 
-        // 🔥 Démarrer automatiquement le widget si activé
-        checkAndStartFloatingWidgetAutomatically()
+        // 🔥 Démarrer automatiquement les services si activés
+        checkAndStartServices()
     }
 
-    // 🔥 AJOUT CRUCIAL: Gestion du retour des permissions d'overlay
+    // 🔥 NOUVELLE MÉTHODE: Vérifier et demander toutes les permissions
+    private fun checkAndRequestPermissions() {
+        val permissionsNeeded = mutableListOf<String>()
+
+        // Permissions SMS
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.RECEIVE_SMS)
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.READ_SMS)
+        }
+
+        // Permission de notification pour Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        if (permissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, permissionsNeeded.toTypedArray(), Constants.SMS_PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Démarrer automatiquement les services
+    private fun checkAndStartServices() {
+        if (sessionManager.isLoggedIn()) {
+            Log.d(TAG, "👤 Utilisateur connecté, vérification des services")
+
+            // Démarrer le widget flottant si activé
+            Handler(Looper.getMainLooper()).postDelayed({
+                floatingWidgetManager.startFloatingWidgetIfEnabled()
+            }, 1500)
+
+            // Démarrer les rappels si activés
+            Handler(Looper.getMainLooper()).postDelayed({
+                reminderManager.restartRemindersIfEnabled()
+            }, 2000)
+        }
+    }
+
+    // 🔥 AJOUT CRUCIAL: Gestion du retour des permissions
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE) {
-            if (floatingWidgetManager.hasOverlayPermission()) {
-                Log.d(TAG, "✅ Permission d'overlay accordée")
-                floatingWidgetManager.resetPermissionPreferences()
-                Toast.makeText(this, "✅ Permission accordée ! Le widget peut maintenant être activé.", Toast.LENGTH_LONG).show()
+        when (requestCode) {
+            OVERLAY_PERMISSION_REQUEST_CODE -> {
+                if (floatingWidgetManager.hasOverlayPermission()) {
+                    Log.d(TAG, "✅ Permission d'overlay accordée")
+                    floatingWidgetManager.resetPermissionPreferences()
+                    Toast.makeText(this, "✅ Permission accordée ! Le widget peut maintenant être activé.", Toast.LENGTH_LONG).show()
 
-                // 🔥 Démarrer automatiquement le widget après avoir accordé la permission
-                Handler(Looper.getMainLooper()).postDelayed({
-                    floatingWidgetManager.startFloatingWidget()
-                }, 500)
-            } else {
-                Log.w(TAG, "❌ Permission d'overlay refusée")
-                floatingWidgetManager.markPermissionDenied()
-                Toast.makeText(this, "❌ Permission refusée. Le widget ne peut pas fonctionner.", Toast.LENGTH_LONG).show()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        floatingWidgetManager.startFloatingWidget()
+                    }, 500)
+                } else {
+                    Log.w(TAG, "❌ Permission d'overlay refusée")
+                    floatingWidgetManager.markPermissionDenied()
+                    Toast.makeText(this, "❌ Permission refusée. Le widget ne peut pas fonctionner.", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
 
-    // 🔥 Démarre automatiquement le widget si les conditions sont remplies
-    private fun checkAndStartFloatingWidgetAutomatically() {
-        Log.d(TAG, "🔍 Vérification du démarrage automatique du widget")
-
-        // Vérifier si l'utilisateur est connecté
-        if (sessionManager.isLoggedIn()) {
-            Log.d(TAG, "👤 Utilisateur connecté, vérification des conditions")
-
-            // 🔥 AFFICHER les statistiques de permission
-            Log.d(TAG, floatingWidgetManager.getPermissionStats())
-
-            // 🔥 DÉMARRAGE AUTOMATIQUE: Si le widget était activé et permission accordée
-            Handler(Looper.getMainLooper()).postDelayed({
-                floatingWidgetManager.startFloatingWidgetIfEnabled()
-            }, 1500) // Délai pour s'assurer que l'activité est prête
-        } else {
-            Log.d(TAG, "❌ Utilisateur non connecté, widget non démarré")
-        }
-    }
-
-    // 🔥 Vérifier à nouveau les permissions au retour à l'application
     override fun onResume() {
         super.onResume()
 
-        // 🔥 DÉMARRAGE AUTOMATIQUE au retour dans l'app
         if (sessionManager.isLoggedIn()) {
-            Log.d(TAG, "🔄 onResume - Vérification du widget")
+            Log.d(TAG, "🔄 onResume - Vérification des services")
             floatingWidgetManager.startFloatingWidgetIfEnabled()
-        }
-    }
-
-    private fun checkAndRequestSmsPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val permissionsNeeded = mutableListOf<String>()
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
-                permissionsNeeded.add(Manifest.permission.RECEIVE_SMS)
-            }
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-                permissionsNeeded.add(Manifest.permission.READ_SMS)
-            }
-
-            if (permissionsNeeded.isNotEmpty()) {
-                ActivityCompat.requestPermissions(this, permissionsNeeded.toTypedArray(), Constants.SMS_PERMISSION_REQUEST_CODE)
-            }
+            reminderManager.restartRemindersIfEnabled()
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == Constants.SMS_PERMISSION_REQUEST_CODE) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                Toast.makeText(this, "Permissions SMS accordées", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Les permissions SMS sont nécessaires pour le traitement automatique", Toast.LENGTH_LONG).show()
+
+        when (requestCode) {
+            Constants.SMS_PERMISSION_REQUEST_CODE -> {
+                val smsGranted = grantResults.any { it == PackageManager.PERMISSION_GRANTED }
+                if (smsGranted) {
+                    Toast.makeText(this, "Permissions accordées", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Certaines permissions sont nécessaires pour le bon fonctionnement", Toast.LENGTH_LONG).show()
+                }
+            }
+            NOTIFICATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "✅ Permission de notification accordée", Toast.LENGTH_SHORT).show()
+                    // Proposer d'activer les rappels maintenant que la permission est accordée
+                    showReminderIntervalDialog(true)
+                } else {
+                    Toast.makeText(this, "❌ Permission de notification refusée. Les rappels ne fonctionneront pas.", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -194,7 +226,6 @@ class MainActivity : AppCompatActivity() {
         val navView: NavigationView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_main)
 
-        // Configuration des destinations de niveau supérieur
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home,
@@ -210,11 +241,9 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        // Gestion personnalisée de la navigation du drawer
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_home -> {
-                    // Nettoyer la pile de navigation et aller au home
                     if (navController.currentDestination?.id != R.id.nav_home) {
                         navController.popBackStack(R.id.nav_home, false)
                         if (navController.currentDestination?.id != R.id.nav_home) {
@@ -225,12 +254,10 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_emprunt -> {
-                    // Naviguer vers emprunt
                     if (navController.currentDestination?.id != R.id.nav_emprunt) {
                         try {
                             navController.navigate(R.id.nav_emprunt)
                         } catch (e: Exception) {
-                            // Si la navigation échoue, essayer de nettoyer la pile d'abord
                             navController.popBackStack(R.id.nav_home, false)
                             navController.navigate(R.id.nav_emprunt)
                         }
@@ -302,9 +329,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Écouter les changements de destination pour mettre à jour l'état du drawer
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            // Mettre à jour l'élément sélectionné dans le drawer
             when (destination.id) {
                 R.id.nav_home -> navView.setCheckedItem(R.id.nav_home)
                 R.id.nav_profile -> navView.setCheckedItem(R.id.nav_profile)
@@ -323,7 +348,6 @@ class MainActivity : AppCompatActivity() {
                 users.firstOrNull()?.let { user ->
                     updateBalanceInToolbar(user.solde)
 
-                    // 🔥 Mettre à jour le widget flottant quand le solde change
                     if (floatingWidgetManager.hasOverlayPermission() && floatingWidgetManager.isWidgetEnabled()) {
                         floatingWidgetManager.updateFloatingWidget()
                     }
@@ -401,7 +425,6 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         try {
-                            // Créer la transaction
                             val transaction = Transaction(
                                 type = type,
                                 montants = amount.toString(),
@@ -410,10 +433,8 @@ class MainActivity : AppCompatActivity() {
                                 id_banque = bankId
                             )
 
-                            // Insérer la transaction
                             db.transactionDao().insertTransaction(transaction)
 
-                            // Mettre à jour le solde de l'utilisateur
                             val newBalance = when (type) {
                                 "Dépôt" -> user.solde + amount
                                 "Retrait" -> user.solde - amount
@@ -421,7 +442,6 @@ class MainActivity : AppCompatActivity() {
                             }
                             db.utilisateurDao().update(user.copy(solde = newBalance))
 
-                            // 🔥 Mettre à jour le widget flottant après une transaction
                             if (floatingWidgetManager.hasOverlayPermission() && floatingWidgetManager.isWidgetEnabled()) {
                                 floatingWidgetManager.updateFloatingWidget()
                             }
@@ -447,12 +467,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
-        // Mettre à jour l'icône du thème
         updateThemeIcon(menu)
 
-        // 🔥 Ajouter le menu du widget flottant
+        // 🔥 Ajouter les menus du widget flottant et des notifications
         menu.add(Menu.NONE, MENU_FLOATING_WIDGET, Menu.NONE, "Widget flottant")
             .setIcon(R.drawable.ic_account_balance_wallet)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+
+        menu.add(Menu.NONE, MENU_NOTIFICATIONS, Menu.NONE, "Rappels")
+            .setIcon(R.drawable.ic_notifications)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
 
         return true
@@ -460,10 +483,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            // Gestion du toggle de thème
             R.id.theme_toggle -> {
                 ThemeManager.toggleTheme(this)
-                recreate() // Recréer l'activité pour appliquer le nouveau thème
+                recreate()
                 true
             }
             R.id.Banque -> {
@@ -474,16 +496,141 @@ class MainActivity : AppCompatActivity() {
                 showBanqueSettingsDialog()
                 true
             }
-            // 🔥 Gestion du widget flottant
             MENU_FLOATING_WIDGET -> {
                 showFloatingWidgetDialog()
+                true
+            }
+            // 🔥 NOUVEAU: Gestion des rappels avec sélection d'intervalle
+            MENU_NOTIFICATIONS -> {
+                showNotificationDialog()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    // 🔥 DIALOGUE SIMPLIFIÉ SELON VOTRE DEMANDE INITIALE
+    // 🔥 NOUVEAU DIALOGUE: Contrôle des notifications de rappel avec sélection d'intervalle
+    private fun showNotificationDialog() {
+        val hasPermission = notificationHelper.hasNotificationPermission()
+        val isEnabled = reminderManager.areRemindersEnabled()
+
+        if (!hasPermission) {
+            // Demander la permission d'abord
+            showPermissionRequestDialog()
+            return
+        }
+
+        // Si la permission est accordée, montrer les options de rappel
+        val title = "🔔 Rappels MoneyWise"
+        val currentInterval = reminderManager.formatInterval(reminderManager.getCurrentInterval())
+        val message = if (isEnabled) {
+            "Rappels actifs - Intervalle: $currentInterval\n\nRecevez des rappels pour vos emprunts, acquittements et projets."
+        } else {
+            "Activez les rappels pour être alerté de vos emprunts, acquittements et projets nécessitant votre attention."
+        }
+
+        val positiveButtonText = if (isEnabled) "🛑 Arrêter rappels" else "🚀 Activer rappels"
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(positiveButtonText) { _, _ ->
+                if (isEnabled) {
+                    // Arrêter les rappels
+                    reminderManager.stopReminders()
+                    showToast("🛑 Rappels arrêtés")
+                } else {
+                    // Activer les rappels avec sélection d'intervalle
+                    showReminderIntervalDialog(true)
+                }
+            }
+            .setNeutralButton(if (isEnabled) "⚙️ Modifier intervalle" else null) { _, _ ->
+                if (isEnabled) {
+                    showReminderIntervalDialog(false)
+                }
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Dialogue de demande de permission
+    private fun showPermissionRequestDialog() {
+        val title = "🔐 Permission requise"
+        val message = "Pour recevoir des notifications de rappel, MoneyWise a besoin de la permission d'envoyer des notifications.\n\nCette permission est nécessaire pour vous alerter des emprunts, acquittements et projets nécessitant votre attention."
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("🔐 Accorder permission") { _, _ ->
+                requestNotificationPermission()
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Dialogue de sélection d'intervalle de rappel
+    private fun showReminderIntervalDialog(isActivatingReminders: Boolean = false) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_reminder_interval, null)
+        val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radio_group_interval)
+        val tvCurrentInterval = dialogView.findViewById<TextView>(R.id.tv_current_interval)
+
+        // Afficher l'intervalle actuel
+        val currentInterval = reminderManager.getCurrentInterval()
+        tvCurrentInterval.text = "Intervalle actuel : ${reminderManager.formatInterval(currentInterval)}"
+
+        // Sélectionner le bouton radio correspondant à l'intervalle actuel
+        when (currentInterval) {
+            THREE_HOURS -> radioGroup.check(R.id.radio_3_hours)
+            SIX_HOURS -> radioGroup.check(R.id.radio_6_hours)
+            TWELVE_HOURS -> radioGroup.check(R.id.radio_12_hours)
+            ONE_DAY -> radioGroup.check(R.id.radio_24_hours)
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton("✅ Confirmer") { _, _ ->
+                // Récupérer l'intervalle sélectionné
+                val selectedInterval = when (radioGroup.checkedRadioButtonId) {
+                    R.id.radio_3_hours -> THREE_HOURS
+                    R.id.radio_6_hours -> SIX_HOURS
+                    R.id.radio_12_hours -> TWELVE_HOURS
+                    R.id.radio_24_hours -> ONE_DAY
+                    else -> SIX_HOURS
+                }
+
+                // Appliquer l'intervalle
+                reminderManager.setReminderInterval(selectedInterval)
+
+                // Si on active les rappels, les démarrer
+                if (isActivatingReminders) {
+                    reminderManager.startReminders()
+                    showToast("✅ Rappels activés - Intervalle: ${reminderManager.formatInterval(selectedInterval)}")
+                } else {
+                    showToast("🕐 Intervalle modifié: ${reminderManager.formatInterval(selectedInterval)}")
+                }
+            }
+            .setNegativeButton("❌ Annuler", null)
+            .setCancelable(false)
+            .create()
+
+        dialog.show()
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Demander la permission de notification
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // Pour les versions antérieures, la permission est automatiquement accordée
+            showToast("✅ Permission accordée")
+            showReminderIntervalDialog(true)
+        }
+    }
+
     private fun showFloatingWidgetDialog() {
         val hasPermission = floatingWidgetManager.hasOverlayPermission()
         val isEnabled = floatingWidgetManager.isWidgetEnabled()
@@ -507,16 +654,13 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton(positiveButtonText) { _, _ ->
                 if (hasPermission) {
                     if (isEnabled) {
-                        // Arrêter le widget
                         floatingWidgetManager.stopFloatingWidget()
-                        Toast.makeText(this, "🛑 Widget flottant arrêté", Toast.LENGTH_SHORT).show()
+                        showToast("🛑 Widget flottant arrêté")
                     } else {
-                        // Activer le widget
                         floatingWidgetManager.startFloatingWidget()
-                        Toast.makeText(this, "🚀 Widget flottant activé", Toast.LENGTH_SHORT).show()
+                        showToast("🚀 Widget flottant activé")
                     }
                 } else {
-                    // Demander la permission
                     floatingWidgetManager.forceRequestOverlayPermission()
                     showPermissionGuide()
                 }
@@ -525,7 +669,6 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    // 🔥 Guide pour accorder la permission
     private fun showPermissionGuide() {
         val guide = """
             📱 Pour activer le widget flottant :
@@ -545,104 +688,6 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    // 🔥 GARDER TOUTES VOS MÉTHODES AVANCÉES EXISTANTES
-    private fun showWidgetStats() {
-        val stats = floatingWidgetManager.getPermissionStats()
-        MaterialAlertDialogBuilder(this)
-            .setTitle("📊 Statistiques du Widget")
-            .setMessage(stats)
-            .setPositiveButton("OK", null)
-            .show()
-    }
-
-    private fun showAdvancedSettings() {
-        val options = arrayOf(
-            "🔄 Réinitialiser les préférences",
-            "🔧 Forcer le redémarrage",
-            "🧹 Nettoyer le cache",
-            "🔍 Mode debug"
-        )
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("⚙️ Paramètres Avancés")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> {
-                        // Réinitialiser les préférences
-                        floatingWidgetManager.resetPermissionPreferences()
-                        Toast.makeText(this, "🔄 Préférences réinitialisées", Toast.LENGTH_SHORT).show()
-                    }
-                    1 -> {
-                        // Forcer le redémarrage
-                        floatingWidgetManager.stopFloatingWidget()
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            floatingWidgetManager.startFloatingWidgetWithPermissionRequest()
-                            Toast.makeText(this, "🔧 Redémarrage forcé", Toast.LENGTH_SHORT).show()
-                        }, 1000)
-                    }
-                    2 -> {
-                        // Nettoyer le cache (simulation)
-                        Toast.makeText(this, "🧹 Cache nettoyé", Toast.LENGTH_SHORT).show()
-                    }
-                    3 -> {
-                        // Mode debug
-                        val debugInfo = """
-                            🔍 Informations de Debug:
-                            
-                            ${floatingWidgetManager.getPermissionStats()}
-                            
-                            📱 Système: Android ${Build.VERSION.RELEASE}
-                            🏗️ SDK: ${Build.VERSION.SDK_INT}
-                            📦 App: ${packageName}
-                        """.trimIndent()
-
-                        MaterialAlertDialogBuilder(this)
-                            .setTitle("🔍 Mode Debug")
-                            .setMessage(debugInfo)
-                            .setPositiveButton("OK", null)
-                            .show()
-                    }
-                }
-            }
-            .setNegativeButton("Retour", null)
-            .show()
-    }
-
-    private fun showActivationGuide() {
-        val guide = """
-            🎯 Guide complet d'activation du Widget Flottant:
-            
-            📋 ÉTAPES:
-            1️⃣ Menu → Widget flottant → Accorder la permission
-            2️⃣ Dans les paramètres: Activer "Affichage par-dessus d'autres apps"
-            3️⃣ Revenir dans MoneyWise
-            4️⃣ Le widget apparaît automatiquement
-            
-            ✨ FONCTIONNALITÉS:
-            • 💰 Affiche votre solde en temps réel
-            • 📱 Visible dans toutes les applications
-            • 🎮 Déplaçable et redimensionnable
-            • 🔄 Mise à jour automatique
-            
-            🔧 CONTRÔLES:
-            • Glisser la barre du haut pour déplacer
-            • Clic sur le widget pour ouvrir l'app
-            • Boutons minimiser/fermer disponibles
-            
-            ⚡ Le widget se lance automatiquement à chaque connexion une fois activé !
-        """.trimIndent()
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("📖 Guide Complet du Widget")
-            .setMessage(guide)
-            .setPositiveButton("Commencer", { _, _ ->
-                floatingWidgetManager.forceRequestOverlayPermission()
-            })
-            .setNegativeButton("Plus tard", null)
-            .show()
-    }
-
-    // Méthode pour mettre à jour l'icône du thème
     private fun updateThemeIcon(menu: Menu) {
         val themeItem = menu.findItem(R.id.theme_toggle)
         if (ThemeManager.isDarkMode(this)) {
@@ -654,7 +699,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Mettre à jour l'icône quand le menu est préparé
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         updateThemeIcon(menu)
         return super.onPrepareOptionsMenu(menu)
@@ -784,6 +828,11 @@ class MainActivity : AppCompatActivity() {
         banqueNames.clear()
     }
 
+    // 🔥 NOUVELLE MÉTHODE: Afficher un toast
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
@@ -793,7 +842,6 @@ class MainActivity : AppCompatActivity() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
-            // Gérer le bouton retour pour revenir au home si on n'y est pas
             if (navController.currentDestination?.id != R.id.nav_home) {
                 navController.popBackStack(R.id.nav_home, false)
                 if (navController.currentDestination?.id != R.id.nav_home) {
@@ -807,7 +855,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Ne pas arrêter le widget à la destruction de l'activité
-        // car il doit continuer à fonctionner en arrière-plan
+        // Les services continuent à fonctionner en arrière-plan
     }
 }
