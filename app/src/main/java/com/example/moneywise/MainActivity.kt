@@ -38,6 +38,7 @@ import com.example.moneywise.data.entity.Banque
 import com.example.moneywise.databinding.ActivityMainBinding
 import com.example.moneywise.expenses.BanqueViewModel
 import com.example.moneywise.ui.Banque.BanqueAdapter
+import com.example.moneywise.ui.components.MarqueeTextView
 import com.example.moneywise.utils.FloatingWidgetManager
 import com.example.moneywise.utils.ThemeManager
 import com.google.android.material.navigation.NavigationView
@@ -73,6 +74,9 @@ class MainActivity : AppCompatActivity() {
     // 🔥 Gestionnaires pour le widget flottant et les notifications
     private lateinit var floatingWidgetManager: FloatingWidgetManager
     private lateinit var sessionManager: SessionManager
+
+    // 🔥 Référence au titre défilant
+    private lateinit var toolbarTitle: MarqueeTextView
 
     @Inject
     lateinit var db: AppDatabase
@@ -116,11 +120,50 @@ class MainActivity : AppCompatActivity() {
         checkAndRequestPermissions()
 
         setSupportActionBar(binding.appBarMain.toolbar)
+
+        // 🔥 Initialiser le titre défilant APRÈS avoir configuré la toolbar
+        initializeToolbarTitle()
+
         observeUserBalance()
         setupNavigation()
 
         // 🔥 Démarrer automatiquement les services si activés
         checkAndStartServices()
+    }
+
+    // 🔥 MÉTHODE CORRIGÉE: Initialiser le titre défilant
+    private fun initializeToolbarTitle() {
+        try {
+            toolbarTitle = findViewById(R.id.toolbar_title)
+            Log.d(TAG, "✅ MarqueeTextView trouvé et initialisé")
+
+            // Définir le titre complet qui va défiler
+            updateToolbarTitle("Tableau de bord MoneyWise - Gestion financière complète et suivi des transactions en temps réel")
+
+            // Forcer le démarrage du marquee après un délai
+            Handler(Looper.getMainLooper()).postDelayed({
+                toolbarTitle.isSelected = true
+                Log.d(TAG, "🎬 Marquee forcé après délai")
+            }, 1000)
+
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ Erreur lors de l'initialisation du MarqueeTextView: ${e.message}")
+        }
+    }
+
+    // 🔥 MÉTHODE CORRIGÉE: Mettre à jour le titre défilant
+    private fun updateToolbarTitle(title: String) {
+        if (::toolbarTitle.isInitialized) {
+            toolbarTitle.text = title
+            Log.d(TAG, "📝 Titre mis à jour: $title")
+
+            // Forcer le redémarrage du marquee
+            Handler(Looper.getMainLooper()).postDelayed({
+                toolbarTitle.isSelected = true
+            }, 100)
+        } else {
+            Log.w(TAG, "⚠️ MarqueeTextView non initialisé")
+        }
     }
 
     // 🔥 NOUVELLE MÉTHODE: Vérifier et demander toutes les permissions
@@ -194,6 +237,14 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "🔄 onResume - Vérification des services")
             floatingWidgetManager.startFloatingWidgetIfEnabled()
             reminderManager.restartRemindersIfEnabled()
+        }
+
+        // 🔥 AJOUT: Redémarrer le marquee en onResume
+        if (::toolbarTitle.isInitialized) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                toolbarTitle.isSelected = true
+                Log.d(TAG, "🔄 Marquee redémarré en onResume")
+            }, 500)
         }
     }
 
@@ -331,13 +382,34 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.nav_home -> navView.setCheckedItem(R.id.nav_home)
-                R.id.nav_profile -> navView.setCheckedItem(R.id.nav_profile)
-                R.id.nav_projet -> navView.setCheckedItem(R.id.nav_projet)
-                R.id.nav_historique -> navView.setCheckedItem(R.id.nav_historique)
-                R.id.nav_emprunt -> navView.setCheckedItem(R.id.nav_emprunt)
-                R.id.nav_acquittement -> navView.setCheckedItem(R.id.nav_acquittement)
-                R.id.nav_transaction -> navView.setCheckedItem(R.id.nav_transaction)
+                R.id.nav_home -> {
+                    navView.setCheckedItem(R.id.nav_home)
+                    updateToolbarTitle("Tableau de bord")
+                }
+                R.id.nav_profile -> {
+                    navView.setCheckedItem(R.id.nav_profile)
+                    updateToolbarTitle("Profil utilisateur")
+                }
+                R.id.nav_projet -> {
+                    navView.setCheckedItem(R.id.nav_projet)
+                    updateToolbarTitle("Gestion des projets")
+                }
+                R.id.nav_historique -> {
+                    navView.setCheckedItem(R.id.nav_historique)
+                    updateToolbarTitle("Historique")
+                }
+                R.id.nav_emprunt -> {
+                    navView.setCheckedItem(R.id.nav_emprunt)
+                    updateToolbarTitle("Gestion des emprunts")
+                }
+                R.id.nav_acquittement -> {
+                    navView.setCheckedItem(R.id.nav_acquittement)
+                    updateToolbarTitle("Gestion des Acquittements")
+                }
+                R.id.nav_transaction -> {
+                    navView.setCheckedItem(R.id.nav_transaction)
+                    updateToolbarTitle("Transactions")
+                }
             }
         }
     }
