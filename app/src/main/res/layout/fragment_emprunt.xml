@@ -209,13 +209,12 @@
                     android:textColor="?attr/textColorPrimary"/>
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFilterEmprunt"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:text="Filtrer"
                     android:textColor="#4285F4"
                     android:textAllCaps="false"
-                    app:icon="@drawable/ic_filter"
-                    app:iconTint="#4285F4"
                     app:iconGravity="textStart"
                     app:strokeColor="#4285F4"
                     app:strokeWidth="1dp"

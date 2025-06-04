@@ -8,15 +8,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moneywise.R
 import com.example.moneywise.data.entity.Emprunt
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class EmpruntAdapter(
-    private val emprunts: List<Emprunt>,
+    private var emprunts: List<Emprunt>,
     private val onRembourserClick: (Emprunt) -> Unit
 ) : RecyclerView.Adapter<EmpruntAdapter.EmpruntViewHolder>() {
 
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    private val numberFormat = NumberFormat.getInstance(Locale.getDefault())
 
     class EmpruntViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textNom: TextView = itemView.findViewById(R.id.text_nom)
@@ -48,8 +50,8 @@ class EmpruntAdapter(
 
         holder.initials.text = initials
         holder.textNom.text = emprunt.nom_emprunte
-        holder.textContact.text = emprunt.contacte
-        holder.textMontant.text = "${emprunt.montant} MGA"
+        holder.textContact.text = emprunt.contacte.ifEmpty { "Aucun contact" }
+        holder.textMontant.text = "${numberFormat.format(emprunt.montant)} MGA"
         holder.textDateEmprunt.text = dateFormat.format(emprunt.date_emprunt)
         holder.textDateRemboursement.text = dateFormat.format(emprunt.date_remboursement)
 
@@ -61,4 +63,13 @@ class EmpruntAdapter(
     }
 
     override fun getItemCount() = emprunts.size
+
+    // 🔥 NOUVELLE MÉTHODE: Mettre à jour la liste
+    fun updateList(newList: List<Emprunt>) {
+        emprunts = newList
+        notifyDataSetChanged()
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Obtenir la liste actuelle
+    fun getCurrentList(): List<Emprunt> = emprunts
 }

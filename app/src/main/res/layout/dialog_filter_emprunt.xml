@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- En-tête -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🔍 Options de tri des emprunts"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="?attr/textColorPrimary"/>
+    </LinearLayout>
+
+    <!-- Description -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choisissez comment trier vos emprunts :"
+        android:textSize="14sp"
+        android:textColor="?attr/textColorSecondary"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Options de tri -->
+    <RadioGroup
+        android:id="@+id/radioGroupFilterEmprunt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Nom A-Z -->
+        <RadioButton
+            android:id="@+id/radioNomAZ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="👤 Nom A → Z"
+            android:textSize="16sp"
+            android:textColor="?attr/textColorPrimary"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/selectableItemBackground"/>
+
+        <!-- Nom Z-A -->
+        <RadioButton
+            android:id="@+id/radioNomZA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="👤 Nom Z → A"
+            android:textSize="16sp"
+            android:textColor="?attr/textColorPrimary"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/selectableItemBackground"/>
+
+        <!-- Montant croissant -->
+        <RadioButton
+            android:id="@+id/radioMontantCroissantEmprunt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💰 Montant croissant"
+            android:textSize="16sp"
+            android:textColor="?attr/textColorPrimary"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/selectableItemBackground"/>
+
+        <!-- Montant décroissant -->
+        <RadioButton
+            android:id="@+id/radioMontantDecroissantEmprunt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💰 Montant décroissant"
+            android:textSize="16sp"
+            android:textColor="?attr/textColorPrimary"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/selectableItemBackground"/>
+
+        <!-- Date remboursement récent -->
+        <RadioButton
+            android:id="@+id/radioDateRemboursementRecent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📅 Remboursement récent"
+            android:textSize="16sp"
+            android:textColor="?attr/textColorPrimary"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:checked="true"/>
+
+        <!-- Date remboursement ancien -->
+        <RadioButton
+            android:id="@+id/radioDateRemboursementAncien"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📅 Remboursement ancien"
+            android:textSize="16sp"
+            android:textColor="?attr/textColorPrimary"
+            android:padding="16dp"
+            android:background="?android:attr/selectableItemBackground"/>
+
+    </RadioGroup>
+
+    <!-- Note informative -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="💡 Le tri sera appliqué immédiatement à votre liste d'emprunts."
+        android:textSize="12sp"
+        android:textColor="?attr/textColorSecondary"
+        android:layout_marginTop="20dp"
+        android:gravity="center"/>
+
+</LinearLayout>
