@@ -5,8 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.moneywise.data.entity.Utilisateur
 import com.example.moneywise.data.repository.UtilisateurRepository
 import kotlinx.coroutines.launch
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class AuthViewModel(private val utilisateurRepository: UtilisateurRepository) : ViewModel() {
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val utilisateurRepository: UtilisateurRepository
+) : ViewModel() {
 
     fun registerUser(
         nom: String,
@@ -29,6 +34,21 @@ class AuthViewModel(private val utilisateurRepository: UtilisateurRepository) : 
         viewModelScope.launch {
             val result = utilisateurRepository.loginUser(email, password)
             onResult(result)
+        }
+    }
+
+    // 🔥 NOUVELLES MÉTHODES AJOUTÉES POUR MOT DE PASSE OUBLIÉ
+    fun checkUserExists(email: String, callback: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val result = utilisateurRepository.checkUserExists(email)
+            callback(result)
+        }
+    }
+
+    fun resetPassword(email: String, newPassword: String, callback: (Result<Unit>) -> Unit) {
+        viewModelScope.launch {
+            val result = utilisateurRepository.resetPassword(email, newPassword)
+            callback(result)
         }
     }
 

@@ -15,6 +15,6 @@
     <item
         android:id="@+id/banque_setting"
         android:orderInCategory="100"
-        android:title="Banque setting"
+        android:title="Paramétre du banque"
         app:showAsAction="never" />
 </menu>

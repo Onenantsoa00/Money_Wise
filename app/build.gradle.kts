@@ -93,4 +93,7 @@ dependencies {
 
     // Sécurité pour les SharedPreferences chiffrées
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    // 🔥 NOUVELLE DÉPENDANCE POUR LA BIOMÉTRIE
+    implementation ("androidx.biometric:biometric:1.1.0")
 }

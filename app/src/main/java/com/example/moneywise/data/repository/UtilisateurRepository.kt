@@ -60,12 +60,49 @@ class UtilisateurRepository(private val utilisateurDao: UtilisateurDao) {
             if (user != null) {
                 // Vérifier le mot de passe
                 if (PasswordUtils.verifyPassword(password, user.password)) {
-                    Result.success(user)
+
+                    // 🔥 MIGRATION AUTOMATIQUE: Si l'ancien format, migrer vers le nouveau
+                    if (!PasswordUtils.isModernHash(user.password)) {
+                        val newHash = PasswordUtils.hashPassword(password)
+                        val updatedUser = user.copy(password = newHash)
+                        utilisateurDao.update(updatedUser)
+                        Result.success(updatedUser)
+                    } else {
+                        Result.success(user)
+                    }
                 } else {
                     Result.failure(Exception("Email ou mot de passe incorrect"))
                 }
             } else {
                 Result.failure(Exception("Email ou mot de passe incorrect"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // 🔥 NOUVELLES MÉTHODES AJOUTÉES POUR MOT DE PASSE OUBLIÉ
+    suspend fun checkUserExists(email: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            utilisateurDao.getUserByEmail(email) != null
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun resetPassword(email: String, newPassword: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val user = utilisateurDao.getUserByEmail(email)
+
+            if (user != null) {
+                // Hacher le nouveau mot de passe avec le système sécurisé
+                val hashedPassword = PasswordUtils.hashPassword(newPassword)
+                val updatedUser = user.copy(password = hashedPassword)
+
+                utilisateurDao.update(updatedUser)
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Utilisateur non trouvé"))
             }
         } catch (e: Exception) {
             Result.failure(e)
