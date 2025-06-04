@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.moneywise.R
 import com.example.moneywise.data.entity.Acquittement
 import com.google.android.material.button.MaterialButton
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,6 +18,7 @@ class AcquittementAdapter(
 ) : RecyclerView.Adapter<AcquittementAdapter.AcquittementViewHolder>() {
 
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    private val numberFormat = NumberFormat.getInstance(Locale.getDefault())
 
     class AcquittementViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textNom: TextView = view.findViewById(R.id.text_nom)
@@ -38,15 +40,19 @@ class AcquittementAdapter(
         val acquittement = acquittements[position]
 
         holder.textNom.text = acquittement.personne_acquittement
-        holder.textContact.text = acquittement.contacte
-        holder.textMontant.text = "${acquittement.montant} MGA"
+        holder.textContact.text = acquittement.contacte.ifEmpty { "Aucun contact" }
+        holder.textMontant.text = "${numberFormat.format(acquittement.montant)} MGA"
         holder.textDateCredit.text = dateFormat.format(acquittement.date_crédit)
         holder.textDateRemise.text = dateFormat.format(acquittement.date_remise_crédit)
 
-        val initials = acquittement.personne_acquittement.split(" ")
-            .take(2)
-            .joinToString("") { it.firstOrNull()?.toString() ?: "" }
-            .uppercase()
+        // Extraire les initiales
+        val initials = try {
+            acquittement.personne_acquittement.split(" ").take(2)
+                .filter { it.isNotEmpty() }
+                .joinToString("") { it.first().toString().uppercase() }
+        } catch (e: Exception) {
+            "?"
+        }
         holder.initials.text = initials
 
         holder.btnRembourser.setOnClickListener {
@@ -56,8 +62,12 @@ class AcquittementAdapter(
 
     override fun getItemCount() = acquittements.size
 
+    // 🔥 NOUVELLE MÉTHODE: Mettre à jour la liste
     fun updateList(newList: List<Acquittement>) {
         acquittements = newList
         notifyDataSetChanged()
     }
+
+    // 🔥 NOUVELLE MÉTHODE: Obtenir la liste actuelle
+    fun getCurrentList(): List<Acquittement> = acquittements
 }

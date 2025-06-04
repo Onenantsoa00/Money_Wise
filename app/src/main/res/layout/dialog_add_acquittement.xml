@@ -12,23 +12,28 @@
 
         <!-- Nom -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_nom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="Nom complet">
+            android:hint="Nom complet"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_nom"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName|textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Contact -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_contact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="Contact">
+            android:hint="Contact (téléphone)"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_contact"
@@ -39,10 +44,12 @@
 
         <!-- Montant -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_montant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="Montant">
+            android:hint="Montant (MGA)"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_montant"
@@ -51,35 +58,68 @@
                 android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Affichage du solde disponible -->
+        <TextView
+            android:id="@+id/text_solde_disponible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💰 Solde disponible : 0 MGA"
+            android:textSize="14sp"
+            android:textColor="?attr/textColorSecondary"
+            android:layout_marginBottom="16dp"
+            android:padding="8dp"
+            android:background="?attr/colorSurface"
+            android:gravity="center" />
+
         <!-- Date Crédit -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_date_credit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="Date de crédit">
+            android:hint="Date de crédit"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_date_credit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                android:clickable="true" />
+                android:clickable="true"
+                android:drawableEnd="@drawable/ic_calendar"
+                android:drawablePadding="8dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Date Remise -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_date_remise"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="Date de remise">
+            android:hint="Date de remise"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_date_remise"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                android:clickable="true" />
+                android:clickable="true"
+                android:drawableEnd="@drawable/ic_calendar"
+                android:drawablePadding="8dp" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Note d'information -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💡 Tous les champs sont obligatoires. Le nom doit commencer par une majuscule. Le montant ne peut pas dépasser votre solde."
+            android:textSize="12sp"
+            android:textColor="?attr/textColorSecondary"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:background="?attr/colorSurface"
+            android:gravity="center" />
 
     </LinearLayout>
 </ScrollView>
