@@ -109,6 +109,12 @@
                                     android:layout_marginTop="8dp"/>
                             </LinearLayout>
 
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="48dp"
+                                android:layout_gravity="center_vertical"
+                                android:background="#DDDDDD" />
+
                             <!-- Stat En Cours - CLIQUABLE -->
                             <LinearLayout
                                 android:id="@+id/layout_ongoing_projects"
@@ -152,6 +158,12 @@
                                     android:textColor="?attr/textColorPrimary"
                                     android:layout_marginTop="8dp"/>
                             </LinearLayout>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="48dp"
+                                android:layout_gravity="center_vertical"
+                                android:background="#DDDDDD" />
 
                             <!-- Stat Complétés - CLIQUABLE -->
                             <LinearLayout

@@ -144,7 +144,11 @@
                                         android:textColor="?attr/textColorPrimary"
                                         android:layout_marginTop="8dp"/>
                                 </LinearLayout>
-
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="48dp"
+                                    android:layout_gravity="center_vertical"
+                                    android:background="#DDDDDD" />
                                 <LinearLayout
                                     android:id="@+id/buttonSend"
                                     android:layout_width="0dp"
@@ -176,7 +180,11 @@
                                         android:textColor="?attr/textColorPrimary"
                                         android:layout_marginTop="8dp"/>
                                 </LinearLayout>
-
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="48dp"
+                                    android:layout_gravity="center_vertical"
+                                    android:background="#DDDDDD" />
                                 <LinearLayout
                                     android:id="@+id/buttonRembourser"
                                     android:layout_width="0dp"
@@ -255,62 +263,48 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Type"
+                                android:textColor="@color/black"
+                                android:alpha="0.7"
+                                android:textStyle="bold"
+                                android:gravity="center"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Montant"
+                                android:textColor="@color/black"
+                                android:alpha="0.7"
+                                android:textStyle="bold"
+                                android:gravity="center"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Date"
+                                android:textColor="@color/black"
+                                android:alpha="0.7"
+                                android:textStyle="bold"
+                                android:gravity="center"/>
+                        </TableRow>
                         <TableLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:stretchColumns="*"
                             android:shrinkColumns="*">
 
-                            <TableRow
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="8dp">
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Type"
-                                    android:textColor="@color/black"
-                                    android:alpha="0.7"
-                                    android:textStyle="bold"/>
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Montant"
-                                    android:textColor="@color/black"
-                                    android:alpha="0.7"
-                                    android:textStyle="bold"/>
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Date"
-                                    android:textColor="@color/black"
-                                    android:alpha="0.7"
-                                    android:textStyle="bold"/>
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Motif"
-                                    android:textColor="@color/black"
-                                    android:alpha="0.7"
-                                    android:textStyle="bold"/>
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Description"
-                                    android:textColor="@color/black"
-                                    android:alpha="0.7"
-                                    android:textStyle="bold"/>
-                            </TableRow>
                         </TableLayout>
 
                         <View

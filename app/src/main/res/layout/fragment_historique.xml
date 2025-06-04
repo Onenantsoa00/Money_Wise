@@ -91,7 +91,7 @@
                                 android:id="@+id/textCredit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="+500,000"
+                                android:text="+500,000 MGA"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
                                 android:textColor="#34A853"
@@ -133,7 +133,7 @@
                                 android:id="@+id/textDebit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="-150,000"
+                                android:text="-150,000 MGA"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
                                 android:textColor="#EA4335"
@@ -175,7 +175,7 @@
                                 android:id="@+id/textSolde"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="+350,000"
+                                android:text="+350,000 MGA"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
                                 android:textColor="#4285F4"
@@ -210,13 +210,12 @@
                     android:textColor="?attr/textColorPrimary"/>
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:text="Filtrer"
                     android:textColor="#4285F4"
                     android:textAllCaps="false"
-                    app:icon="@drawable/ic_filter"
-                    app:iconTint="#4285F4"
                     app:iconGravity="textStart"
                     app:strokeColor="#4285F4"
                     app:strokeWidth="1dp"
@@ -224,7 +223,7 @@
                     app:cornerRadius="20dp"/>
             </LinearLayout>
 
-            <!-- Carte des transactions -->
+            <!-- Carte des transactions avec défilement horizontal -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -238,53 +237,67 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- En-tête du tableau -->
-                    <LinearLayout
+                    <!-- En-tête du tableau avec défilement horizontal -->
+                    <HorizontalScrollView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?attr/colorSurface"
-                        android:padding="16dp"
-                        android:orientation="horizontal">
+                        android:scrollbars="none"
+                        android:overScrollMode="never">
 
-                        <TextView
-                            android:layout_width="0dp"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1.5"
-                            android:text="Type"
-                            android:textColor="?attr/textColorSecondary"
-                            android:textStyle="bold"
-                            android:textSize="14sp"/>
+                            android:background="?attr/colorSurface"
+                            android:padding="16dp"
+                            android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Montant"
-                            android:textColor="?attr/textColorSecondary"
-                            android:textStyle="bold"
-                            android:textSize="14sp"
-                            android:gravity="end"/>
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:text="Type"
+                                android:textColor="?attr/textColorSecondary"
+                                android:textStyle="bold"
+                                android:textSize="14sp"
+                                android:gravity="center"/>
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1.5"
-                            android:text="Date"
-                            android:textColor="?attr/textColorSecondary"
-                            android:textStyle="bold"
-                            android:textSize="14sp"
-                            android:gravity="center"/>
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:text="Montant"
+                                android:textColor="?attr/textColorSecondary"
+                                android:textStyle="bold"
+                                android:textSize="14sp"
+                                android:gravity="center"
+                                android:layout_marginStart="12dp"/>
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:text="Motif"
-                            android:textColor="?attr/textColorSecondary"
-                            android:textStyle="bold"
-                            android:textSize="14sp"/>
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:text="Date"
+                                android:textColor="?attr/textColorSecondary"
+                                android:textStyle="bold"
+                                android:textSize="14sp"
+                                android:gravity="center"
+                                android:layout_marginStart="12dp"/>
 
+                            <TextView
+                                android:layout_width="120dp"
+                                android:layout_height="wrap_content"
+                                android:text="Motif"
+                                android:textColor="?attr/textColorSecondary"
+                                android:textStyle="bold"
+                                android:textSize="14sp"
+                                android:gravity="center"
+                                android:layout_marginStart="12dp"/>
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/dividerColor"/>
+
+                    <!-- Liste des transactions -->
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerHistorique"
                         android:layout_width="match_parent"
