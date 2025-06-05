@@ -132,6 +132,17 @@
                 android:value="Widget flottant pour affichage du solde" />
         </service>
 
+        <!-- 🔥 NOUVEAU: SERVICE POUR LE TRAITEMENT SMS EN ARRIÈRE-PLAN -->
+        <service
+            android:name=".services.SMSBackgroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Service de traitement des SMS mobile money en arrière-plan" />
+        </service>
+
         <!-- 🔥 NOUVEAU: SERVICE POUR LES RAPPELS -->
         <service
             android:name=".services.ReminderNotificationService"
@@ -154,7 +165,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- 🔥 RECEIVER POUR LE REDÉMARRAGE AUTOMATIQUE (SANS @AndroidEntryPoint) -->
+        <!-- 🔥 RECEIVER POUR LE REDÉMARRAGE AUTOMATIQUE -->
         <receiver
             android:name=".services.BootReceiver"
             android:enabled="true"

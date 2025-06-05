@@ -1,5 +1,6 @@
 package com.example.moneywise.utils
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -7,7 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -26,11 +26,57 @@ class NotificationHelper @Inject constructor(
 
     companion object {
         private const val TAG = "NotificationHelper"
-        private const val CHANNEL_ID = "reminder_channel"
+        private const val CHANNEL_ID_TRANSACTIONS = "transactions_channel"
+        private const val CHANNEL_ID_REMINDERS = "reminders_channel"
+        private const val CHANNEL_ID_SERVICES = "services_channel"
+        private const val CHANNEL_ID = "reminder_channel" // Pour compatibilité avec votre code existant
     }
 
     private var mediaPlayer: MediaPlayer? = null
 
+    init {
+        createNotificationChannels()
+    }
+
+    private fun createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            // Canal pour les transactions (NOUVEAU)
+            val transactionsChannel = NotificationChannel(
+                CHANNEL_ID_TRANSACTIONS,
+                "Transactions Mobile Money",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Notifications pour les transactions mobile money détectées"
+            }
+
+            // Canal pour les rappels (EXISTANT - préservé)
+            val remindersChannel = NotificationChannel(
+                CHANNEL_ID,
+                "Rappels",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Rappels pour emprunts, acquittements et projets"
+            }
+
+            // Canal pour les services (NOUVEAU)
+            val servicesChannel = NotificationChannel(
+                CHANNEL_ID_SERVICES,
+                "Services en arrière-plan",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Notifications pour les services en arrière-plan"
+                setShowBadge(false)
+            }
+
+            notificationManager.createNotificationChannel(transactionsChannel)
+            notificationManager.createNotificationChannel(remindersChannel)
+            notificationManager.createNotificationChannel(servicesChannel)
+        }
+    }
+
+    // 🔥 VOTRE MÉTHODE EXISTANTE - PRÉSERVÉE
     fun sendNotification(
         id: Int,
         title: String,
@@ -82,9 +128,74 @@ class NotificationHelper @Inject constructor(
         }
     }
 
-    /**
-     * Joue le son de pièce d'argent qui tombe
-     */
+    // 🔥 NOUVELLES MÉTHODES POUR LES TRANSACTIONS
+    fun showTransactionNotification(
+        title: String,
+        content: String,
+        transactionType: String,
+        amount: Double
+    ) {
+        if (!hasNotificationPermission()) {
+            Log.w(TAG, "❌ Permission de notification non accordée")
+            return
+        }
+
+        val intent = Intent(context, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            System.currentTimeMillis().toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID_TRANSACTIONS)
+            .setContentTitle(title)
+            .setContentText(content)
+            .setSmallIcon(R.drawable.ic_account_balance_wallet)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(System.currentTimeMillis().toInt(), notification)
+
+        // Jouer le son de pièce
+        playCoinDropSound()
+    }
+
+    fun showReminderNotification(
+        title: String,
+        content: String,
+        notificationId: Int
+    ) {
+        if (!hasNotificationPermission()) {
+            Log.w(TAG, "❌ Permission de notification non accordée")
+            return
+        }
+
+        val intent = Intent(context, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle(title)
+            .setContentText(content)
+            .setSmallIcon(R.drawable.ic_account_balance_wallet)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .build()
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(notificationId, notification)
+    }
+
+    // 🔥 VOTRE MÉTHODE EXISTANTE - PRÉSERVÉE
     private fun playCoinDropSound() {
         try {
             // Libérer le MediaPlayer précédent s'il existe
@@ -131,6 +242,7 @@ class NotificationHelper @Inject constructor(
         }
     }
 
+    // 🔥 VOTRE MÉTHODE EXISTANTE - PRÉSERVÉE
     fun hasNotificationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.checkSelfPermission(
@@ -142,9 +254,7 @@ class NotificationHelper @Inject constructor(
         }
     }
 
-    /**
-     * Libère les ressources du MediaPlayer
-     */
+    // 🔥 VOTRE MÉTHODE EXISTANTE - PRÉSERVÉE
     fun release() {
         try {
             mediaPlayer?.release()

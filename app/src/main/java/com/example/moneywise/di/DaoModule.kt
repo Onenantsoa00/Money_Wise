@@ -3,7 +3,6 @@ package com.example.moneywise.di
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.dao.*
 import com.example.moneywise.data.repository.*
-import com.example.moneywise.services.BalanceUpdateService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -69,10 +68,4 @@ object DaoModule {
         return UtilisateurRepository(utilisateurDao)
     }
 
-    // 🔥 NOUVEAU: Provider pour le service de mise à jour du solde
-    @Provides
-    @Singleton
-    fun provideBalanceUpdateService(): BalanceUpdateService {
-        return BalanceUpdateService()
-    }
 }

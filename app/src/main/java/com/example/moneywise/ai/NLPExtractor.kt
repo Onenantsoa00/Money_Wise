@@ -51,7 +51,7 @@ class NLPExtractor @Inject constructor(
             val transactionType = extractTransactionType(message.lowercase(), provider)
             result["transaction_type"] = transactionType
 
-            // Extraire le montant
+            // 🔥 CORRECTION: Extraire le montant avec gestion des espaces ET exclusion des patterns x/y
             val amount = extractAmount(message)
             result["amount"] = amount
 
@@ -241,34 +241,113 @@ class NLPExtractor @Inject constructor(
         return "AUTRE"
     }
 
+    /**
+     * 🔥 CORRECTION MAJEURE: Extraction des montants avec exclusion des patterns x/y
+     * Cette fonction extrait les montants en évitant les indicateurs de messages multi-parties
+     */
     private fun extractAmount(message: String): Double {
         // 🔥 EXCLURE LES POURCENTAGES PROMOTIONNELS
         if (isPromotionalMessage(message)) {
             return 0.0
         }
 
-        // Patterns pour les montants avec priorité - AMÉLIORÉS
+        Log.d(TAG, "🔍 Extraction du montant depuis: '$message'")
+
+        // 🔥 ÉTAPE 1: Nettoyer le message en supprimant les patterns x/y (comme 1/2, 2/2)
+        val cleanedMessage = removeMultiPartIndicators(message)
+        Log.d(TAG, "🧹 Message nettoyé: '$cleanedMessage'")
+
+        // 🔥 ÉTAPE 2: Patterns pour montants avec espaces - ORDRE DE PRIORITÉ
         val amountPatterns = listOf(
-            Pattern.compile("(\\d+(?:[.,]\\d+)?)\\s*(?:Ar|MGA|ariary)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(\\d+(?:[.,]\\d+)?)\\s*(?:ar|mga)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?:montant|amount|somme)[\\s:]*(\\d+(?:[.,]\\d+)?)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(\\d+(?:[.,]\\d+)?)\\s*(?:francs?|fr)", Pattern.CASE_INSENSITIVE)
+            // Pattern le plus spécifique: montant suivi directement de la devise
+            Pattern.compile("(\\d+(?:\\s+\\d+)*(?:[.,]\\d+)?)\\s*(?:Ar|MGA|ariary)\\b", Pattern.CASE_INSENSITIVE),
+
+            // Pattern pour montants après des mots-clés spécifiques
+            Pattern.compile("(?:montant|amount|somme)\\s*:?\\s*(\\d+(?:\\s+\\d+)*(?:[.,]\\d+)?)", Pattern.CASE_INSENSITIVE),
+
+            // Pattern pour montants avec francs
+            Pattern.compile("(\\d+(?:\\s+\\d+)*(?:[.,]\\d+)?)\\s*(?:francs?|fr)\\b", Pattern.CASE_INSENSITIVE),
+
+            // Pattern pour montants entre guillemets (corrigé)
+            Pattern.compile("[\"«](\\d+(?:\\s+\\d+)*(?:[.,]\\d+)?)[\"»]", Pattern.CASE_INSENSITIVE),
+
+            // Pattern pour montants après "solde"
+            Pattern.compile("solde\\s*:?\\s*(\\d+(?:\\s+\\d+)*(?:[.,]\\d+)?)", Pattern.CASE_INSENSITIVE),
+
+            // Pattern pour montants après "recu" (spécifique MVola)
+            Pattern.compile("recu\\s+(?:de\\s+\\w+\\s+)?(?:un\\s+montant\\s+de\\s+)?(\\d+(?:\\s+\\d+)*(?:[.,]\\d+)?)\\s*(?:Ar|MGA)?", Pattern.CASE_INSENSITIVE)
         )
 
-        for (pattern in amountPatterns) {
-            val matcher = pattern.matcher(message)
+        for ((index, pattern) in amountPatterns.withIndex()) {
+            val matcher = pattern.matcher(cleanedMessage)
             if (matcher.find()) {
-                val amountStr = matcher.group(1).replace(",", ".")
                 try {
+                    // 🔥 CORRECTION: Nettoyer la chaîne en supprimant les espaces et en remplaçant la virgule par un point
+                    val amountStr = matcher.group(1)
+                        .replace("\\s+".toRegex(), "") // Supprimer tous les espaces (y compris multiples)
+                        .replace(",", ".") // Remplacer la virgule par un point
+
+                    Log.d(TAG, "✅ Montant extrait avec pattern ${index + 1}: '$amountStr' depuis '${matcher.group()}'")
+
                     val amount = amountStr.toDouble()
-                    if (amount > 0) return amount
+                    if (amount > 0) {
+                        Log.d(TAG, "💰 Montant final: $amount")
+                        return amount
+                    }
                 } catch (e: NumberFormatException) {
+                    Log.e(TAG, "❌ Erreur parsing montant: ${e.message}")
                     continue
                 }
             }
         }
 
+        // 🔥 FALLBACK AMÉLIORÉ: Recherche de nombres dans le message nettoyé
+        val genericNumberPattern = Pattern.compile("\\b(\\d+(?:\\s+\\d+)*(?:[.,]\\d+)?)\\b")
+        val matcher = genericNumberPattern.matcher(cleanedMessage)
+
+        // Collecter tous les nombres trouvés
+        val numbers = mutableListOf<Double>()
+        while (matcher.find()) {
+            try {
+                val numStr = matcher.group(1)
+                    .replace("\\s+".toRegex(), "")
+                    .replace(",", ".")
+
+                val num = numStr.toDouble()
+                // Filtrer les nombres trop petits (probablement pas des montants)
+                if (num >= 10) { // Montant minimum de 10 Ar
+                    numbers.add(num)
+                    Log.d(TAG, "🔢 Nombre trouvé: $num depuis '${matcher.group()}'")
+                }
+            } catch (e: NumberFormatException) {
+                continue
+            }
+        }
+
+        // Si des nombres ont été trouvés, retourner le plus grand (probablement le montant)
+        if (numbers.isNotEmpty()) {
+            val maxAmount = numbers.maxOrNull()!!
+            Log.d(TAG, "🎯 Utilisation du fallback - montant le plus grand: $maxAmount")
+            return maxAmount
+        }
+
+        Log.w(TAG, "❌ Aucun montant trouvé dans le message")
         return 0.0
+    }
+
+    /**
+     * 🔥 NOUVELLE FONCTION: Supprime les indicateurs de messages multi-parties (x/y)
+     */
+    private fun removeMultiPartIndicators(message: String): String {
+        // Pattern pour détecter et supprimer les indicateurs comme "1/2", "2/2", etc.
+        val multiPartPattern = Pattern.compile("\\b\\d+/\\d+\\b")
+        val cleanedMessage = multiPartPattern.matcher(message).replaceAll("")
+
+        if (cleanedMessage != message) {
+            Log.d(TAG, "🗑️ Suppression des indicateurs multi-parties: '$message' -> '$cleanedMessage'")
+        }
+
+        return cleanedMessage.trim()
     }
 
     private fun extractPhoneNumber(message: String): String {

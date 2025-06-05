@@ -25,6 +25,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,6 +61,7 @@ class ReminderNotificationService : Service() {
         private const val PROJET_NOTIFICATION_ID = 3003
         private const val TEST_NOTIFICATION_ID = 3000
         private const val GENERAL_NOTIFICATION_ID = 3004
+        private const val URGENT_NOTIFICATION_ID = 3005
 
         // Constantes d'intervalles pour éviter les erreurs de référence
         private const val FIFTEEN_SECONDS = 15 * 1000L
@@ -63,6 +69,10 @@ class ReminderNotificationService : Service() {
         private const val SIX_HOURS = 6 * 60 * 60 * 1000L
         private const val TWELVE_HOURS = 12 * 60 * 60 * 1000L
         private const val ONE_DAY = 24 * 60 * 60 * 1000L
+
+        // 🔥 NOUVEAU: Seuils d'urgence en jours
+        private const val URGENT_THRESHOLD = 3 // 3 jours ou moins = urgent
+        private const val WARNING_THRESHOLD = 7 // 7 jours ou moins = avertissement
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -114,14 +124,50 @@ class ReminderNotificationService : Service() {
         .setSilent(true)
         .build()
 
+    // 🔥 NOUVELLE MÉTHODE: Calculer les jours restants jusqu'à une date
+    private fun calculateDaysRemaining(targetDate: Date): Long {
+        val currentDate = Calendar.getInstance().time
+        val diffInMillis = targetDate.time - currentDate.time
+        return TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS)
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Formater une date pour l'affichage
+    private fun formatDate(date: Date): String {
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return formatter.format(date)
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Obtenir l'emoji et le texte d'urgence selon les jours restants
+    private fun getUrgencyInfo(daysRemaining: Long): Pair<String, String> {
+        return when {
+            daysRemaining < 0 -> "🚨" to "EN RETARD"
+            daysRemaining == 0L -> "⚠️" to "AUJOURD'HUI"
+            daysRemaining == 1L -> "⏰" to "DEMAIN"
+            daysRemaining <= URGENT_THRESHOLD -> "🔥" to "URGENT"
+            daysRemaining <= WARNING_THRESHOLD -> "⚡" to "BIENTÔT"
+            else -> "📅" to ""
+        }
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Formater le texte des jours restants
+    private fun formatDaysRemaining(daysRemaining: Long): String {
+        return when {
+            daysRemaining < 0 -> "en retard de ${Math.abs(daysRemaining)} jour(s)"
+            daysRemaining == 0L -> "aujourd'hui"
+            daysRemaining == 1L -> "demain"
+            else -> "dans $daysRemaining jour(s)"
+        }
+    }
+
     private fun processReminders() {
         serviceScope.launch {
             try {
                 Log.d(TAG, "🔍 Vérification des rappels...")
 
                 var notificationsSent = 0
+                var hasUrgentItems = false
 
-                // 🔥 CORRECTION: Utiliser la nouvelle méthode synchrone pour les emprunts
+                // 🔥 AMÉLIORATION: Vérifier les emprunts avec dates d'échéance
                 val empruntsNonRembourses = withContext(Dispatchers.IO) {
                     try {
                         db.empruntDao().getEmpruntsNonRemboursesSync()
@@ -132,25 +178,45 @@ class ReminderNotificationService : Service() {
                 }
 
                 if (empruntsNonRembourses.isNotEmpty()) {
+                    // Trier par date de remboursement (les plus urgents en premier)
+                    val empruntsSorted = empruntsNonRembourses.sortedBy { it.date_remboursement }
                     val totalMontant = empruntsNonRembourses.sumOf { it.montant }
 
+                    // Trouver l'emprunt le plus urgent
+                    val empruntUrgent = empruntsSorted.first()
+                    val daysRemaining = calculateDaysRemaining(empruntUrgent.date_remboursement)
+                    val (urgencyEmoji, urgencyText) = getUrgencyInfo(daysRemaining)
+                    val dateFormatted = formatDate(empruntUrgent.date_remboursement)
+                    val daysText = formatDaysRemaining(daysRemaining)
+
+                    // Déterminer si c'est urgent
+                    val isUrgent = daysRemaining <= URGENT_THRESHOLD
+                    if (isUrgent) hasUrgentItems = true
+
                     val message = if (empruntsNonRembourses.size == 1) {
-                        "Vous avez un emprunt non remboursé de ${empruntsNonRembourses[0].montant} MGA à ${empruntsNonRembourses[0].nom_emprunte}."
+                        "$urgencyEmoji Emprunt à ${empruntUrgent.nom_emprunte}: ${empruntUrgent.montant} MGA\n" +
+                                "📅 Échéance: $dateFormatted ($daysText)\n" +
+                                if (urgencyText.isNotEmpty()) "⚠️ $urgencyText" else ""
                     } else {
-                        "Vous avez ${empruntsNonRembourses.size} emprunts non remboursés totalisant ${String.format("%.0f", totalMontant)} MGA."
+                        "$urgencyEmoji ${empruntsNonRembourses.size} emprunts non remboursés (${String.format("%.0f", totalMontant)} MGA)\n" +
+                                "📅 Plus urgent: ${empruntUrgent.nom_emprunte} - $dateFormatted ($daysText)\n" +
+                                if (urgencyText.isNotEmpty()) "⚠️ $urgencyText" else ""
                     }
 
+                    val priority = if (isUrgent) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_DEFAULT
+
                     notificationHelper.sendNotification(
-                        id = EMPRUNT_NOTIFICATION_ID,
-                        title = "💰 Rappel d'emprunt",
-                        message = message,
+                        id = if (isUrgent) URGENT_NOTIFICATION_ID else EMPRUNT_NOTIFICATION_ID,
+                        title = if (isUrgent) "🚨 EMPRUNT URGENT" else "💰 Rappel d'emprunt",
+                        message = message.trim(),
+                        priority = priority,
                         playSound = true
                     )
                     notificationsSent++
-                    Log.d(TAG, "📤 Notification d'emprunt envoyée")
+                    Log.d(TAG, "📤 Notification d'emprunt envoyée (urgent: $isUrgent)")
                 }
 
-                // 🔥 CORRECTION: Utiliser la méthode existante pour les acquittements
+                // 🔥 AMÉLIORATION: Vérifier les acquittements avec dates
                 val acquittements = withContext(Dispatchers.IO) {
                     try {
                         db.acquittementDao().getAcquittementNonPayes()
@@ -161,25 +227,45 @@ class ReminderNotificationService : Service() {
                 }
 
                 if (acquittements.isNotEmpty()) {
+                    // Trier par date de remise crédit (les plus urgents en premier)
+                    val acquittementsSorted = acquittements.sortedBy { it.date_remise_crédit }
                     val totalMontant = acquittements.sumOf { it.montant }
 
+                    // Trouver l'acquittement le plus urgent
+                    val acquittementUrgent = acquittementsSorted.first()
+                    val daysRemaining = calculateDaysRemaining(acquittementUrgent.date_remise_crédit)
+                    val (urgencyEmoji, urgencyText) = getUrgencyInfo(daysRemaining)
+                    val dateFormatted = formatDate(acquittementUrgent.date_remise_crédit)
+                    val daysText = formatDaysRemaining(daysRemaining)
+
+                    // Déterminer si c'est urgent
+                    val isUrgent = daysRemaining <= URGENT_THRESHOLD
+                    if (isUrgent) hasUrgentItems = true
+
                     val message = if (acquittements.size == 1) {
-                        "Vous avez un acquittement de ${acquittements[0].montant} MGA pour ${acquittements[0].personne_acquittement}."
+                        "$urgencyEmoji Acquittement pour ${acquittementUrgent.personne_acquittement}: ${acquittementUrgent.montant} MGA\n" +
+                                "📅 Échéance: $dateFormatted ($daysText)\n" +
+                                if (urgencyText.isNotEmpty()) "⚠️ $urgencyText" else ""
                     } else {
-                        "Vous avez ${acquittements.size} acquittements totalisant ${String.format("%.0f", totalMontant)} MGA."
+                        "$urgencyEmoji ${acquittements.size} acquittements (${String.format("%.0f", totalMontant)} MGA)\n" +
+                                "📅 Plus urgent: ${acquittementUrgent.personne_acquittement} - $dateFormatted ($daysText)\n" +
+                                if (urgencyText.isNotEmpty()) "⚠️ $urgencyText" else ""
                     }
 
+                    val priority = if (isUrgent) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_DEFAULT
+
                     notificationHelper.sendNotification(
-                        id = ACQUITTEMENT_NOTIFICATION_ID,
-                        title = "💸 Rappel d'acquittement",
-                        message = message,
+                        id = if (isUrgent) URGENT_NOTIFICATION_ID + 1 else ACQUITTEMENT_NOTIFICATION_ID,
+                        title = if (isUrgent) "🚨 ACQUITTEMENT URGENT" else "💸 Rappel d'acquittement",
+                        message = message.trim(),
+                        priority = priority,
                         playSound = true
                     )
                     notificationsSent++
-                    Log.d(TAG, "📤 Notification d'acquittement envoyée")
+                    Log.d(TAG, "📤 Notification d'acquittement envoyée (urgent: $isUrgent)")
                 }
 
-                // 🔥 CORRECTION: Utiliser la méthode existante pour les projets
+                // 🔥 AMÉLIORATION: Vérifier les projets avec dates limites
                 val projetsEnCours = withContext(Dispatchers.IO) {
                     try {
                         db.projetDao().getProjetsEnCours()
@@ -190,20 +276,43 @@ class ReminderNotificationService : Service() {
                 }
 
                 if (projetsEnCours.isNotEmpty()) {
+                    // Trier par date limite (les plus urgents en premier)
+                    val projetsSorted = projetsEnCours.sortedBy { it.date_limite }
+
+                    // Trouver le projet le plus urgent
+                    val projetUrgent = projetsSorted.first()
+                    val daysRemaining = calculateDaysRemaining(projetUrgent.date_limite)
+                    val (urgencyEmoji, urgencyText) = getUrgencyInfo(daysRemaining)
+                    val dateFormatted = formatDate(projetUrgent.date_limite)
+                    val daysText = formatDaysRemaining(daysRemaining)
+
+                    // Déterminer si c'est urgent
+                    val isUrgent = daysRemaining <= URGENT_THRESHOLD
+                    if (isUrgent) hasUrgentItems = true
+
                     val message = if (projetsEnCours.size == 1) {
-                        "Vous avez un projet en cours: ${projetsEnCours[0].nom} (${projetsEnCours[0].progression}% complété)."
+                        "$urgencyEmoji Projet: ${projetUrgent.nom} (${projetUrgent.progression}% complété)\n" +
+                                "📅 Échéance: $dateFormatted ($daysText)\n" +
+                                "💰 ${String.format("%.0f", projetUrgent.montant_actuel)}/${String.format("%.0f", projetUrgent.montant_necessaire)} MGA\n" +
+                                if (urgencyText.isNotEmpty()) "⚠️ $urgencyText" else ""
                     } else {
-                        "Vous avez ${projetsEnCours.size} projets en cours qui nécessitent votre attention."
+                        "$urgencyEmoji ${projetsEnCours.size} projets en cours\n" +
+                                "📅 Plus urgent: ${projetUrgent.nom} - $dateFormatted ($daysText)\n" +
+                                "📊 Progression: ${projetUrgent.progression}%\n" +
+                                if (urgencyText.isNotEmpty()) "⚠️ $urgencyText" else ""
                     }
 
+                    val priority = if (isUrgent) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_DEFAULT
+
                     notificationHelper.sendNotification(
-                        id = PROJET_NOTIFICATION_ID,
-                        title = "📊 Rappel de projet",
-                        message = message,
+                        id = if (isUrgent) URGENT_NOTIFICATION_ID + 2 else PROJET_NOTIFICATION_ID,
+                        title = if (isUrgent) "🚨 PROJET URGENT" else "📊 Rappel de projet",
+                        message = message.trim(),
+                        priority = priority,
                         playSound = true
                     )
                     notificationsSent++
-                    Log.d(TAG, "📤 Notification de projet envoyée")
+                    Log.d(TAG, "📤 Notification de projet envoyée (urgent: $isUrgent)")
                 }
 
                 // Gestion des cas spéciaux
@@ -235,7 +344,8 @@ class ReminderNotificationService : Service() {
                         }
                     }
                 } else {
-                    Log.d(TAG, "✅ $notificationsSent notification(s) de rappel envoyée(s)")
+                    val urgentText = if (hasUrgentItems) " (dont des éléments URGENTS)" else ""
+                    Log.d(TAG, "✅ $notificationsSent notification(s) de rappel envoyée(s)$urgentText")
                 }
 
             } catch (e: Exception) {
