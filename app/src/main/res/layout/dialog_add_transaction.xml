@@ -6,6 +6,7 @@
     android:padding="16dp">
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_transaction_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Type de transaction"
@@ -20,10 +21,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_transaction_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Montant">
+        android:hint="Montant (MGA)"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/transactionAmount"
@@ -33,10 +36,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_transaction_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Date">
+        android:hint="Date"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/transactionDate"
@@ -44,14 +49,18 @@
             android:layout_height="wrap_content"
             android:inputType="date"
             android:focusable="false"
-            android:clickable="true"/>
+            android:clickable="true"
+            android:drawableEnd="@drawable/ic_calendar"
+            android:drawablePadding="8dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_transaction_bank"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Banque">
+        android:hint="Banque"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
         <AutoCompleteTextView
             android:id="@+id/transactionBankDropdown"
@@ -60,4 +69,16 @@
             android:inputType="none"
             android:editable="false"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Note informative -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="💡 Tous les champs sont obligatoires. Le montant doit être supérieur à 0."
+        android:textSize="12sp"
+        android:textColor="?attr/textColorSecondary"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:background="?attr/colorSurface"
+        android:gravity="center" />
 </LinearLayout>

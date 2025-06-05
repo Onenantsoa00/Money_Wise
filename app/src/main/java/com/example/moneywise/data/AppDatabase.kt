@@ -21,15 +21,17 @@ import com.example.moneywise.data.entity.*
         Acquittement::class,
         Historique::class
     ],
-    version = 7, // Augmenté à 7 pour le champ avatar
+    version = 7,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun utilisateurDao(): UtilisateurDao
     abstract fun empruntDao(): EmpruntDao
-    abstract fun AcquittementDao(): AcquittementDao
-    abstract fun ProjetDao(): ProjetDao
+    // 🔥 CORRECTION: Nom de méthode en minuscules
+    abstract fun acquittementDao(): AcquittementDao
+    // 🔥 CORRECTION: Nom de méthode en minuscules
+    abstract fun projetDao(): ProjetDao
     abstract fun banqueDao(): BanqueDao
     abstract fun transactionDao(): TransactionDao
     abstract fun historiqueDao(): HistoriqueDao

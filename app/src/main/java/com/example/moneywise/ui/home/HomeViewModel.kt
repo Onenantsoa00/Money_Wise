@@ -23,7 +23,7 @@ class HomeViewModel(private val db: AppDatabase) : ViewModel() {
     val empruntsRecents: LiveData<List<Emprunt>> = db.empruntDao().getRecentEmpruntsNonRembourses()
 
     // Récupère les 5 acquittements les plus récents
-    val acquittementsRecents: LiveData<List<Acquittement>> = db.AcquittementDao().getRecentAcquittements()
+    val acquittementsRecents: LiveData<List<Acquittement>> = db.acquittementDao().getRecentAcquittements()
 
     // Solde de l'utilisateur
     val soldeUtilisateur: LiveData<Double?> = db.utilisateurDao().getSoldeUtilisateur()
@@ -32,7 +32,7 @@ class HomeViewModel(private val db: AppDatabase) : ViewModel() {
     val nomUtilisateur: LiveData<String?> = db.utilisateurDao().getNomUtilisateur()
 
     // Pour récupérer les projets
-    val projetsRecents: LiveData<List<Projet>> = db.ProjetDao().getRecentProjects()
+    val projetsRecents: LiveData<List<Projet>> = db.projetDao().getRecentProjects()
 
     // Pour les transactions récentes
     val transactionsRecentes: LiveData<List<Transaction>> = db.transactionDao().getRecentTransactions().asLiveData()
@@ -146,7 +146,7 @@ class HomeViewModel(private val db: AppDatabase) : ViewModel() {
                 }
 
                 // Récupérer le projet
-                val projet = db.ProjetDao().getProjetById(projetId)
+                val projet = db.projetDao().getProjetById(projetId)
                 if (projet == null) {
                     onError("Projet non trouvé")
                     return@launch
@@ -166,7 +166,7 @@ class HomeViewModel(private val db: AppDatabase) : ViewModel() {
                 val nouvelleProgression = ((nouveauMontantActuel / projet.montant_necessaire) * 100).toInt()
 
                 // Mettre à jour le projet
-                db.ProjetDao().updateProjetMontantAndProgression(
+                db.projetDao().updateProjetMontantAndProgression(
                     projetId = projetId,
                     montantActuel = nouveauMontantActuel,
                     progression = nouvelleProgression

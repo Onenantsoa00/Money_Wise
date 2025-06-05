@@ -96,7 +96,8 @@ class MainActivity : AppCompatActivity() {
         private const val OVERLAY_PERMISSION_REQUEST_CODE = 1001
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1002
 
-        // 🔥 Constantes d'intervalle pour éviter les erreurs de référence
+        // 🔥 Constantes d'intervalle mises à jour avec 15 secondes
+        private const val FIFTEEN_SECONDS = 15 * 1000L        // 15 secondes pour tests
         private const val THREE_HOURS = 3 * 60 * 60 * 1000L  // 3 heures en millisecondes
         private const val SIX_HOURS = 6 * 60 * 60 * 1000L    // 6 heures en millisecondes
         private const val TWELVE_HOURS = 12 * 60 * 60 * 1000L // 12 heures en millisecondes
@@ -640,7 +641,7 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Dialogue de sélection d'intervalle de rappel
+    // 🔥 MÉTHODE MISE À JOUR: Dialogue de sélection d'intervalle de rappel avec option 15 secondes
     private fun showReminderIntervalDialog(isActivatingReminders: Boolean = false) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_reminder_interval, null)
         val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radio_group_interval)
@@ -652,6 +653,7 @@ class MainActivity : AppCompatActivity() {
 
         // Sélectionner le bouton radio correspondant à l'intervalle actuel
         when (currentInterval) {
+            FIFTEEN_SECONDS -> radioGroup.check(R.id.radio_15_seconds)
             THREE_HOURS -> radioGroup.check(R.id.radio_3_hours)
             SIX_HOURS -> radioGroup.check(R.id.radio_6_hours)
             TWELVE_HOURS -> radioGroup.check(R.id.radio_12_hours)
@@ -663,6 +665,7 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("✅ Confirmer") { _, _ ->
                 // Récupérer l'intervalle sélectionné
                 val selectedInterval = when (radioGroup.checkedRadioButtonId) {
+                    R.id.radio_15_seconds -> FIFTEEN_SECONDS
                     R.id.radio_3_hours -> THREE_HOURS
                     R.id.radio_6_hours -> SIX_HOURS
                     R.id.radio_12_hours -> TWELVE_HOURS
@@ -676,9 +679,24 @@ class MainActivity : AppCompatActivity() {
                 // Si on active les rappels, les démarrer
                 if (isActivatingReminders) {
                     reminderManager.startReminders()
-                    showToast("✅ Rappels activés - Intervalle: ${reminderManager.formatInterval(selectedInterval)}")
+                    val intervalText = reminderManager.formatInterval(selectedInterval)
+                    showToast("✅ Rappels activés - Intervalle: $intervalText")
+
+                    // Avertissement pour l'option de test
+                    if (selectedInterval == FIFTEEN_SECONDS) {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            showToast("🧪 Mode test activé - Vous recevrez des notifications toutes les 15 secondes")
+                        }, 2000)
+                    }
                 } else {
-                    showToast("🕐 Intervalle modifié: ${reminderManager.formatInterval(selectedInterval)}")
+                    val intervalText = reminderManager.formatInterval(selectedInterval)
+                    showToast("🕐 Intervalle modifié: $intervalText")
+
+                    if (selectedInterval == FIFTEEN_SECONDS) {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            showToast("🧪 Mode test activé")
+                        }, 1500)
+                    }
                 }
             }
             .setNegativeButton("❌ Annuler", null)
@@ -927,6 +945,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Les services continuent à fonctionner en arrière-plan
+        // Libérer les ressources du NotificationHelper
+        notificationHelper.release()
     }
 }

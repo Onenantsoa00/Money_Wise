@@ -22,7 +22,7 @@ enum class ProjectFilter {
 class ProjectViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = AppDatabase.getDatabase(application)
-    private val projetDao = database.ProjetDao()
+    private val projetDao = database.projetDao()
 
     // Statistiques des projets
     val activeProjects: LiveData<Int> = projetDao.countActiveProjects()

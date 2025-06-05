@@ -42,4 +42,27 @@ interface EmpruntDao {
 
     @Query("DELETE FROM Emprunt")
     suspend fun deleteAllEmprunts()
+
+    @Query("SELECT * FROM Emprunt")
+    suspend fun getAllEmpruntSync(): List<Emprunt>
+
+    @Query("DELETE FROM Emprunt")
+    suspend fun deleteAllEmprunt()
+
+    // Méthodes pour les statistiques
+    @Query("SELECT COUNT(*) FROM Emprunt WHERE est_rembourse = 0")
+    fun getTotalUnpaidEmpruntCount(): LiveData<Int>
+
+    @Query("SELECT SUM(montant) FROM Emprunt WHERE est_rembourse = 0")
+    fun getTotalUnpaidEmpruntAmount(): LiveData<Double?>
+
+    @Query("SELECT * FROM Emprunt ORDER BY date_emprunt DESC LIMIT 5")
+    fun getRecentEmprunts(): LiveData<List<Emprunt>>
+
+    @Query("UPDATE Emprunt SET est_rembourse = 1 WHERE id = :empruntId")
+    suspend fun markAsRembourse(empruntId: Int)
+
+    // 🔥 NOUVELLE MÉTHODE AJOUTÉE: Version synchrone pour les rappels
+    @Query("SELECT * FROM Emprunt WHERE est_rembourse = 0")
+    suspend fun getEmpruntsNonRemboursesSync(): List<Emprunt>
 }

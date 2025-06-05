@@ -34,4 +34,9 @@ interface AcquittementDao {
 
     @Update
     suspend fun updateAcquittement(acquittement: Acquittement)
+
+    // 🔥 MÉTHODE EXISTANTE CONSERVÉE: Méthode pour les rappels - tous les acquittements
+    // Comme il n'y a pas de champ est_paye dans l'entité, on retourne tous les acquittements
+    @Query("SELECT * FROM Acquittement")
+    suspend fun getAcquittementNonPayes(): List<Acquittement>
 }

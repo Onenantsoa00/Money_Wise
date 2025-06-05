@@ -42,12 +42,12 @@ object DaoModule {
 
     @Provides
     fun provideAcquittementDao(database: AppDatabase): AcquittementDao {
-        return database.AcquittementDao()
+        return database.acquittementDao()
     }
 
     @Provides
     fun provideProjetDao(database: AppDatabase): ProjetDao {
-        return database.ProjetDao()
+        return database.projetDao()
     }
 
     // Providers pour les Repositories

@@ -30,12 +30,13 @@ class ReminderManager @Inject constructor(
 
         // Constantes pour les intervalles de rappel
         object Intervals {
+            const val FIFTEEN_SECONDS = 15 * 1000L        // 15 secondes (pour tests)
             const val THREE_HOURS = 3 * 60 * 60 * 1000L  // 3 heures en millisecondes
             const val SIX_HOURS = 6 * 60 * 60 * 1000L    // 6 heures en millisecondes
             const val TWELVE_HOURS = 12 * 60 * 60 * 1000L // 12 heures en millisecondes
             const val ONE_DAY = 24 * 60 * 60 * 1000L     // 24 heures en millisecondes
 
-            // Pour les tests uniquement
+            // Pour les tests uniquement (alias pour compatibilité)
             const val THIRTY_SECONDS = 30 * 1000L        // 30 secondes en millisecondes
         }
     }
@@ -66,6 +67,7 @@ class ReminderManager @Inject constructor(
      */
     fun setReminderInterval(interval: Long) {
         sharedPreferences.edit().putLong(KEY_REMINDER_INTERVAL, interval).apply()
+        Log.d(TAG, "📅 Intervalle défini: ${formatInterval(interval)}")
 
         // Si les rappels sont activés, les redémarrer avec le nouvel intervalle
         if (areRemindersEnabled()) {
@@ -78,6 +80,7 @@ class ReminderManager @Inject constructor(
      */
     fun formatInterval(interval: Long): String {
         return when (interval) {
+            Intervals.FIFTEEN_SECONDS -> "15 secondes (test)"
             Intervals.THREE_HOURS -> "3 heures"
             Intervals.SIX_HOURS -> "6 heures"
             Intervals.TWELVE_HOURS -> "12 heures"
@@ -85,6 +88,13 @@ class ReminderManager @Inject constructor(
             Intervals.THIRTY_SECONDS -> "30 secondes (test)"
             else -> "${interval / (60 * 60 * 1000)} heures"
         }
+    }
+
+    /**
+     * Vérifie si l'intervalle est un intervalle de test
+     */
+    fun isTestInterval(interval: Long): Boolean {
+        return interval == Intervals.FIFTEEN_SECONDS || interval == Intervals.THIRTY_SECONDS
     }
 
     /**
@@ -111,17 +121,24 @@ class ReminderManager @Inject constructor(
         // Obtenir l'intervalle configuré
         val interval = getCurrentInterval()
 
+        // Délai initial plus court pour les tests
+        val initialDelay = if (isTestInterval(interval)) {
+            5000L // 5 secondes pour les tests
+        } else {
+            10000L // 10 secondes pour les intervalles normaux
+        }
+
         // Configurer l'alarme répétitive
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + 10000, // Première exécution après 10 secondes
+                SystemClock.elapsedRealtime() + initialDelay,
                 pendingIntent
             )
         } else {
             alarmManager.setExact(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + 10000, // Première exécution après 10 secondes
+                SystemClock.elapsedRealtime() + initialDelay,
                 pendingIntent
             )
         }
@@ -133,7 +150,13 @@ class ReminderManager @Inject constructor(
             Log.e(TAG, "❌ Erreur lors du démarrage du service: ${e.message}")
         }
 
-        Log.d(TAG, "✅ Rappels programmés avec intervalle: ${formatInterval(interval)}")
+        val intervalText = formatInterval(interval)
+        Log.d(TAG, "✅ Rappels programmés avec intervalle: $intervalText")
+
+        // Avertissement pour les intervalles de test
+        if (isTestInterval(interval)) {
+            Log.w(TAG, "🧪 ATTENTION: Intervalle de test activé ($intervalText)")
+        }
     }
 
     /**

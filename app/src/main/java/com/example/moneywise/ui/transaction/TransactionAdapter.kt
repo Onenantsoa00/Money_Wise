@@ -20,6 +20,15 @@ class TransactionAdapter : RecyclerView.Adapter<TransactionAdapter.TransactionVi
         notifyDataSetChanged()
     }
 
+    // 🔥 NOUVELLE MÉTHODE: Mettre à jour la liste (pour compatibilité avec le filtrage)
+    fun updateList(newList: List<Transaction>) {
+        transactions = newList
+        notifyDataSetChanged()
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Obtenir la liste actuelle
+    fun getCurrentList(): List<Transaction> = transactions
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val binding = ItemTransactionBinding.inflate(
             LayoutInflater.from(parent.context),

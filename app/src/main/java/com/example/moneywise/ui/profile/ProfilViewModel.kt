@@ -152,7 +152,7 @@ class ProfilViewModel @Inject constructor(
                     _transactionsCount.value = userTransactions.size
 
                     // Charger le nombre de projets non terminés
-                    val userProjects = database.ProjetDao().getProjetsByUserId(currentUser.id)
+                    val userProjects = database.projetDao().getProjetsByUserId(currentUser.id)
                     val unfinishedProjects = userProjects.filter { it.progression < 100 }
                     _projectsCount.value = unfinishedProjects.size
 

@@ -68,7 +68,7 @@ class AcquittementFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val database = AppDatabase.getDatabase(requireContext())
-        val acquittementDao = database.AcquittementDao()
+        val acquittementDao = database.acquittementDao()
 
         viewModel = ViewModelProvider(
             this,

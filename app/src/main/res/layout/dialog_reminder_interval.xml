@@ -27,6 +27,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Option de test - 15 secondes -->
+        <RadioButton
+            android:id="@+id/radio_15_seconds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🧪 15 secondes (test uniquement)"
+            android:textSize="16sp"
+            android:textColor="#FF9800"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp"/>
+
         <RadioButton
             android:id="@+id/radio_3_hours"
             android:layout_width="match_parent"
@@ -85,6 +96,16 @@
         android:layout_height="wrap_content"
         android:text="💡 Les rappels vous alertent des emprunts, acquittements et projets nécessitant votre attention."
         android:textSize="12sp"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🧪 L'option 15 secondes est destinée aux tests uniquement"
+        android:textSize="11sp"
+        android:textColor="#FF9800"
+        android:textStyle="italic"
         android:gravity="center"/>
 
 </LinearLayout>
