@@ -2,6 +2,8 @@ package com.example.moneywise.ui.home
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -16,6 +18,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 import com.example.moneywise.R
 import com.example.moneywise.data.AppDatabase
 import com.example.moneywise.data.entity.Projet
@@ -43,6 +47,22 @@ class HomeFragment : Fragment() {
     private val numberFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
         maximumFractionDigits = 0
     }
+
+    // Variables pour l'auto-scroll des transactions (vertical)
+    private var autoScrollHandler: Handler? = null
+    private var autoScrollRunnable: Runnable? = null
+    private var isScrollingDown = true
+    private var currentScrollPosition = 0
+    private val SCROLL_DELAY = 2000L // 2 secondes entre chaque scroll
+    private val SCROLL_DURATION = 1500 // Durée de l'animation de scroll
+
+    // Variables pour l'auto-scroll des projets (horizontal)
+    private var autoScrollProjectsHandler: Handler? = null
+    private var autoScrollProjectsRunnable: Runnable? = null
+    private var isScrollingRight = true
+    private var currentProjectScrollPosition = 0
+    private val PROJECT_SCROLL_DELAY = 2500L // 2.5 secondes entre chaque scroll
+    private val PROJECT_SCROLL_DURATION = 1800 // Durée de l'animation de scroll
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,7 +108,7 @@ class HomeFragment : Fragment() {
             setHasFixedSize(true)
         }
 
-        // Adapter pour les projets avec gestion des clics
+        // Adapter pour les projets avec gestion des clics et auto-scroll horizontal
         projetAdapter = ProjetHomeAdapter(emptyList()) { projet ->
             showInvestProjectDialog(projet)
         }
@@ -96,14 +116,36 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = projetAdapter
             setHasFixedSize(true)
+
+            // Désactiver le scroll manuel pour éviter les conflits
+            isNestedScrollingEnabled = false
+
+            // Ajouter un listener pour détecter les changements de scroll horizontal
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    currentProjectScrollPosition = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                }
+            })
         }
 
-        // Adapter pour les transactions
+        // Adapter pour les transactions avec auto-scroll vertical
         transactionAdapter = TransactionHomeAdapter(emptyList())
         binding.recyclerTransactionsHome.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = transactionAdapter
             setHasFixedSize(true)
+
+            // Désactiver le scroll manuel pour éviter les conflits
+            isNestedScrollingEnabled = false
+
+            // Ajouter un listener pour détecter les changements de scroll
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    currentScrollPosition = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                }
+            })
         }
 
         // Masquer l'ancien HorizontalScrollView statique
@@ -146,21 +188,177 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Observateur pour les projets récents
+        // Observateur pour les projets récents avec démarrage de l'auto-scroll horizontal
         viewModel.projetsRecents.observe(viewLifecycleOwner) { projets ->
             projets?.let {
                 projetAdapter.updateList(it)
                 binding.recyclerProjectsHome.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+
+                // Démarrer l'auto-scroll horizontal seulement s'il y a des projets
+                if (it.isNotEmpty() && it.size > 1) {
+                    startAutoScrollProjects()
+                } else {
+                    stopAutoScrollProjects()
+                }
             }
         }
 
-        // Observateur pour les transactions récentes
+        // Observateur pour les transactions récentes avec démarrage de l'auto-scroll vertical
         viewModel.transactionsRecentes.observe(viewLifecycleOwner) { transactions ->
             transactions?.let {
                 transactionAdapter.updateList(it)
                 binding.recyclerTransactionsHome.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+
+                // Démarrer l'auto-scroll seulement s'il y a des transactions
+                if (it.isNotEmpty() && it.size > 1) {
+                    startAutoScroll()
+                } else {
+                    stopAutoScroll()
+                }
             }
         }
+    }
+
+    // Auto-scroll vertical pour les transactions
+    private fun startAutoScroll() {
+        stopAutoScroll() // Arrêter l'ancien scroll s'il existe
+
+        autoScrollHandler = Handler(Looper.getMainLooper())
+        autoScrollRunnable = object : Runnable {
+            override fun run() {
+                val recyclerView = binding.recyclerTransactionsHome
+                val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
+                val adapter = recyclerView.adapter
+
+                if (layoutManager != null && adapter != null && adapter.itemCount > 1) {
+                    val totalItems = adapter.itemCount
+                    val lastVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                    val firstVisiblePosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+
+                    // Créer un smooth scroller personnalisé avec vitesse réduite
+                    val smoothScroller = object : LinearSmoothScroller(requireContext()) {
+                        override fun getVerticalSnapPreference(): Int {
+                            return SNAP_TO_START
+                        }
+
+                        override fun calculateTimeForScrolling(dx: Int): Int {
+                            return SCROLL_DURATION
+                        }
+                    }
+
+                    when {
+                        // Si on scroll vers le bas et qu'on atteint la fin
+                        isScrollingDown && lastVisiblePosition >= totalItems - 1 -> {
+                            isScrollingDown = false
+                            smoothScroller.targetPosition = 0
+                            layoutManager.startSmoothScroll(smoothScroller)
+                        }
+                        // Si on scroll vers le haut et qu'on atteint le début
+                        !isScrollingDown && firstVisiblePosition <= 0 -> {
+                            isScrollingDown = true
+                            smoothScroller.targetPosition = totalItems - 1
+                            layoutManager.startSmoothScroll(smoothScroller)
+                        }
+                        // Continuer dans la direction actuelle
+                        isScrollingDown -> {
+                            val nextPosition = minOf(lastVisiblePosition + 1, totalItems - 1)
+                            smoothScroller.targetPosition = nextPosition
+                            layoutManager.startSmoothScroll(smoothScroller)
+                        }
+                        else -> {
+                            val nextPosition = maxOf(firstVisiblePosition - 1, 0)
+                            smoothScroller.targetPosition = nextPosition
+                            layoutManager.startSmoothScroll(smoothScroller)
+                        }
+                    }
+                }
+
+                // Programmer le prochain scroll
+                autoScrollHandler?.postDelayed(this, SCROLL_DELAY)
+            }
+        }
+
+        // Démarrer le premier scroll après un délai initial
+        autoScrollHandler?.postDelayed(autoScrollRunnable!!, SCROLL_DELAY)
+    }
+
+    private fun stopAutoScroll() {
+        autoScrollRunnable?.let { runnable ->
+            autoScrollHandler?.removeCallbacks(runnable)
+        }
+        autoScrollHandler = null
+        autoScrollRunnable = null
+    }
+
+    // Auto-scroll horizontal pour les projets
+    private fun startAutoScrollProjects() {
+        stopAutoScrollProjects() // Arrêter l'ancien scroll s'il existe
+
+        autoScrollProjectsHandler = Handler(Looper.getMainLooper())
+        autoScrollProjectsRunnable = object : Runnable {
+            override fun run() {
+                val recyclerView = binding.recyclerProjectsHome
+                val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
+                val adapter = recyclerView.adapter
+
+                if (layoutManager != null && adapter != null && adapter.itemCount > 1) {
+                    val totalItems = adapter.itemCount
+                    val lastVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                    val firstVisiblePosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+
+                    // Créer un smooth scroller personnalisé pour le scroll horizontal
+                    val smoothScroller = object : LinearSmoothScroller(requireContext()) {
+                        override fun getHorizontalSnapPreference(): Int {
+                            return SNAP_TO_START
+                        }
+
+                        override fun calculateTimeForScrolling(dx: Int): Int {
+                            return PROJECT_SCROLL_DURATION
+                        }
+                    }
+
+                    when {
+                        // Si on scroll vers la droite et qu'on atteint la fin
+                        isScrollingRight && lastVisiblePosition >= totalItems - 1 -> {
+                            isScrollingRight = false
+                            smoothScroller.targetPosition = 0
+                            layoutManager.startSmoothScroll(smoothScroller)
+                        }
+                        // Si on scroll vers la gauche et qu'on atteint le début
+                        !isScrollingRight && firstVisiblePosition <= 0 -> {
+                            isScrollingRight = true
+                            smoothScroller.targetPosition = totalItems - 1
+                            layoutManager.startSmoothScroll(smoothScroller)
+                        }
+                        // Continuer dans la direction actuelle
+                        isScrollingRight -> {
+                            val nextPosition = minOf(lastVisiblePosition + 1, totalItems - 1)
+                            smoothScroller.targetPosition = nextPosition
+                            layoutManager.startSmoothScroll(smoothScroller)
+                        }
+                        else -> {
+                            val nextPosition = maxOf(firstVisiblePosition - 1, 0)
+                            smoothScroller.targetPosition = nextPosition
+                            layoutManager.startSmoothScroll(smoothScroller)
+                        }
+                    }
+                }
+
+                // Programmer le prochain scroll
+                autoScrollProjectsHandler?.postDelayed(this, PROJECT_SCROLL_DELAY)
+            }
+        }
+
+        // Démarrer le premier scroll après un délai initial
+        autoScrollProjectsHandler?.postDelayed(autoScrollProjectsRunnable!!, PROJECT_SCROLL_DELAY)
+    }
+
+    private fun stopAutoScrollProjects() {
+        autoScrollProjectsRunnable?.let { runnable ->
+            autoScrollProjectsHandler?.removeCallbacks(runnable)
+        }
+        autoScrollProjectsHandler = null
+        autoScrollProjectsRunnable = null
     }
 
     private fun setupClickListeners() {
@@ -183,13 +381,11 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // NOUVEAUX CLICK LISTENERS AJOUTÉS
         // Navigation vers TransactionFragment quand on clique sur "Voir tout" des transactions
         binding.voirToutTransactions.setOnClickListener {
             try {
                 findNavController().navigate(R.id.action_homeFragment_to_transactionFragment)
             } catch (e: Exception) {
-                // Fallback si l'action n'existe pas
                 findNavController().navigate(R.id.nav_transaction)
                 Toast.makeText(requireContext(), "Navigation vers les transactions", Toast.LENGTH_SHORT).show()
             }
@@ -200,10 +396,35 @@ class HomeFragment : Fragment() {
             try {
                 findNavController().navigate(R.id.action_homeFragment_to_projectFragment)
             } catch (e: Exception) {
-                // Fallback si l'action n'existe pas
                 findNavController().navigate(R.id.nav_projet)
                 Toast.makeText(requireContext(), "Navigation vers les projets", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        // Arrêter l'auto-scroll des transactions quand l'utilisateur touche la liste
+        binding.recyclerTransactionsHome.setOnTouchListener { _, _ ->
+            stopAutoScroll()
+            // Redémarrer l'auto-scroll après 5 secondes d'inactivité
+            autoScrollHandler = Handler(Looper.getMainLooper())
+            autoScrollHandler?.postDelayed({
+                if (transactionAdapter.itemCount > 1) {
+                    startAutoScroll()
+                }
+            }, 5000)
+            false // Permettre le traitement normal du touch
+        }
+
+        // Arrêter l'auto-scroll des projets quand l'utilisateur touche la liste
+        binding.recyclerProjectsHome.setOnTouchListener { _, _ ->
+            stopAutoScrollProjects()
+            // Redémarrer l'auto-scroll après 5 secondes d'inactivité
+            autoScrollProjectsHandler = Handler(Looper.getMainLooper())
+            autoScrollProjectsHandler?.postDelayed({
+                if (projetAdapter.itemCount > 1) {
+                    startAutoScrollProjects()
+                }
+            }, 5000)
+            false // Permettre le traitement normal du touch
         }
     }
 
@@ -410,8 +631,28 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Redémarrer les auto-scrolls quand le fragment redevient visible
+        if (transactionAdapter.itemCount > 1) {
+            startAutoScroll()
+        }
+        if (projetAdapter.itemCount > 1) {
+            startAutoScrollProjects()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Arrêter les auto-scrolls quand le fragment n'est plus visible
+        stopAutoScroll()
+        stopAutoScrollProjects()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        stopAutoScroll()
+        stopAutoScrollProjects()
         _binding = null
     }
 }
