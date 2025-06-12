@@ -140,7 +140,7 @@ class ProfilViewModel @Inject constructor(
     }
 
     /**
-     * 🔥 MÉTHODE CORRIGÉE - Charge les statistiques de l'utilisateur
+     * Charge les statistiques de l'utilisateur
      */
     private fun loadStatistics() {
         viewModelScope.launch {

@@ -36,11 +36,11 @@ class EmpruntFragment : Fragment() {
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private val numberFormat = NumberFormat.getInstance(Locale.getDefault())
 
-    // 🔥 Variables pour le filtrage
+    // Variables pour le filtrage
     private lateinit var empruntAdapter: EmpruntAdapter
     private var currentEmprunts: List<Emprunt> = emptyList()
 
-    // 🔥 Enum pour les types de tri
+    // Enum pour les types de tri
     enum class SortType {
         NOM_A_Z,
         NOM_Z_A,
@@ -113,19 +113,19 @@ class EmpruntFragment : Fragment() {
         }
     }
 
-    // 🔥 Configuration des listeners
+    // Configuration des listeners
     private fun setupClickListeners() {
         binding.fabAddEmprunt.setOnClickListener {
             showAddEmpruntDialog()
         }
 
-        // 🔥 Bouton Filtrer
+        // Bouton Filtrer
         binding.btnFilterEmprunt.setOnClickListener {
             showFilterDialog()
         }
     }
 
-    // 🔥 Afficher la modal de filtrage
+    // Afficher la modal de filtrage
     private fun showFilterDialog() {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_filter_emprunt, null)
@@ -167,7 +167,7 @@ class EmpruntFragment : Fragment() {
             .show()
     }
 
-    // 🔥 Appliquer le tri
+    // Appliquer le tri
     private fun applySorting(emprunts: List<Emprunt>) {
         val sortedList = when (currentSortType) {
             SortType.NOM_A_Z -> emprunts.sortedBy { it.nom_emprunte.lowercase() }
@@ -181,7 +181,7 @@ class EmpruntFragment : Fragment() {
         empruntAdapter.updateList(sortedList)
     }
 
-    // 🔥 Mettre à jour le texte du bouton
+    // Mettre à jour le texte du bouton
     private fun updateFilterButtonText() {
         val filterText = when (currentSortType) {
             SortType.NOM_A_Z -> "Nom A→Z"
@@ -205,7 +205,7 @@ class EmpruntFragment : Fragment() {
         binding.textProchaineEcheance.text = prochaineEcheance?.let { dateFormat.format(it) } ?: "N/A"
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Dialogue d'ajout d'emprunt avec validation
+    // Dialogue d'ajout d'emprunt avec validation
     private fun showAddEmpruntDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_emprunt, null)
 
@@ -241,7 +241,7 @@ class EmpruntFragment : Fragment() {
 
         dialog.show()
 
-        // 🔥 Override du bouton positif pour la validation
+        // Override du bouton positif pour la validation
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             if (validateEmpruntForm(
                     layoutNom, layoutContact, layoutMontant,
@@ -259,7 +259,7 @@ class EmpruntFragment : Fragment() {
         }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Validation complète du formulaire
+    // Validation complète du formulaire
     private fun validateEmpruntForm(
         layoutNom: TextInputLayout,
         layoutContact: TextInputLayout,
@@ -391,12 +391,12 @@ class EmpruntFragment : Fragment() {
         return isValid
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Effacer les erreurs
+    // Effacer les erreurs
     private fun clearErrors(vararg layouts: TextInputLayout) {
         layouts.forEach { it.error = null }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Traiter l'enregistrement
+    // Traiter l'enregistrement
     private fun processEmpruntSave(
         editNom: TextInputEditText,
         editContact: TextInputEditText,

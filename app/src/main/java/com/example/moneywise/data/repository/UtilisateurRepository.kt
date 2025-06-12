@@ -61,7 +61,7 @@ class UtilisateurRepository(private val utilisateurDao: UtilisateurDao) {
                 // Vérifier le mot de passe
                 if (PasswordUtils.verifyPassword(password, user.password)) {
 
-                    // 🔥 MIGRATION AUTOMATIQUE: Si l'ancien format, migrer vers le nouveau
+                    // MIGRATION AUTOMATIQUE: Si l'ancien format, migrer vers le nouveau
                     if (!PasswordUtils.isModernHash(user.password)) {
                         val newHash = PasswordUtils.hashPassword(password)
                         val updatedUser = user.copy(password = newHash)
@@ -81,7 +81,7 @@ class UtilisateurRepository(private val utilisateurDao: UtilisateurDao) {
         }
     }
 
-    // 🔥 NOUVELLES MÉTHODES AJOUTÉES POUR MOT DE PASSE OUBLIÉ
+    // POUR MOT DE PASSE OUBLIÉ
     suspend fun checkUserExists(email: String): Boolean = withContext(Dispatchers.IO) {
         try {
             utilisateurDao.getUserByEmail(email) != null

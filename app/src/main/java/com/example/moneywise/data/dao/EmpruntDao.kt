@@ -62,7 +62,7 @@ interface EmpruntDao {
     @Query("UPDATE Emprunt SET est_rembourse = 1 WHERE id = :empruntId")
     suspend fun markAsRembourse(empruntId: Int)
 
-    // 🔥 NOUVELLE MÉTHODE AJOUTÉE: Version synchrone pour les rappels
+    // Version synchrone pour les rappels
     @Query("SELECT * FROM Emprunt WHERE est_rembourse = 0")
     suspend fun getEmpruntsNonRemboursesSync(): List<Emprunt>
 }

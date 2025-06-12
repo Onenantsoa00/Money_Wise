@@ -28,14 +28,14 @@ interface AcquittementDao {
     @Query("SELECT * FROM Acquittement ORDER BY id DESC LIMIT 5")
     fun getRecentAcquittements(): LiveData<List<Acquittement>>
 
-    // Nouvelle méthode pour compter tous les acquittements
+    // méthode pour compter tous les acquittements
     @Query("SELECT COUNT(*) FROM Acquittement")
     fun getTotalAcquittementCount(): LiveData<Int>
 
     @Update
     suspend fun updateAcquittement(acquittement: Acquittement)
 
-    // 🔥 MÉTHODE EXISTANTE CONSERVÉE: Méthode pour les rappels - tous les acquittements
+    // Méthode pour les rappels - tous les acquittements
     // Comme il n'y a pas de champ est_paye dans l'entité, on retourne tous les acquittements
     @Query("SELECT * FROM Acquittement")
     suspend fun getAcquittementNonPayes(): List<Acquittement>

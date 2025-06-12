@@ -157,7 +157,7 @@ class SMSBackgroundService : Service() {
                 Log.d(TAG, "📊 Analyse: type=$transactionType, montant=$amount, confiance=$confidence, valide=$isValid")
 
                 if (isValid && confidence > 0.5 && amount > 0) {
-                    // 🔥 CORRECTION: Vérification plus précise des doublons
+                    // Vérification plus précise des doublons
                     val isDuplicate = isTransactionAlreadyProcessed(messageBody, sender, amount, reference, transactionType)
 
                     if (isDuplicate) {
@@ -185,7 +185,7 @@ class SMSBackgroundService : Service() {
         }
     }
 
-    // 🔥 CORRECTION: Vérification plus précise des doublons
+    // Vérification plus précise des doublons
     private suspend fun isTransactionAlreadyProcessed(
         messageBody: String,
         sender: String,
@@ -203,18 +203,18 @@ class SMSBackgroundService : Service() {
 
             Log.d(TAG, "🔍 Vérification doublons: ${recentTransactions.size} transactions récentes trouvées")
 
-            // 🔥 CORRECTION: Vérification plus stricte avec plusieurs critères
+            // Vérification plus stricte avec plusieurs critères
             val isDuplicate = recentTransactions.any { transaction ->
-                val transactionAmount = transaction.montants?.toDoubleOrNull() ?: 0.0 // 🔥 CORRECTION: Safe call
+                val transactionAmount = transaction.montants?.toDoubleOrNull() ?: 0.0 // Safe call
                 val sameAmount = Math.abs(transactionAmount - amount) < 0.01
                 val sameType = transaction.type == transactionType
 
-                // 🔥 CORRECTION: Vérifier aussi la référence si disponible
+                // Vérifier aussi la référence si disponible
                 val sameReference = if (reference.isNotEmpty()) {
                     try {
                         // Chercher la référence dans les détails de l'historique
                         val historique = db.historiqueDao().getHistoriqueByTransactionAmount(amount)
-                        historique.any { it.details?.contains(reference) == true } // 🔥 CORRECTION: Safe call
+                        historique.any { it.details?.contains(reference) == true } // Safe call
                     } catch (e: Exception) {
                         Log.w(TAG, "⚠️ Erreur vérification référence: ${e.message}")
                         false
@@ -237,7 +237,7 @@ class SMSBackgroundService : Service() {
 
         } catch (e: Exception) {
             Log.e(TAG, "❌ Erreur vérification doublons", e)
-            // 🔥 CORRECTION: En cas d'erreur, on laisse passer la transaction
+            // En cas d'erreur, on laisse passer la transaction
             false
         }
     }
@@ -283,7 +283,7 @@ class SMSBackgroundService : Service() {
             db.transactionDao().insertTransaction(transaction)
             Log.d(TAG, "💾 Transaction insérée: $transactionType - $amount")
 
-            // 🔥 MISE À JOUR DU SOLDE
+            // MISE À JOUR DU SOLDE
             val balanceUpdated = balanceService.updateUserBalance(
                 context = this@SMSBackgroundService,
                 userId = userId,
@@ -291,9 +291,9 @@ class SMSBackgroundService : Service() {
                 amount = amount
             )
 
-            Log.d(TAG, "💰 Mise à jour solde: ${if (balanceUpdated) "✅ Succès" else "❌ Échec"}") // 🔥 CORRECTION: Expression if complète
+            Log.d(TAG, "💰 Mise à jour solde: ${if (balanceUpdated) "✅ Succès" else "❌ Échec"}") // Expression if complète
 
-            // 🔥 MISE À JOUR DU WIDGET FLOTTANT
+            // MISE À JOUR DU WIDGET FLOTTANT
             if (balanceUpdated) {
                 try {
                     val widgetManager = FloatingWidgetManager(this@SMSBackgroundService)
@@ -315,7 +315,7 @@ class SMSBackgroundService : Service() {
                     append(" | Confiance: ${String.format("%.2f", confidence)}")
                     append(" | Ref: ${extractedDetails["reference"] as? String ?: "N/A"}")
                     append(" | Clé: $messageKey")
-                    append(" | Solde: ${if (balanceUpdated) "✅" else "❌"}") // 🔥 CORRECTION: Expression if complète
+                    append(" | Solde: ${if (balanceUpdated) "✅" else "❌"}") // Expression if complète
                 }
             )
             db.historiqueDao().insert(historique)

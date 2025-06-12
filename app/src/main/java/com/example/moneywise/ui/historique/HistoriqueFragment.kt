@@ -26,7 +26,7 @@ class HistoriqueFragment : Fragment() {
     private lateinit var viewModel: HistoriqueViewModel
     private lateinit var adapter: HistoriqueAdapter
 
-    // 🔥 Enum pour les types de tri
+    // Enum pour les types de tri
     enum class SortType {
         TYPE_A_Z,
         TYPE_Z_A,
@@ -75,20 +75,20 @@ class HistoriqueFragment : Fragment() {
         }
     }
 
-    // 🔥 Configuration des listeners
+    // Configuration des listeners
     private fun setupClickListeners() {
         // Bouton pour remonter en haut
         binding.fabScrollTop.setOnClickListener {
             binding.nestedScrollView.smoothScrollTo(0, 0)
         }
 
-        // 🔥 Bouton Filtrer
+        // Bouton Filtrer
         binding.btnFilter.setOnClickListener {
             showFilterDialog()
         }
     }
 
-    // 🔥 Afficher la modal de filtrage
+    // Afficher la modal de filtrage
     private fun showFilterDialog() {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_filter_historique, null)
@@ -132,7 +132,7 @@ class HistoriqueFragment : Fragment() {
             .show()
     }
 
-    // 🔥 Appliquer le tri
+    // Appliquer le tri
     private fun applySorting(historiques: List<com.example.moneywise.data.entity.Historique>) {
         val sortedList = when (currentSortType) {
             SortType.TYPE_A_Z -> historiques.sortedBy { it.typeTransaction }
@@ -158,7 +158,7 @@ class HistoriqueFragment : Fragment() {
         adapter.updateList(sortedList)
     }
 
-    // 🔥 Mettre à jour le texte du bouton
+    // Mettre à jour le texte du bouton
     private fun updateFilterButtonText() {
         val filterText = when (currentSortType) {
             SortType.TYPE_A_Z -> "Type A→Z"

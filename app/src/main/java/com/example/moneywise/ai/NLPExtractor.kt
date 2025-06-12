@@ -30,7 +30,7 @@ class NLPExtractor @Inject constructor(
         val result = mutableMapOf<String, Any>()
 
         try {
-            // 🔥 VÉRIFICATION PRÉALABLE: Exclure les messages promotionnels
+            // VÉRIFICATION PRÉALABLE: Exclure les messages promotionnels
             if (isPromotionalMessage(message)) {
                 Log.d(TAG, "Message promotionnel détecté - ignoré")
                 result["is_valid"] = false
@@ -47,11 +47,11 @@ class NLPExtractor @Inject constructor(
             val provider = getProviderFromSender(sender)
             result["provider"] = provider
 
-            // Extraire le type de transaction - LOGIQUE AMÉLIORÉE
+            // Extraire le type de transaction
             val transactionType = extractTransactionType(message.lowercase(), provider)
             result["transaction_type"] = transactionType
 
-            // 🔥 CORRECTION: Extraire le montant avec gestion des espaces ET exclusion des patterns x/y
+            // Extraire le montant avec gestion des espaces ET exclusion des patterns x/y
             val amount = extractAmount(message)
             result["amount"] = amount
 
@@ -63,11 +63,11 @@ class NLPExtractor @Inject constructor(
             val reference = extractReference(message)
             result["reference"] = reference
 
-            // Calculer la confiance - LOGIQUE AMÉLIORÉE
+            // Calculer la confiance
             val confidence = calculateConfidence(message, transactionType, amount, provider)
             result["confidence"] = confidence
 
-            // 🔥 LOGIQUE DE VALIDATION AMÉLIORÉE
+            // LOGIQUE DE VALIDATION
             val isValid = isValidTransaction(message, transactionType, amount, confidence, provider)
             result["is_valid"] = isValid
 
@@ -83,7 +83,7 @@ class NLPExtractor @Inject constructor(
     }
 
     /**
-     * 🔥 NOUVELLE FONCTION: Détecte les messages promotionnels
+     * Détecte les messages promotionnels
      */
     private fun isPromotionalMessage(message: String): Boolean {
         val messageLower = message.lowercase()
@@ -126,7 +126,7 @@ class NLPExtractor @Inject constructor(
     }
 
     /**
-     * 🔥 NOUVELLE LOGIQUE DE VALIDATION PLUS INTELLIGENTE
+     * VALIDATION PLUS INTELLIGENTE
      */
     private fun isValidTransaction(
         message: String,
@@ -154,7 +154,7 @@ class NLPExtractor @Inject constructor(
             return false
         }
 
-        // 🔥 VALIDATION STRICTE: Doit avoir un solde ET une référence pour être valide
+        //VALIDATION STRICTE: Doit avoir un solde ET une référence pour être valide
         val hasSolde = messageLower.contains("solde")
         val hasReference = extractReference(message).isNotEmpty()
 
@@ -163,13 +163,13 @@ class NLPExtractor @Inject constructor(
             return false
         }
 
-        // 🔥 LOGIQUE SPÉCIALE POUR MVOLA "recu de" (DEPOT)
+        // LOGIQUE SPÉCIALE POUR MVOLA "recu de" (DEPOT)
         if (provider == "mvola" && messageLower.contains("recu de")) {
             Log.d(TAG, "Valid: MVola 'recu de' pattern detected (DEPOT)")
             return true
         }
 
-        // 🔥 LOGIQUE SPÉCIALE POUR MVOLA "envoye a" (RETRAIT)
+        // LOGIQUE SPÉCIALE POUR MVOLA "envoye a" (RETRAIT)
         if (provider == "mvola" && messageLower.contains("envoye a")) {
             Log.d(TAG, "Valid: MVola 'envoye a' pattern detected (RETRAIT)")
             return true
@@ -203,7 +203,7 @@ class NLPExtractor @Inject constructor(
     }
 
     private fun extractTransactionType(message: String, provider: String): String {
-        // 🔥 LOGIQUE SPÉCIALE POUR MVOLA - PLUS PRÉCISE
+        //LOGIQUE SPÉCIALE POUR MVOLA - PLUS PRÉCISE
         if (provider == "mvola") {
             when {
                 message.contains("recu de") -> return "DEPOT"
@@ -242,22 +242,22 @@ class NLPExtractor @Inject constructor(
     }
 
     /**
-     * 🔥 CORRECTION MAJEURE: Extraction des montants avec exclusion des patterns x/y
+     * Extraction des montants avec exclusion des patterns x/y
      * Cette fonction extrait les montants en évitant les indicateurs de messages multi-parties
      */
     private fun extractAmount(message: String): Double {
-        // 🔥 EXCLURE LES POURCENTAGES PROMOTIONNELS
+        //EXCLURE LES POURCENTAGES PROMOTIONNELS
         if (isPromotionalMessage(message)) {
             return 0.0
         }
 
         Log.d(TAG, "🔍 Extraction du montant depuis: '$message'")
 
-        // 🔥 ÉTAPE 1: Nettoyer le message en supprimant les patterns x/y (comme 1/2, 2/2)
+        // ÉTAPE 1: Nettoyer le message en supprimant les patterns x/y (comme 1/2, 2/2)
         val cleanedMessage = removeMultiPartIndicators(message)
         Log.d(TAG, "🧹 Message nettoyé: '$cleanedMessage'")
 
-        // 🔥 ÉTAPE 2: Patterns pour montants avec espaces - ORDRE DE PRIORITÉ
+        // ÉTAPE 2: Patterns pour montants avec espaces - ORDRE DE PRIORITÉ
         val amountPatterns = listOf(
             // Pattern le plus spécifique: montant suivi directement de la devise
             Pattern.compile("(\\d+(?:\\s+\\d+)*(?:[.,]\\d+)?)\\s*(?:Ar|MGA|ariary)\\b", Pattern.CASE_INSENSITIVE),
@@ -282,7 +282,7 @@ class NLPExtractor @Inject constructor(
             val matcher = pattern.matcher(cleanedMessage)
             if (matcher.find()) {
                 try {
-                    // 🔥 CORRECTION: Nettoyer la chaîne en supprimant les espaces et en remplaçant la virgule par un point
+                    // Nettoyer la chaîne en supprimant les espaces et en remplaçant la virgule par un point
                     val amountStr = matcher.group(1)
                         .replace("\\s+".toRegex(), "") // Supprimer tous les espaces (y compris multiples)
                         .replace(",", ".") // Remplacer la virgule par un point
@@ -301,7 +301,7 @@ class NLPExtractor @Inject constructor(
             }
         }
 
-        // 🔥 FALLBACK AMÉLIORÉ: Recherche de nombres dans le message nettoyé
+        //Recherche de nombres dans le message nettoyé
         val genericNumberPattern = Pattern.compile("\\b(\\d+(?:\\s+\\d+)*(?:[.,]\\d+)?)\\b")
         val matcher = genericNumberPattern.matcher(cleanedMessage)
 
@@ -336,7 +336,7 @@ class NLPExtractor @Inject constructor(
     }
 
     /**
-     * 🔥 NOUVELLE FONCTION: Supprime les indicateurs de messages multi-parties (x/y)
+     * Supprime les indicateurs de messages multi-parties (x/y)
      */
     private fun removeMultiPartIndicators(message: String): String {
         // Pattern pour détecter et supprimer les indicateurs comme "1/2", "2/2", etc.
@@ -400,7 +400,7 @@ class NLPExtractor @Inject constructor(
             confidence += 0.4
         }
 
-        // 🔥 BONUS SPÉCIAL POUR MVOLA avec patterns spécifiques
+        // BONUS SPÉCIAL POUR MVOLA avec patterns spécifiques
         if (provider == "mvola") {
             when {
                 messageLower.contains("recu de") -> confidence += 0.5

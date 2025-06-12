@@ -12,7 +12,7 @@ android {
     kapt {
         correctErrorTypes = true
         useBuildCache = false
-        // 🔥 AJOUT: Configuration pour Room
+        // Configuration pour Room
         arguments {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
@@ -71,7 +71,7 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.48.1")
     kapt("androidx.hilt:hilt-compiler:1.1.0")
 
-    // Room - 🔥 VERSIONS MISES À JOUR
+    // Room
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
@@ -94,6 +94,6 @@ dependencies {
     // Sécurité pour les SharedPreferences chiffrées
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-    // 🔥 NOUVELLE DÉPENDANCE POUR LA BIOMÉTRIE
+    // BIOMÉTRIE
     implementation ("androidx.biometric:biometric:1.1.0")
 }

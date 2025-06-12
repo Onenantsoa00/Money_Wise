@@ -64,12 +64,12 @@ class EmpruntAdapter(
 
     override fun getItemCount() = emprunts.size
 
-    // 🔥 NOUVELLE MÉTHODE: Mettre à jour la liste
+    // Mettre à jour la liste
     fun updateList(newList: List<Emprunt>) {
         emprunts = newList
         notifyDataSetChanged()
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Obtenir la liste actuelle
+    // Obtenir la liste actuelle
     fun getCurrentList(): List<Emprunt> = emprunts
 }

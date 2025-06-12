@@ -37,7 +37,7 @@ interface ProjetDao {
     @Query("DELETE FROM Projet")
     suspend fun deleteAllProjet()
 
-    // 🔥 MÉTHODE EXISTANTE CONSERVÉE: Méthode pour les rappels - projets en cours (non terminés)
+    // Méthode pour les rappels - projets en cours (non terminés)
     @Query("SELECT * FROM Projet WHERE progression < 100")
     suspend fun getProjetsEnCours(): List<Projet>
 

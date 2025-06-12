@@ -86,7 +86,7 @@ class TransactionClassifier @Inject constructor(
     )
 
     /**
-     * 🔥 NOUVELLE FONCTION: Détecte les messages promotionnels
+     * Détecte les messages promotionnels
      */
     private fun isPromotionalMessage(message: String): Boolean {
         val messageLower = message.lowercase()
@@ -130,13 +130,13 @@ class TransactionClassifier @Inject constructor(
         val textLower = text.lowercase()
         val operator = getOperatorFromSender(sender)
 
-        // 🔥 VÉRIFICATION PRÉALABLE: Exclure les messages promotionnels
+        // VÉRIFICATION PRÉALABLE: Exclure les messages promotionnels
         if (isPromotionalMessage(text)) {
             Log.d(TAG, "Promotional message detected - returning PROMOTION")
             return "PROMOTION"
         }
 
-        // 🔥 LOGIQUE SPÉCIALE POUR LES MESSAGES MVOLA
+        // LOGIQUE SPÉCIALE POUR LES MESSAGES MVOLA
         if (operator == "mvola") {
             when {
                 textLower.contains("recu de") -> {
@@ -199,7 +199,7 @@ class TransactionClassifier @Inject constructor(
         val textLower = text.lowercase()
         val operator = getOperatorFromSender(sender)
 
-        // 🔥 VÉRIFICATION PRÉALABLE: Messages promotionnels
+        // VÉRIFICATION PRÉALABLE: Messages promotionnels
         if (isPromotionalMessage(text)) {
             Log.d(TAG, "Promotional message detected - zero confidence")
             return TransactionClassification("PROMOTION", 0.0)
@@ -208,7 +208,7 @@ class TransactionClassifier @Inject constructor(
         val scores = mutableMapOf<String, Double>()
         var maxScore = 0.0
 
-        // 🔥 LOGIQUE SPÉCIALE POUR MVOLA avec haute confiance
+        // LOGIQUE SPÉCIALE POUR MVOLA avec haute confiance
         if (operator == "mvola") {
             when {
                 textLower.contains("recu de") -> {

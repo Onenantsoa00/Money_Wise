@@ -70,7 +70,7 @@ class ReminderNotificationService : Service() {
         private const val TWELVE_HOURS = 12 * 60 * 60 * 1000L
         private const val ONE_DAY = 24 * 60 * 60 * 1000L
 
-        // 🔥 NOUVEAU: Seuils d'urgence en jours
+        // Seuils d'urgence en jours
         private const val URGENT_THRESHOLD = 3 // 3 jours ou moins = urgent
         private const val WARNING_THRESHOLD = 7 // 7 jours ou moins = avertissement
     }
@@ -124,20 +124,20 @@ class ReminderNotificationService : Service() {
         .setSilent(true)
         .build()
 
-    // 🔥 NOUVELLE MÉTHODE: Calculer les jours restants jusqu'à une date
+    // Calculer les jours restants jusqu'à une date
     private fun calculateDaysRemaining(targetDate: Date): Long {
         val currentDate = Calendar.getInstance().time
         val diffInMillis = targetDate.time - currentDate.time
         return TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS)
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Formater une date pour l'affichage
+    // Formater une date pour l'affichage
     private fun formatDate(date: Date): String {
         val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return formatter.format(date)
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Obtenir l'emoji et le texte d'urgence selon les jours restants
+    // Obtenir l'emoji et le texte d'urgence selon les jours restants
     private fun getUrgencyInfo(daysRemaining: Long): Pair<String, String> {
         return when {
             daysRemaining < 0 -> "🚨" to "EN RETARD"
@@ -149,7 +149,7 @@ class ReminderNotificationService : Service() {
         }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Formater le texte des jours restants
+    // Formater le texte des jours restants
     private fun formatDaysRemaining(daysRemaining: Long): String {
         return when {
             daysRemaining < 0 -> "en retard de ${Math.abs(daysRemaining)} jour(s)"
@@ -167,7 +167,7 @@ class ReminderNotificationService : Service() {
                 var notificationsSent = 0
                 var hasUrgentItems = false
 
-                // 🔥 AMÉLIORATION: Vérifier les emprunts avec dates d'échéance
+                // Vérifier les emprunts avec dates d'échéance
                 val empruntsNonRembourses = withContext(Dispatchers.IO) {
                     try {
                         db.empruntDao().getEmpruntsNonRemboursesSync()
@@ -216,7 +216,7 @@ class ReminderNotificationService : Service() {
                     Log.d(TAG, "📤 Notification d'emprunt envoyée (urgent: $isUrgent)")
                 }
 
-                // 🔥 AMÉLIORATION: Vérifier les acquittements avec dates
+                // Vérifier les acquittements avec dates
                 val acquittements = withContext(Dispatchers.IO) {
                     try {
                         db.acquittementDao().getAcquittementNonPayes()
@@ -265,7 +265,7 @@ class ReminderNotificationService : Service() {
                     Log.d(TAG, "📤 Notification d'acquittement envoyée (urgent: $isUrgent)")
                 }
 
-                // 🔥 AMÉLIORATION: Vérifier les projets avec dates limites
+                // Vérifier les projets avec dates limites
                 val projetsEnCours = withContext(Dispatchers.IO) {
                     try {
                         db.projetDao().getProjetsEnCours()

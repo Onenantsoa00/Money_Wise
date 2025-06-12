@@ -28,9 +28,9 @@ import com.example.moneywise.data.entity.*
 abstract class AppDatabase : RoomDatabase() {
     abstract fun utilisateurDao(): UtilisateurDao
     abstract fun empruntDao(): EmpruntDao
-    // 🔥 CORRECTION: Nom de méthode en minuscules
+    // Nom de méthode en minuscules
     abstract fun acquittementDao(): AcquittementDao
-    // 🔥 CORRECTION: Nom de méthode en minuscules
+    // Nom de méthode en minuscules
     abstract fun projetDao(): ProjetDao
     abstract fun banqueDao(): BanqueDao
     abstract fun transactionDao(): TransactionDao

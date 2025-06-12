@@ -40,10 +40,10 @@ class AcquittementFragment : Fragment() {
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private val numberFormat = NumberFormat.getInstance(Locale.getDefault())
 
-    // 🔥 Variables pour le filtrage
+    // Variables pour le filtrage
     private var currentAcquittements: List<Acquittement> = emptyList()
 
-    // 🔥 Enum pour les types de tri
+    // Enum pour les types de tri
     enum class SortType {
         NOM_A_Z,
         NOM_Z_A,
@@ -100,19 +100,19 @@ class AcquittementFragment : Fragment() {
         }
     }
 
-    // 🔥 Configuration des listeners
+    // Configuration des listeners
     private fun setupClickListeners() {
         binding.fabAddAcquittement.setOnClickListener {
             showAddAcquittementDialog()
         }
 
-        // 🔥 Bouton Filtrer
+        // Bouton Filtrer
         binding.btnFilterAcquittement.setOnClickListener {
             showFilterDialog()
         }
     }
 
-    // 🔥 Afficher la modal de filtrage
+    // Afficher la modal de filtrage
     private fun showFilterDialog() {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_filter_acquittement, null)
@@ -154,7 +154,7 @@ class AcquittementFragment : Fragment() {
             .show()
     }
 
-    // 🔥 Appliquer le tri
+    // Appliquer le tri
     private fun applySorting(acquittements: List<Acquittement>) {
         val sortedList = when (currentSortType) {
             SortType.NOM_A_Z -> acquittements.sortedBy { it.personne_acquittement.lowercase() }
@@ -168,7 +168,7 @@ class AcquittementFragment : Fragment() {
         adapter.updateList(sortedList)
     }
 
-    // 🔥 Mettre à jour le texte du bouton
+    // Mettre à jour le texte du bouton
     private fun updateFilterButtonText() {
         val filterText = when (currentSortType) {
             SortType.NOM_A_Z -> "Nom A→Z"
@@ -192,7 +192,7 @@ class AcquittementFragment : Fragment() {
         binding.textDernierRemboursement.text = dernierRemboursement?.let { dateFormat.format(it) } ?: "N/A"
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Dialogue d'ajout d'acquittement avec validation
+    // Dialogue d'ajout d'acquittement avec validation
     private fun showAddAcquittementDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_acquittement, null)
 
@@ -218,7 +218,7 @@ class AcquittementFragment : Fragment() {
         val today = Calendar.getInstance()
         editDateCredit.setText(dateFormat.format(today.time))
 
-        // 🔥 Charger et afficher le solde utilisateur
+        // Charger et afficher le solde utilisateur
         lifecycleScope.launch {
             val database = AppDatabase.getDatabase(requireContext())
             val currentUser = database.utilisateurDao().getFirstUtilisateur()
@@ -240,7 +240,7 @@ class AcquittementFragment : Fragment() {
 
         dialog.show()
 
-        // 🔥 Override du bouton positif pour la validation
+        // Override du bouton positif pour la validation
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             lifecycleScope.launch {
                 if (validateAcquittementForm(
@@ -260,7 +260,7 @@ class AcquittementFragment : Fragment() {
         }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Validation complète du formulaire
+    // Validation complète du formulaire
     private suspend fun validateAcquittementForm(
         layoutNom: TextInputLayout,
         layoutContact: TextInputLayout,
@@ -352,7 +352,7 @@ class AcquittementFragment : Fragment() {
                             isValid = false
                         }
                         else -> {
-                            // 🔥 Vérification du solde utilisateur
+                            // Vérification du solde utilisateur
                             val database = AppDatabase.getDatabase(requireContext())
                             val currentUser = database.utilisateurDao().getFirstUtilisateur()
                             val soldeDisponible = currentUser?.solde ?: 0.0
@@ -441,12 +441,12 @@ class AcquittementFragment : Fragment() {
         return isValid
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Effacer les erreurs
+    // Effacer les erreurs
     private fun clearErrors(vararg layouts: TextInputLayout) {
         layouts.forEach { it.error = null }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Traiter l'enregistrement
+    // Traiter l'enregistrement
     private fun processAcquittementSave(
         editNom: TextInputEditText,
         editContact: TextInputEditText,

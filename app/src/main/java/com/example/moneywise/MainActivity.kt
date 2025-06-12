@@ -71,11 +71,11 @@ class MainActivity : AppCompatActivity() {
     private val banqueViewModel: BanqueViewModel by viewModels()
     private val banqueNames = mutableListOf<String>()
 
-    // 🔥 Gestionnaires pour le widget flottant et les notifications
+    // Gestionnaires pour le widget flottant et les notifications
     private lateinit var floatingWidgetManager: FloatingWidgetManager
     private lateinit var sessionManager: SessionManager
 
-    // 🔥 Référence au titre défilant
+    // Référence au titre défilant
     private lateinit var toolbarTitle: MarqueeTextView
 
     @Inject
@@ -89,14 +89,14 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
-        // 🔥 ID constants pour les menus
+        // ID constants pour les menus
         private const val MENU_FLOATING_WIDGET = 9999
         private const val MENU_NOTIFICATIONS = 9998
-        // 🔥 Codes de requête pour les permissions
+        // Codes de requête pour les permissions
         private const val OVERLAY_PERMISSION_REQUEST_CODE = 1001
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1002
 
-        // 🔥 Constantes d'intervalle mises à jour avec 15 secondes
+        // Constantes d'intervalle mises à jour avec 15 secondes
         private const val FIFTEEN_SECONDS = 15 * 1000L        // 15 secondes pour tests
         private const val THREE_HOURS = 3 * 60 * 60 * 1000L  // 3 heures en millisecondes
         private const val SIX_HOURS = 6 * 60 * 60 * 1000L    // 6 heures en millisecondes
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 🔥 Initialiser les gestionnaires
+        // Initialiser les gestionnaires
         floatingWidgetManager = FloatingWidgetManager(this)
         sessionManager = SessionManager(this)
 
@@ -122,17 +122,17 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
-        // 🔥 Initialiser le titre défilant APRÈS avoir configuré la toolbar
+        // Initialiser le titre défilant APRÈS avoir configuré la toolbar
         initializeToolbarTitle()
 
         observeUserBalance()
         setupNavigation()
 
-        // 🔥 Démarrer automatiquement les services si activés
+        // Démarrer automatiquement les services si activés
         checkAndStartServices()
     }
 
-    // 🔥 MÉTHODE CORRIGÉE: Initialiser le titre défilant
+    // Initialiser le titre défilant
     private fun initializeToolbarTitle() {
         try {
             toolbarTitle = findViewById(R.id.toolbar_title)
@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 MÉTHODE CORRIGÉE: Mettre à jour le titre défilant
+    // Mettre à jour le titre défilant
     private fun updateToolbarTitle(title: String) {
         if (::toolbarTitle.isInitialized) {
             toolbarTitle.text = title
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Vérifier et demander toutes les permissions
+    // Vérifier et demander toutes les permissions
     private fun checkAndRequestPermissions() {
         val permissionsNeeded = mutableListOf<String>()
 
@@ -191,7 +191,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Démarrer automatiquement les services
+    // Démarrer automatiquement les services
     private fun checkAndStartServices() {
         if (sessionManager.isLoggedIn()) {
             Log.d(TAG, "👤 Utilisateur connecté, vérification des services")
@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 AJOUT CRUCIAL: Gestion du retour des permissions
+    // Gestion du retour des permissions
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -240,7 +240,7 @@ class MainActivity : AppCompatActivity() {
             reminderManager.restartRemindersIfEnabled()
         }
 
-        // 🔥 AJOUT: Redémarrer le marquee en onResume
+        // Redémarrer le marquee en onResume
         if (::toolbarTitle.isInitialized) {
             Handler(Looper.getMainLooper()).postDelayed({
                 toolbarTitle.isSelected = true
@@ -542,7 +542,7 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.main, menu)
         updateThemeIcon(menu)
 
-        // 🔥 Ajouter les menus du widget flottant et des notifications
+        // Ajouter les menus du widget flottant et des notifications
         menu.add(Menu.NONE, MENU_FLOATING_WIDGET, Menu.NONE, "Widget flottant")
             .setIcon(R.drawable.ic_account_balance_wallet)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
@@ -573,7 +573,7 @@ class MainActivity : AppCompatActivity() {
                 showFloatingWidgetDialog()
                 true
             }
-            // 🔥 NOUVEAU: Gestion des rappels avec sélection d'intervalle
+            // Gestion des rappels avec sélection d'intervalle
             MENU_NOTIFICATIONS -> {
                 showNotificationDialog()
                 true
@@ -582,7 +582,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 NOUVEAU DIALOGUE: Contrôle des notifications de rappel avec sélection d'intervalle
+    // Contrôle des notifications de rappel avec sélection d'intervalle
     private fun showNotificationDialog() {
         val hasPermission = notificationHelper.hasNotificationPermission()
         val isEnabled = reminderManager.areRemindersEnabled()
@@ -626,7 +626,7 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Dialogue de demande de permission
+    // Dialogue de demande de permission
     private fun showPermissionRequestDialog() {
         val title = "🔐 Permission requise"
         val message = "Pour recevoir des notifications de rappel, MoneyWise a besoin de la permission d'envoyer des notifications.\n\nCette permission est nécessaire pour vous alerter des emprunts, acquittements et projets nécessitant votre attention."
@@ -641,7 +641,7 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    // 🔥 MÉTHODE MISE À JOUR: Dialogue de sélection d'intervalle de rappel avec option 15 secondes
+    // Dialogue de sélection d'intervalle de rappel avec option 15 secondes
     private fun showReminderIntervalDialog(isActivatingReminders: Boolean = false) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_reminder_interval, null)
         val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radio_group_interval)
@@ -706,7 +706,7 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Demander la permission de notification
+    // Demander la permission de notification
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
@@ -918,7 +918,7 @@ class MainActivity : AppCompatActivity() {
         banqueNames.clear()
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Afficher un toast
+    // Afficher un toast
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }

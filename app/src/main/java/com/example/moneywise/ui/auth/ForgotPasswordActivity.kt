@@ -26,7 +26,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
     private var userEmail: String = ""
 
-    // 🔥 CORRECTION: Utilisation de Hilt avec @HiltViewModel
+    // Utilisation de Hilt avec @HiltViewModel
     private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -148,7 +148,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         binding.btnVerifyEmail.isEnabled = false
         binding.btnVerifyEmail.text = "Vérification..."
 
-        // 🔥 CORRECTION: Utilisation de la méthode du ViewModel
+        // Utilisation de la méthode du ViewModel
         viewModel.checkUserExists(email) { exists ->
             binding.btnVerifyEmail.isEnabled = true
             binding.btnVerifyEmail.text = "Vérifier l'email"
@@ -200,12 +200,12 @@ class ForgotPasswordActivity : AppCompatActivity() {
         binding.layoutPasswordReset.visibility = android.view.View.VISIBLE
     }
 
-    // 🔥 CORRECTION: Renommage de la méthode pour éviter le conflit
+    // Renommage de la méthode pour éviter le conflit
     private fun resetPasswordMethod(email: String, newPassword: String) {
         binding.btnResetPassword.isEnabled = false
         binding.btnResetPassword.text = "Réinitialisation..."
 
-        // 🔥 CORRECTION: Utilisation de la méthode du ViewModel
+        // Utilisation de la méthode du ViewModel
         viewModel.resetPassword(email, newPassword) { result ->
             binding.btnResetPassword.isEnabled = true
             binding.btnResetPassword.text = "Réinitialiser le mot de passe"

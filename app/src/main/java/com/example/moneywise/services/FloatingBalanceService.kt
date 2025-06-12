@@ -79,7 +79,7 @@ class FloatingBalanceService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "📨 Commande reçue: ${intent?.action}")
 
-        // 🔥 CORRECTION: Vérifier que l'intent n'est pas null
+        // Vérifier que l'intent n'est pas null
         val action = intent?.action ?: ""
 
         when (action) {
@@ -235,7 +235,7 @@ class FloatingBalanceService : Service() {
                     layoutParams.x = initialX + (event.rawX - initialTouchX).toInt()
                     layoutParams.y = initialY + (event.rawY - initialTouchY).toInt()
 
-                    // 🔥 CORRECTION: Vérifier que la vue existe avant de la mettre à jour
+                    // Vérifier que la vue existe avant de la mettre à jour
                     floatingView?.let { view ->
                         try {
                             windowManager.updateViewLayout(view, layoutParams)

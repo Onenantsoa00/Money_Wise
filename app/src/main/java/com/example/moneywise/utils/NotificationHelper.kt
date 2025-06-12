@@ -76,7 +76,7 @@ class NotificationHelper @Inject constructor(
         }
     }
 
-    // 🔥 VOTRE MÉTHODE EXISTANTE - PRÉSERVÉE
+    // PRÉSERVÉE
     fun sendNotification(
         id: Int,
         title: String,
@@ -128,7 +128,7 @@ class NotificationHelper @Inject constructor(
         }
     }
 
-    // 🔥 NOUVELLES MÉTHODES POUR LES TRANSACTIONS
+    // NOUVELLES MÉTHODES POUR LES TRANSACTIONS
     fun showTransactionNotification(
         title: String,
         content: String,
@@ -195,7 +195,7 @@ class NotificationHelper @Inject constructor(
         notificationManager.notify(notificationId, notification)
     }
 
-    // 🔥 VOTRE MÉTHODE EXISTANTE - PRÉSERVÉE
+    // PRÉSERVÉE
     private fun playCoinDropSound() {
         try {
             // Libérer le MediaPlayer précédent s'il existe
@@ -242,7 +242,7 @@ class NotificationHelper @Inject constructor(
         }
     }
 
-    // 🔥 VOTRE MÉTHODE EXISTANTE - PRÉSERVÉE
+    // PRÉSERVÉE
     fun hasNotificationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.checkSelfPermission(
@@ -254,7 +254,7 @@ class NotificationHelper @Inject constructor(
         }
     }
 
-    // 🔥 VOTRE MÉTHODE EXISTANTE - PRÉSERVÉE
+    // PRÉSERVÉE
     fun release() {
         try {
             mediaPlayer?.release()

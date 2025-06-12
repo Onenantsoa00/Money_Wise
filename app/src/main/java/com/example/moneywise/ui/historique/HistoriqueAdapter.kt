@@ -36,7 +36,7 @@ class HistoriqueAdapter(private var items: List<Historique>) :
     override fun onBindViewHolder(holder: HistoriqueViewHolder, position: Int) {
         val item = items[position]
 
-        // 🔥 Formatage du montant avec MGA
+        // Formatage du montant avec MGA
         val montantValue = item.montant.toString().replace(",", "").replace(" ", "").replace("MGA", "").trim().toDoubleOrNull() ?: 0.0
         val formattedMontant = numberFormat.format(montantValue)
 
@@ -65,7 +65,7 @@ class HistoriqueAdapter(private var items: List<Historique>) :
                 holder.textMontant.text = "-$formattedMontant MGA"
                 holder.textMontant.setTextColor(Color.parseColor("#D32F2F"))
             }
-            // 🔥 Support pour les transactions normales
+            // Support pour les transactions normales
             "Dépôt" -> {
                 holder.cardType.setCardBackgroundColor(Color.parseColor("#E8F5E8"))
                 holder.textType.text = "Dépôt"
@@ -98,12 +98,12 @@ class HistoriqueAdapter(private var items: List<Historique>) :
 
     override fun getItemCount() = items.size
 
-    // 🔥 Méthode de mise à jour optimisée
+    // Méthode de mise à jour optimisée
     fun updateList(newList: List<Historique>) {
         items = newList
         notifyDataSetChanged()
     }
 
-    // 🔥 Obtenir la liste actuelle
+    // Obtenir la liste actuelle
     fun getCurrentList(): List<Historique> = items
 }

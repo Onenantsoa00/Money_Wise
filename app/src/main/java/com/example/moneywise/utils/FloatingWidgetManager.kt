@@ -179,7 +179,7 @@ class FloatingWidgetManager(private val context: Context) {
                     action = FloatingBalanceService.ACTION_START_FLOATING
                 }
 
-                // 🔥 CORRECTION: Utiliser startForegroundService pour Android O+
+                // Utiliser startForegroundService pour Android O+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(intent)
                 } else {

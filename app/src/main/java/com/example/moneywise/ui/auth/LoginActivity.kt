@@ -102,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this, SignupActivity::class.java))
         }
 
-        // 🔥 NOUVEAU: Gestion du mot de passe oublié
+        // Gestion du mot de passe oublié
         binding.tvForgotPassword.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }

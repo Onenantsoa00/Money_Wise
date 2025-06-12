@@ -20,7 +20,7 @@ class MoneyWiseApp : Application() {
                 modelsDir.mkdirs()
             }
 
-            // 🔥 DÉMARRER LE SERVICE SMS EN ARRIÈRE-PLAN AU DÉMARRAGE DE L'APP
+            // DÉMARRER LE SERVICE SMS EN ARRIÈRE-PLAN AU DÉMARRAGE DE L'APP
             startSMSBackgroundService()
 
             Log.d("MoneyWiseApp", "Application initialized successfully")

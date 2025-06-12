@@ -47,10 +47,10 @@ class TransactionFragment : Fragment() {
     private lateinit var transactionAdapter: TransactionAdapter
     private var showAllTransactions = false
 
-    // 🔥 Variables pour le filtrage
+    // Variables pour le filtrage
     private var currentTransactions: List<Transaction> = emptyList()
 
-    // 🔥 Enum pour les types de tri
+    // Enum pour les types de tri
     enum class SortType {
         TYPE_A_Z,
         TYPE_Z_A,
@@ -98,7 +98,7 @@ class TransactionFragment : Fragment() {
         }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Appliquer le tri
+    // Appliquer le tri
     private fun applySorting(transactions: List<Transaction>) {
         val sortedList = when (currentSortType) {
             SortType.TYPE_A_Z -> transactions.sortedBy { it.type.lowercase() }
@@ -157,13 +157,13 @@ class TransactionFragment : Fragment() {
             applySorting(currentTransactions)
         }
 
-        // 🔥 NOUVEAU: Bouton Filtrer
+        // Bouton Filtrer
         binding.btnFilterTransaction.setOnClickListener {
             showFilterDialog()
         }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Afficher la modal de filtrage
+    // Afficher la modal de filtrage
     private fun showFilterDialog() {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_filter_transaction, null)
@@ -205,7 +205,7 @@ class TransactionFragment : Fragment() {
             .show()
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Mettre à jour le texte du bouton
+    // Mettre à jour le texte du bouton
     private fun updateFilterButtonText() {
         val filterText = when (currentSortType) {
             SortType.TYPE_A_Z -> "Type A→Z"
@@ -219,7 +219,7 @@ class TransactionFragment : Fragment() {
         binding.btnFilterTransaction.text = filterText
     }
 
-    // 🔥 MÉTHODE MODIFIÉE: Ajout de la validation des champs
+    // Ajout de la validation des champs
     private fun showAddTransactionDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_transaction, null)
 
@@ -229,7 +229,7 @@ class TransactionFragment : Fragment() {
         val layoutDate = dialogView.findViewById<TextInputLayout>(R.id.layout_transaction_date)
         val layoutBank = dialogView.findViewById<TextInputLayout>(R.id.layout_transaction_bank)
 
-        // 🔥 MODIFIÉ: Suppression de "Transfert" des types de transaction
+        // Suppression de "Transfert" des types de transaction
         val transactionTypes = arrayOf("Dépôt", "Retrait")
         val typeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, transactionTypes)
         val typeDropdown = dialogView.findViewById<AutoCompleteTextView>(R.id.transactionTypeDropdown)
@@ -253,7 +253,7 @@ class TransactionFragment : Fragment() {
             ).show()
         }
 
-        // 🔥 CORRIGÉ: Utilisation directe de la base de données
+        // Utilisation directe de la base de données
         lifecycleScope.launchWhenStarted {
             val banks = db.banqueDao().getAllBanques().first().map { it.nom }
             if (banks.isNotEmpty()) {
@@ -275,7 +275,7 @@ class TransactionFragment : Fragment() {
 
         dialog.show()
 
-        // 🔥 NOUVEAU: Override du bouton positif pour la validation
+        // Override du bouton positif pour la validation
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             // Récupérer les valeurs
             val type = typeDropdown.text.toString()
@@ -328,7 +328,7 @@ class TransactionFragment : Fragment() {
 
                 lifecycleScope.launch {
                     try {
-                        // 🔥 CORRIGÉ: Utilisation directe de la base de données comme dans MainActivity
+                        // Utilisation directe de la base de données comme dans MainActivity
                         val currentUser = db.utilisateurDao().getFirstUtilisateur()
                         currentUser?.let { user ->
                             val bankId = if (bankName.isNotBlank()) {
@@ -378,7 +378,7 @@ class TransactionFragment : Fragment() {
         }
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Effacer les erreurs
+    // Effacer les erreurs
     private fun clearErrors(vararg layouts: TextInputLayout) {
         layouts.forEach { it.error = null }
     }

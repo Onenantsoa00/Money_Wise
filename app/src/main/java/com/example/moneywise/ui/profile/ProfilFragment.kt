@@ -194,7 +194,7 @@ class ProfilFragment : Fragment() {
             showEditProfileDialog()
         }
 
-        // 🔥 DÉCONNEXION AVEC ARRÊT DU WIDGET FLOTTANT
+        // DÉCONNEXION AVEC ARRÊT DU WIDGET FLOTTANT
         binding.logoutButton.setOnClickListener {
             showLogoutConfirmationDialog()
         }
@@ -370,7 +370,7 @@ class ProfilFragment : Fragment() {
             .show()
     }
 
-    // 🔥 DÉCONNEXION AVEC ARRÊT DU WIDGET FLOTTANT
+    // DÉCONNEXION AVEC ARRÊT DU WIDGET FLOTTANT
     private fun showLogoutConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Déconnexion")
@@ -383,10 +383,10 @@ class ProfilFragment : Fragment() {
             .show()
     }
 
-    // 🔥 MÉTHODE DE DÉCONNEXION AVEC ARRÊT DU WIDGET
+    // MÉTHODE DE DÉCONNEXION AVEC ARRÊT DU WIDGET
     private fun performLogout() {
         try {
-            // 🔥 ARRÊTER LE WIDGET FLOTTANT AVANT LA DÉCONNEXION
+            // ARRÊTER LE WIDGET FLOTTANT AVANT LA DÉCONNEXION
             floatingWidgetManager.stopFloatingWidget()
 
             // Effacer la session utilisateur

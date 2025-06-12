@@ -11,7 +11,7 @@ class SmsListener : BroadcastReceiver() {
 
     companion object {
         private const val TAG = "SmsListener"
-        // 🔥 NOUVEAU: Set pour éviter les doublons de SMS
+        // Set pour éviter les doublons de SMS
         private val processedMessages = mutableSetOf<String>()
         private const val MAX_PROCESSED_MESSAGES = 100 // Limite pour éviter la surcharge mémoire
     }
@@ -29,7 +29,7 @@ class SmsListener : BroadcastReceiver() {
                 Log.d(TAG, "📱 SMS de: $sender")
                 Log.d(TAG, "💬 Message: $body")
 
-                // 🔥 NOUVEAU: Créer une clé unique pour éviter les doublons
+                // Créer une clé unique pour éviter les doublons
                 val messageKey = "${sender}_${body.hashCode()}_${timestamp}"
 
                 // Vérifier si ce message a déjà été traité
@@ -56,12 +56,12 @@ class SmsListener : BroadcastReceiver() {
                         }
                     }
 
-                    // 🔥 CORRECTION: SEULEMENT le service en arrière-plan (pas de traitement direct)
+                    // SEULEMENT le service en arrière-plan (pas de traitement direct)
                     val serviceIntent = Intent(context, SMSBackgroundService::class.java).apply {
                         action = SMSBackgroundService.ACTION_PROCESS_SMS
                         putExtra(SMSBackgroundService.EXTRA_MESSAGE_BODY, body)
                         putExtra(SMSBackgroundService.EXTRA_SENDER, sender)
-                        putExtra(SMSBackgroundService.EXTRA_MESSAGE_KEY, messageKey) // 🔥 NOUVEAU
+                        putExtra(SMSBackgroundService.EXTRA_MESSAGE_KEY, messageKey)
                     }
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

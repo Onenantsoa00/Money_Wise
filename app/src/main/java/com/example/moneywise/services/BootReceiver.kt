@@ -25,7 +25,7 @@ class BootReceiver : BroadcastReceiver() {
                 Log.d(TAG, "🔄 Redémarrage détecté, relancement des services")
 
                 try {
-                    // 🔥 DÉMARRER LE SERVICE SMS EN ARRIÈRE-PLAN
+                    // DÉMARRER LE SERVICE SMS EN ARRIÈRE-PLAN
                     val smsServiceIntent = Intent(context, SMSBackgroundService::class.java)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         context.startForegroundService(smsServiceIntent)

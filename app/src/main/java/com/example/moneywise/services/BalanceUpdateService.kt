@@ -43,7 +43,7 @@ class BalanceUpdateService @Inject constructor() {
             val db = AppDatabase.getDatabase(context)
             val utilisateurDao = db.utilisateurDao()
 
-            // 🔥 UTILISATION DES MÉTHODES EXISTANTES DE VOTRE DAO
+            // UTILISATION DES MÉTHODES EXISTANTES DE DAO
             val user = utilisateurDao.getUserById(userId) ?: utilisateurDao.getFirstUtilisateur()
 
             if (user == null) {
@@ -62,7 +62,7 @@ class BalanceUpdateService @Inject constructor() {
                 // On continue quand même car certains comptes peuvent être en découvert
             }
 
-            // 🔥 UTILISATION DE VOTRE MÉTHODE updateBalance EXISTANTE
+            // UTILISATION DE MÉTHODE updateBalance EXISTANTE
             utilisateurDao.updateBalance(userId, newBalance)
 
             Log.d(TAG, "✅ Solde mis à jour avec succès: ${user.solde} -> $newBalance (${transactionType}: $amount)")
@@ -75,7 +75,7 @@ class BalanceUpdateService @Inject constructor() {
     }
 
     /**
-     * 🔥 AMÉLIORATION: Calcule le nouveau solde en fonction du type de transaction avec plus de précision
+     * Calcule le nouveau solde en fonction du type de transaction avec plus de précision
      */
     private fun calculateNewBalance(currentBalance: Double, transactionType: String, amount: Double): Double {
         val type = transactionType.uppercase().trim()
@@ -83,21 +83,21 @@ class BalanceUpdateService @Inject constructor() {
         Log.d(TAG, "💰 Calcul nouveau solde: $currentBalance + ($type: $amount)")
 
         return when (type) {
-            // 🔥 DÉPÔTS - Argent qui ENTRE dans le compte
+            // DÉPÔTS - Argent qui ENTRE dans le compte
             "DEPOT", "DÉPÔT", "CREDIT", "CRÉDIT", "RECU", "REÇU",
             "VERSEMENT", "RECHARGE", "RECHARGÉ", "AJOUTÉ", "CRÉDITÉ" -> {
                 Log.d(TAG, "💵 Type DEPOT détecté - Ajout de $amount")
                 currentBalance + amount
             }
 
-            // 🔥 RETRAITS - Argent qui SORT du compte
+            // RETRAITS - Argent qui SORT du compte
             "RETRAIT", "DEBIT", "DÉBIT", "ENVOYE", "ENVOYÉ",
             "PAIEMENT", "PAYÉ", "DÉBITÉ", "PRÉLEVÉ", "RETIRÉ" -> {
                 Log.d(TAG, "💸 Type RETRAIT détecté - Soustraction de $amount")
                 currentBalance - amount
             }
 
-            // 🔥 TRANSFERTS - Peut être entrant ou sortant selon le contexte
+            // TRANSFERTS - Peut être entrant ou sortant selon le contexte
             "TRANSFERT", "TRANSFER", "ENVOI", "VIREMENT" -> {
                 Log.d(TAG, "🔄 Type TRANSFERT détecté - Soustraction de $amount (par défaut)")
                 // Par défaut, on considère un transfert comme une sortie
@@ -105,13 +105,13 @@ class BalanceUpdateService @Inject constructor() {
                 currentBalance - amount
             }
 
-            // 🔥 ACHATS - Argent qui sort
+            // ACHATS - Argent qui sort
             "ACHAT", "ACHETÉ", "COMMANDE", "FACTURE", "PURCHASE" -> {
                 Log.d(TAG, "🛒 Type ACHAT détecté - Soustraction de $amount")
                 currentBalance - amount
             }
 
-            // 🔥 TYPES SPÉCIAUX
+            // TYPES SPÉCIAUX
             "FRAIS", "COMMISSION", "FEE" -> {
                 Log.d(TAG, "💳 Type FRAIS détecté - Soustraction de $amount")
                 currentBalance - amount
@@ -130,8 +130,8 @@ class BalanceUpdateService @Inject constructor() {
     }
 
     /**
-     * 🔥 AMÉLIORATION: Recalcule le solde total basé sur toutes les transactions
-     * UTILISE VOS MÉTHODES DAO EXISTANTES
+     * Recalcule le solde total basé sur toutes les transactions
+     * UTILISE LES MÉTHODES DAO EXISTANTES
      */
     suspend fun recalculateBalance(context: Context, userId: Int): Double = withContext(Dispatchers.IO) {
         try {
@@ -141,7 +141,7 @@ class BalanceUpdateService @Inject constructor() {
             val transactionDao = db.transactionDao()
             val utilisateurDao = db.utilisateurDao()
 
-            // 🔥 UTILISATION DE VOTRE MÉTHODE getTransactionsByUserId EXISTANTE
+            // UTILISATION DE MÉTHODE getTransactionsByUserId EXISTANTE
             val transactions = transactionDao.getTransactionsByUserId(userId)
 
             Log.d(TAG, "📊 ${transactions.size} transactions trouvées pour l'utilisateur $userId")
@@ -169,7 +169,7 @@ class BalanceUpdateService @Inject constructor() {
 
             Log.d(TAG, "💰 Solde final calculé: $totalBalance (basé sur $transactionCount transactions)")
 
-            // 🔥 UTILISATION DE VOTRE MÉTHODE updateBalance EXISTANTE
+            // UTILISATION DE MÉTHODE updateBalance EXISTANTE
             utilisateurDao.updateBalance(userId, totalBalance)
             Log.d(TAG, "✅ Solde utilisateur mis à jour à: $totalBalance")
 
@@ -182,8 +182,8 @@ class BalanceUpdateService @Inject constructor() {
     }
 
     /**
-     * 🔥 NOUVELLE MÉTHODE: Vérifie la cohérence du solde
-     * UTILISE VOS MÉTHODES DAO EXISTANTES
+     * Vérifie la cohérence du solde
+     * UTILISE LES MÉTHODES DAO EXISTANTES
      */
     suspend fun validateBalance(context: Context, userId: Int): Boolean = withContext(Dispatchers.IO) {
         try {
@@ -215,8 +215,8 @@ class BalanceUpdateService @Inject constructor() {
     }
 
     /**
-     * 🔥 NOUVELLE MÉTHODE: Obtient le solde actuel de l'utilisateur
-     * UTILISE VOS MÉTHODES DAO EXISTANTES
+     * Obtient le solde actuel de l'utilisateur
+     * UTILISE LES MÉTHODES DAO EXISTANTES
      */
     suspend fun getCurrentBalance(context: Context, userId: Int): Double = withContext(Dispatchers.IO) {
         try {
@@ -236,8 +236,8 @@ class BalanceUpdateService @Inject constructor() {
     }
 
     /**
-     * 🔥 NOUVELLE MÉTHODE: Réinitialise le solde à une valeur spécifique
-     * UTILISE VOS MÉTHODES DAO EXISTANTES
+     * Réinitialise le solde à une valeur spécifique
+     * UTILISE LES MÉTHODES DAO EXISTANTES
      */
     suspend fun resetBalance(context: Context, userId: Int, newBalance: Double): Boolean = withContext(Dispatchers.IO) {
         try {
@@ -246,7 +246,7 @@ class BalanceUpdateService @Inject constructor() {
             val db = AppDatabase.getDatabase(context)
             val utilisateurDao = db.utilisateurDao()
 
-            // 🔥 UTILISATION DE VOTRE MÉTHODE updateBalance EXISTANTE
+            // UTILISATION DE MÉTHODE updateBalance EXISTANTE
             utilisateurDao.updateBalance(userId, newBalance)
             Log.d(TAG, "✅ Solde réinitialisé à: $newBalance")
             return@withContext true
@@ -258,7 +258,7 @@ class BalanceUpdateService @Inject constructor() {
     }
 
     /**
-     * 🔥 NOUVELLE MÉTHODE: Utilise vos méthodes addToBalance et subtractFromBalance existantes
+     * Utilise les méthodes addToBalance et subtractFromBalance existantes
      */
     suspend fun updateBalanceDirectly(
         context: Context,
@@ -278,7 +278,7 @@ class BalanceUpdateService @Inject constructor() {
                 "DEPOT", "DÉPÔT", "CREDIT", "CRÉDIT", "RECU", "REÇU",
                 "VERSEMENT", "RECHARGE", "RECHARGÉ", "AJOUTÉ", "CRÉDITÉ",
                 "REMBOURSEMENT", "REFUND" -> {
-                    // 🔥 UTILISATION DE VOTRE MÉTHODE addToBalance EXISTANTE
+                    // UTILISATION DE MÉTHODE addToBalance EXISTANTE
                     utilisateurDao.addToBalance(userId, amount)
                     Log.d(TAG, "✅ Ajout de $amount au solde")
                 }
@@ -288,7 +288,7 @@ class BalanceUpdateService @Inject constructor() {
                 "TRANSFERT", "TRANSFER", "ENVOI", "VIREMENT",
                 "ACHAT", "ACHETÉ", "COMMANDE", "FACTURE", "PURCHASE",
                 "FRAIS", "COMMISSION", "FEE" -> {
-                    // 🔥 UTILISATION DE VOTRE MÉTHODE subtractFromBalance EXISTANTE
+                    // UTILISATION DE MÉTHODE subtractFromBalance EXISTANTE
                     utilisateurDao.subtractFromBalance(userId, amount)
                     Log.d(TAG, "✅ Soustraction de $amount du solde")
                 }

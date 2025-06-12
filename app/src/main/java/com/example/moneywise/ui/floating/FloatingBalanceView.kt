@@ -55,13 +55,13 @@ class FloatingBalanceView @JvmOverloads constructor(
     }
 
     private fun setupView() {
-        // 🔥 Animation d'apparition plus douce avec transparence
+        // Animation d'apparition plus douce avec transparence
         alpha = 0f
         scaleX = 0.9f
         scaleY = 0.9f
 
         animate()
-            .alpha(0.92f)  // 🔥 Transparence légère
+            .alpha(0.92f)  // Transparence légère
             .scaleX(1f)
             .scaleY(1f)
             .setDuration(250)
@@ -69,7 +69,7 @@ class FloatingBalanceView @JvmOverloads constructor(
     }
 
     private fun setupClickListeners() {
-        // 🔥 CORRECTION: Gestion des clics sur les ImageView
+        // Gestion des clics sur les ImageView
         binding.root.setOnClickListener {
             if (!isDragging) {
                 openMainApp()
@@ -102,7 +102,7 @@ class FloatingBalanceView @JvmOverloads constructor(
                     val deltaX = event.rawX - initialTouchX
                     val deltaY = event.rawY - initialTouchY
 
-                    if (abs(deltaX) > 8 || abs(deltaY) > 8) {  // 🔥 Seuil réduit pour plus de réactivité
+                    if (abs(deltaX) > 8 || abs(deltaY) > 8) {  // Seuil réduit pour plus de réactivité
                         isDragging = true
                         layoutParams?.x = initialX + deltaX.toInt()
                         layoutParams?.y = initialY + deltaY.toInt()
@@ -128,13 +128,13 @@ class FloatingBalanceView @JvmOverloads constructor(
         val currentX = layoutParams?.x ?: 0
 
         val targetX = if (currentX < screenWidth / 2) {
-            10 // 🔥 Snap plus proche du bord gauche
+            10 // Snap plus proche du bord gauche
         } else {
-            screenWidth - width - 10 // 🔥 Snap plus proche du bord droit
+            screenWidth - width - 10 // Snap plus proche du bord droit
         }
 
         ObjectAnimator.ofInt(currentX, targetX).apply {
-            duration = 150  // 🔥 Animation plus rapide
+            duration = 150  // Animation plus rapide
             addUpdateListener { animation ->
                 layoutParams?.x = animation.animatedValue as Int
                 windowManager?.updateViewLayout(this@FloatingBalanceView, layoutParams)
@@ -155,7 +155,7 @@ class FloatingBalanceView @JvmOverloads constructor(
 
             binding.tvBalance.text = "$formattedBalance MGA"
 
-            // 🔥 Animation de mise à jour plus subtile
+            // Animation de mise à jour plus subtile
             binding.tvBalance.animate()
                 .scaleX(1.05f)
                 .scaleY(1.05f)
@@ -185,7 +185,7 @@ class FloatingBalanceView @JvmOverloads constructor(
 
     fun updateUserName(name: String) {
         try {
-            // 🔥 Nom plus court pour économiser l'espace
+            // Nom plus court pour économiser l'espace
             val shortName = if (name.length > 8) "${name.take(8)}..." else name
             binding.tvUserName.text = "Salut, $shortName!"
             Log.d(TAG, "Nom utilisateur mis à jour: $shortName")
@@ -209,11 +209,11 @@ class FloatingBalanceView @JvmOverloads constructor(
             binding.btnMinimize.setImageResource(R.drawable.ic_minimize)
         }
 
-        // 🔥 Animation plus douce pour le mode minimisé
+        // Animation plus douce pour le mode minimisé
         animate()
             .scaleX(if (isMinimized) 0.8f else 1f)
             .scaleY(if (isMinimized) 0.8f else 1f)
-            .alpha(if (isMinimized) 0.85f else 0.92f)  // 🔥 Plus transparent en mode minimisé
+            .alpha(if (isMinimized) 0.85f else 0.92f)  // Plus transparent en mode minimisé
             .setDuration(150)
             .start()
     }
@@ -225,7 +225,7 @@ class FloatingBalanceView @JvmOverloads constructor(
             }
             context.startActivity(intent)
 
-            // 🔥 Animation plus subtile au clic
+            // Animation plus subtile au clic
             animate()
                 .scaleX(0.98f)
                 .scaleY(0.98f)
@@ -250,7 +250,7 @@ class FloatingBalanceView @JvmOverloads constructor(
             .alpha(0f)
             .scaleX(0.9f)
             .scaleY(0.9f)
-            .setDuration(150)  // 🔥 Animation plus rapide
+            .setDuration(150)  // Animation plus rapide
             .withEndAction {
                 try {
                     val intent = Intent(context, FloatingBalanceService::class.java).apply {

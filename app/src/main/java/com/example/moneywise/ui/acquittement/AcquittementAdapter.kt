@@ -62,12 +62,12 @@ class AcquittementAdapter(
 
     override fun getItemCount() = acquittements.size
 
-    // 🔥 NOUVELLE MÉTHODE: Mettre à jour la liste
+    // Mettre à jour la liste
     fun updateList(newList: List<Acquittement>) {
         acquittements = newList
         notifyDataSetChanged()
     }
 
-    // 🔥 NOUVELLE MÉTHODE: Obtenir la liste actuelle
+    // Obtenir la liste actuelle
     fun getCurrentList(): List<Acquittement> = acquittements
 }

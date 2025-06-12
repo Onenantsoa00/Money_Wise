@@ -53,11 +53,11 @@ interface TransactionDao {
     @Query("SELECT * FROM `Transaction` WHERE date BETWEEN :startDate AND :endDate AND id_utilisateur = :userId")
     suspend fun getTransactionsByDateRangeAndUserId(startDate: Long, endDate: Long, userId: Int): List<Transaction>
 
-    // 🔥 NOUVELLE MÉTHODE: Récupérer les transactions depuis une date spécifique
+    // Récupérer les transactions depuis une date spécifique
     @Query("SELECT * FROM `Transaction` WHERE date >= :since ORDER BY date DESC")
     suspend fun getTransactionsSince(since: Date): List<Transaction>
 
-    // 🔥 NOUVELLES MÉTHODES: Pour les statistiques de dépôts et retraits
+    // Pour les statistiques de dépôts et retraits
     @Query("SELECT SUM(CAST(montants AS REAL)) FROM `Transaction` WHERE id_utilisateur = :userId AND type = 'DEPOT'")
     suspend fun getTotalDeposits(userId: Int): Double?
 
